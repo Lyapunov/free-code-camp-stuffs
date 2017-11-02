@@ -1,0 +1,299 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"></script>
+<script>
+$(document).ready(function(){
+  // Smoothscroll ource: https://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_eff_animate_smoothscroll
+
+  // Add smooth scrolling to all links
+  $("a").on('click', function(event) {
+
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      // Using jQuery's animate() method to add smooth page scroll
+      // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 800, function(){
+   
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+
+  // Scrollspy source: https://www.w3schools.com/bootstrap/bootstrap_scrollspy.asp
+  $('[data-spy="scroll"]').each(function () {
+    var $spy = $(this).my-scrollspy('refresh')
+  })
+});
+</script>
+<style>
+body {
+   background-color: black;
+   height:100%;
+   position: relative;
+}
+
+.special {
+   height:100%;
+}
+
+.nav-pills {
+   position: fixed;
+   z-index:999;
+}
+
+#section1 {
+   background-image: url('imgs/section3b.jpg');
+   height:100%;
+   background-size: cover;
+}
+
+#section2 {
+   background-image: url('imgs/section2b.jpg');
+   height:100%;
+   background-size: cover;
+}
+
+#section3 {
+   background-image: url('imgs/section3c.jpg');
+   height:100%;
+   background-size: cover;
+}
+
+.btn {
+  display: inline-block;
+  color: #000;
+  border: 2px outset rgba(0, 0, 0, 0.9);
+  background: #FFFFFF;
+  text-shadow: 1px 1px 1px rgba(0,0,0, 20);
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+  letter-spacing: 2px;
+  transition: 0.2s;
+}
+
+.veighty {
+   height:80%;
+}
+
+.vtwenty {
+   height:25%;
+}
+
+.vthirtyfive {
+   height:35%;
+}
+
+.vten {
+   height:10%;
+}
+
+.vfifty {
+   height:50%;
+}
+
+.namecard {
+   white-space: normal;
+   overflow-wrap:break-word;
+
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+</style>
+<body data-spy="scroll" data-target="#my-scrollspy">
+  <div class="row container p-6 navbar navbar-inverse navbar-fixed-top nav-pills" id="my-scrollspy">
+     <nav class="col-md-4 nav">
+        <a type="button" class="btn" href="#section1">About</a>
+        <a type="button" class="btn" href="#section2">Portfolio 2012</a>
+        <a type="button" class="btn" href="#section3">Portfolio 2016</a>
+     </nav>
+  </div>
+  <div id="section1" class="special container-fluid">
+    <div class="veighty">
+      <div class="vtwenty">
+      </div>
+      <div class="row container-fluid vfifty">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-5 btn namecard">
+        <p>
+        Welcome to Lyapunov's portfolio page!
+        <br/>
+        <br/>
+        Coding is my journey, peace is my profession.
+        </p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 text-center">
+      <a target="_blank" type="button" class="btn" href="https://www.codewars.com/users/Lyapunov">
+        <img src="imgs/icon_cw.png" width="20"/>CodeWars
+      </a>
+      </div>
+      <div class="col-md-4 text-center">
+      <a target="_blank" type="button" class="btn" href="https://github.com/lyapunov">
+        <img src="imgs/icon_gh.png" width="20"/>GitHub
+      </a>
+      </div>
+      <div class="col-md-4 text-center">
+      <a target="_blank" type="button" class="btn" href="https://www.codingame.com/profile/7dfceba434aed56bea027e0d5ab9c5533080261">CodingGame
+      </a>
+      </div>
+    </div>
+  </div>
+  <div id="section2" class="special container-fluid">
+    <div class="row vten">
+    </div>
+    <div class="row container-fluid vthirtyfive">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8 p-4">
+        <div class="row container-fluid">
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://www.kongregate.com/games/peleus/adam-the-archer-the-logical-game">
+              <img class="img-thumbnail" src="http://vrichard86.files.wordpress.com/2012/07/flash01.jpg" alt="Adam the archer (October, 2010)"></img>
+            </a>
+            <p class="text-center">
+            Adam, the archer 
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://www.kongregate.com/games/peleus/hobo-quest">
+              <img class="img-thumbnail" src="http://vrichard86.files.wordpress.com/2012/07/flash02.jpg" alt="Hobo quest (January, 2011)"></img>
+            </a>
+            <p class="text-center">
+            Hobo quest
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://www.kongregate.com/games/peleus/puzzle-killer">
+              <img class="img-thumbnail" src="http://vrichard86.files.wordpress.com/2012/07/flash03.jpg" alt="Puzzle killer (March, 2011)"></img>
+            </a>
+            <p class="text-center">
+            Puzzle killer
+            </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row vten">
+    </div>
+    <div class="row container-fluid vthirtyfive">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8 p-4">
+        <div class="row container-fluid">
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://www.fastswf.com/p7vJ5vc">
+              <img class="img-thumbnail" src="imgs/jigsaw_puzzle.png" alt="Jigsaw puzzle (2011)"></img>
+            </a>
+            <p class="text-center">
+            Jigsaw puzzle 
+            </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="section3" class="special container-fluid">
+    <div class="vten">
+    </div>
+    <div class="row container-fluid vthirtyfive">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8 p-4">
+        <div class="row container-fluid">
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-2-rotating-cube.html">
+              <img class="img-thumbnail" src="imgs/js_cube.png" alt="Rotating cube"></img>
+            </a>
+            <p class="text-center">
+            Rotating cube
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-7-stars.html">
+              <img class="img-thumbnail" src="imgs/js_starfield.png" alt="Starfield"></img>
+            </a>
+            <p class="text-center">
+            Starfield
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-3-landscape.html">
+              <img class="img-thumbnail" src="imgs/js_landscape.png" alt="Landscape"></img>
+            </a>
+            <p class="text-center">
+            Landscape
+            </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div>
+    <div class="row vten">
+    </div>
+    <div class="row container-fluid vthirtyfive">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8 p-4">
+        <div class="row container-fluid">
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-4-billiards.html">
+              <img class="img-thumbnail" src="imgs/js_billiard.png" alt="Billiard"></img>
+            </a>
+            <p class="text-center">
+            Billiard.
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-14-sphere.html">
+              <img class="img-thumbnail" src="imgs/js_sphere.png" alt="Sphere"></img>
+            </a>
+            <p class="text-center">
+            Sphere.
+            </p>
+            </div>
+          </div>
+          <div class="col-md-4 container-fluid">
+            <div class="img-thumbnail">
+            <a target="_blank" href="http://html5-canvas-fun.bitballoon.com/item-18-rotating-textured-cube.html">
+            <img class="img-thumbnail" src="imgs/js_textured_cube.png" alt="Textured cube"></img>
+            </a>
+            <p class="text-center">
+            Textured cube.
+            </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
