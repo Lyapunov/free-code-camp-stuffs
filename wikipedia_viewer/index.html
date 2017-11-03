@@ -1,0 +1,71 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"></script>
+
+<!-- 
+  CSS 
+-->
+<style>
+html, body {
+  background-color:darkblue;
+  width: 99%;
+  height: 100%;
+}
+
+.viewer-text {
+  color:lightblue;
+}
+
+.vhundred {
+  height:100%;
+  width:100%;
+}
+
+.vforty {
+  height:40%;
+}
+
+.centered {
+   white-space: normal;
+   overflow-wrap:break-word;
+   text-align: center;
+   display: table-cell;
+   justify-content: center;
+   vertical-align:middle;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+</style>
+
+<!-- 
+  JS 
+-->
+<script>
+</script>
+
+<!-- 
+  HTML  
+-->
+
+<body>
+  <div id="viewer-main-div" class="vhundred">
+    <div id="viewer-gap-upper" class="vforty">
+    </div>
+    <div id="viewer-panel" class="row container-fluid">
+      <div class="col-md-2"></div>
+      <div class="col-md-8 centered">
+        <p class="viewer-text noselect">Searching in wikipedia</p>
+        <input id="viewer-input"></input>
+      </div>
+    </div>
+  </div>
+</body>
