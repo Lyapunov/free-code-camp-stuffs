@@ -50,6 +50,19 @@ html, body {
   JS 
 -->
 <script>
+
+// https://www.mediawiki.org/wiki/API:Search_and_discovery
+// https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Albert%20Einstein
+
+$.ajax({
+  url: 'https://en.wikipedia.org/w/api.php',
+  data: { action: 'query', list: 'search', srsearch: 'Richard Feynman', format: 'json' },
+  dataType: 'jsonp',
+  success: function (x) {
+    console.log('title', x.query.search[0].title);
+  }
+});
+
 </script>
 
 <!-- 
