@@ -78,10 +78,8 @@ var searchVar = 0;
 function wikisearch_input_oninput() {
    // https://jsfiddle.net/gsj5o3j6/4/
 
-   console.log("xxx");
    {
       var tval = $("#viewer-input").val();
-      console.log(tval);
       if ( tval && !searchVar ) {
          searchVar = 1;
          $.ajax({
@@ -113,7 +111,6 @@ function wikisearch_input_oninput() {
 
 function wikisearch_input_timeout() {
    closeVar = null;
-   console.log("boom");
    $('.dropdown.open').removeClass('open');
 }
 
