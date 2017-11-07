@@ -1,7 +1,7 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!-- 
   CSS 
@@ -54,14 +54,38 @@ html, body {
 // https://www.mediawiki.org/wiki/API:Search_and_discovery
 // https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Albert%20Einstein
 
-$.ajax({
+/* $.ajax({
   url: 'https://en.wikipedia.org/w/api.php',
-  data: { action: 'query', list: 'search', srsearch: 'Richard Feynman', format: 'json' },
+  data: { action: 'query', list: 'search', srsearch: 'Richard Feyman', format: 'json' },
   dataType: 'jsonp',
   success: function (x) {
     console.log('title', x.query.search[0].title);
   }
+}); */
+
+// --------------------------------------------------------------------
+
+// https://www.mediawiki.org/wiki/API:Prefixsearch
+// https://www.mediawiki.org/w/api.php?action=query&list=prefixsearch&pssearch=Fay&format=json&
+
+$.ajax({
+  url: 'https://en.wikipedia.org/w/api.php',
+  data: { action: 'query', list: 'prefixsearch', pssearch: 'Richard', psprofile: 'fuzzy', format:'json' },
+  dataType: 'jsonp',
+  success: function (x) {
+    console.log(x);
+    console.log('title', x.query.prefixsearch[0].title);
+    console.log('title', x.query.prefixsearch[1].title);
+    console.log('title', x.query.prefixsearch[2].title);
+  }
 });
+
+function wikisearch_input_oninput() {
+   // https://jsfiddle.net/gsj5o3j6/4/
+
+   console.log("xxx");
+   $('.dropdown-toggle').dropdown('toggle');
+}
 
 </script>
 
@@ -76,8 +100,16 @@ $.ajax({
     <div id="viewer-panel" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
-        <p class="viewer-text noselect">Searching in wikipedia</p>
-        <input id="viewer-input"></input>
+         <p class="viewer-text noselect">Searching in wikipedia</p>
+         <div class="dropdown">
+             <a href="#" data-toggle="dropdown" class="dropdown-toggle">Dropdown <b class="caret"></b></a>
+             <ul class="dropdown-menu">
+                 <li><a href="#">Action</a></li>
+                 <li><a href="#">Another action</a></li>
+                 <li class="divider"></li>
+                 <li><a href="#">Next action</a></li>
+             </ul>
+         </div>
       </div>
     </div>
   </div>
