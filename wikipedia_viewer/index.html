@@ -13,6 +13,10 @@ html, body {
   height: 100%;
 }
 
+.debug {
+  background-color:green;
+}
+
 .viewer-text {
   color:lightblue;
 }
@@ -127,19 +131,20 @@ function wikisearch_input_timeout() {
     <div id="viewer-panel-1" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
-         <p id="viewer-text" class="noselect">Searching in wikipedia</p>
+         <p class="viewer-text" class="noselect">Wikipedia search engine demo</p>
       </div>
     </div>
     <div id="viewer-panel-2" class="row container-fluid">
       <div class="col-md-2"></div>
-      <div class="col-md-8">
+      <div class="col-md-8 centered">
          <input id="viewer-input" class="span2" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();"/>
+         <button class="btn-info">Search</button>
+         <button class="btn-info">Random</button>
       </div>
-      <div class="col-md-2"></div>
     </div>
     <div id="viewer-panel-3" class="row container-fluid">
       <div class="col-md-2"></div>
-      <div class="col-md-8 dropdown">
+      <div class="col-md-8 dropdown centered">
           <ul class="dropdown-menu">
               <li id="viewer-dropdown-item1"><a href="#">Action</a></li>
               <li id="viewer-dropdown-item2"><a href="#">Another action</a></li>
@@ -149,7 +154,6 @@ function wikisearch_input_timeout() {
           </ul>
           <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
       </div>
-      <div class="col-md-2"></div>
     </div>
   </div>
 </body>
