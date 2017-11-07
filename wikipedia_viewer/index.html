@@ -113,22 +113,33 @@ function wikisearch_input_timeout() {
   <div id="viewer-main-div" class="vhundred">
     <div id="viewer-gap-upper" class="vforty">
     </div>
-    <div id="viewer-panel" class="row container-fluid">
+    <div id="viewer-panel-1" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
          <p class="viewer-text noselect">Searching in wikipedia</p>
+      </div>
+    </div>
+    <div id="viewer-panel-2" class="row container-fluid">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
          <input id="viewer-input" class="span2" data-toggle="dropdown" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();" data-toggle="dropdown"/>
          </input>
-         <div class="dropdown">
-             <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
-             <ul class="dropdown-menu">
-                 <li><a href="#">Action</a></li>
-                 <li><a href="#">Another action</a></li>
-                 <li class="divider"></li>
-                 <li><a href="#">Next action</a></li>
-             </ul>
-         </div>
       </div>
+      <div class="col-md-2"></div>
+    </div>
+    <div id="viewer-panel-3" class="row container-fluid">
+      <div class="col-md-2"></div>
+      <div class="col-md-8 dropdown">
+          <ul class="dropdown-menu">
+              <li id="viewer-dropdown-item1"><a href="#">Action</a></li>
+              <li id="viewer-dropdown-item2"><a href="#">Another action</a></li>
+              <li id="viewer-dropdown-item3"><a href="#">Another action 2</a></li>
+              <li id="viewer-dropdown-item4"><a href="#">Another action 3</a></li>
+              <li id="viewer-dropdown-item5"><a href="#">Another action 4</a></li>
+          </ul>
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
+      </div>
+      <div class="col-md-2"></div>
     </div>
   </div>
 </body>
