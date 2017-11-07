@@ -72,36 +72,41 @@ html, body {
 // https://www.mediawiki.org/wiki/API:Prefixsearch
 // https://www.mediawiki.org/w/api.php?action=query&list=prefixsearch&pssearch=Fay&format=json&
 
-var closerVar;
+var closeVar = null;
 
 function wikisearch_input_oninput() {
    // https://jsfiddle.net/gsj5o3j6/4/
 
    console.log("xxx");
-   if ($('.dropdown').find('.dropdown-menu').is(":hidden"))
    {
       var tval = $("#viewer-input").val();
       console.log(tval);
       if ( tval ) {
          $.ajax({
-           url: 'https://en.wikipedia.org/w/api.php',
-           data: { action: 'query', list: 'prefixsearch', pssearch: tval, psprofile: 'fuzzy', format:'json' },
-           dataType: 'jsonp',
-           success: function (x) {
-             $("#viewer-dropdown-item1").text(x.query.prefixsearch[0].title);
-             $("#viewer-dropdown-item2").text(x.query.prefixsearch[1].title);
-             $("#viewer-dropdown-item3").text(x.query.prefixsearch[2].title);
-             $("#viewer-dropdown-item4").text(x.query.prefixsearch[3].title);
-             $("#viewer-dropdown-item5").text(x.query.prefixsearch[4].title);
-             $('.dropdown-toggle').dropdown('toggle');
-             closerVar = setTimeout(wikisearch_input_timeout, 3000);
-           }
+            url: 'https://en.wikipedia.org/w/api.php',
+            data: { action: 'query', list: 'prefixsearch', pssearch: tval, psprofile: 'fuzzy', format:'json' },
+            dataType: 'jsonp',
+            success: function (x) {
+               $("#viewer-dropdown-item1").text(x.query.prefixsearch[0].title);
+               $("#viewer-dropdown-item2").text(x.query.prefixsearch[1].title);
+               $("#viewer-dropdown-item3").text(x.query.prefixsearch[2].title);
+               $("#viewer-dropdown-item4").text(x.query.prefixsearch[3].title);
+               $("#viewer-dropdown-item5").text(x.query.prefixsearch[4].title);
+               if ($('.dropdown').find('.dropdown-menu').is(":hidden")) {
+                  $('.dropdown-toggle').dropdown('toggle');
+               }
+               if ( closeVar !== null ) {
+                  clearTimeout(closeVar);
+               }
+               closerVar = setTimeout(wikisearch_input_timeout, 3000);
+            }
          });
       }
    }
 }
 
 function wikisearch_input_timeout() {
+   closeVar = null;
    console.log("boom");
    $('.dropdown.open').removeClass('open');
 }
@@ -125,8 +130,7 @@ function wikisearch_input_timeout() {
     <div id="viewer-panel-2" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8">
-         <input id="viewer-input" class="span2" data-toggle="dropdown" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();" data-toggle="dropdown"/>
-         </input>
+         <input id="viewer-input" class="span2" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();"/>
       </div>
       <div class="col-md-2"></div>
     </div>
