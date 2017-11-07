@@ -72,18 +72,6 @@ html, body {
 // https://www.mediawiki.org/wiki/API:Prefixsearch
 // https://www.mediawiki.org/w/api.php?action=query&list=prefixsearch&pssearch=Fay&format=json&
 
-$.ajax({
-  url: 'https://en.wikipedia.org/w/api.php',
-  data: { action: 'query', list: 'prefixsearch', pssearch: 'Richard', psprofile: 'fuzzy', format:'json' },
-  dataType: 'jsonp',
-  success: function (x) {
-    console.log(x);
-    console.log('title', x.query.prefixsearch[0].title);
-    console.log('title', x.query.prefixsearch[1].title);
-    console.log('title', x.query.prefixsearch[2].title);
-  }
-});
-
 var closerVar;
 
 function wikisearch_input_oninput() {
@@ -92,9 +80,24 @@ function wikisearch_input_oninput() {
    console.log("xxx");
    if ($('.dropdown').find('.dropdown-menu').is(":hidden"))
    {
-      console.log('openi!');
-      $('.dropdown-toggle').dropdown('toggle');
-      closerVar = setTimeout(wikisearch_input_timeout, 3000);
+      var tval = $("#viewer-input").val();
+      console.log(tval);
+      if ( tval ) {
+         $.ajax({
+           url: 'https://en.wikipedia.org/w/api.php',
+           data: { action: 'query', list: 'prefixsearch', pssearch: tval, psprofile: 'fuzzy', format:'json' },
+           dataType: 'jsonp',
+           success: function (x) {
+             $("#viewer-dropdown-item1").text(x.query.prefixsearch[0].title);
+             $("#viewer-dropdown-item2").text(x.query.prefixsearch[1].title);
+             $("#viewer-dropdown-item3").text(x.query.prefixsearch[2].title);
+             $("#viewer-dropdown-item4").text(x.query.prefixsearch[3].title);
+             $("#viewer-dropdown-item5").text(x.query.prefixsearch[4].title);
+             $('.dropdown-toggle').dropdown('toggle');
+             closerVar = setTimeout(wikisearch_input_timeout, 3000);
+           }
+         });
+      }
    }
 }
 
@@ -116,7 +119,7 @@ function wikisearch_input_timeout() {
     <div id="viewer-panel-1" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
-         <p class="viewer-text noselect">Searching in wikipedia</p>
+         <p id="viewer-text" class="noselect">Searching in wikipedia</p>
       </div>
     </div>
     <div id="viewer-panel-2" class="row container-fluid">
