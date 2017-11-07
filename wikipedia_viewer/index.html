@@ -39,6 +39,10 @@ html, body {
    vertical-align:middle;
 }
 
+.middle {
+   vertical-align:middle;
+}
+
 .invisible {
    display:none;
 }
@@ -54,20 +58,10 @@ html, body {
                                   supported by Chrome and Opera */
 }
 
-.dropdown {
+.holder {
     position: relative;
-    display: inline-block;
 }
 
-/* Dropdown Content (Hidden by Default) */
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
 </style>
 
 <!-- 
@@ -145,14 +139,14 @@ function wikisearch_input_timeout() {
     <div id="viewer-gap-upper" class="vforty">
     </div>
     <div id="viewer-panel-1" class="row container-fluid">
-      <div class="col-md-2"></div>
-      <div class="col-md-8 centered">
+      <div class="col-md-2 col-xs-2"></div>
+      <div class="col-md-8 col-xs-8 centered">
          <p class="viewer-text noselect">Wikipedia search engine demo</p>
       </div>
     </div>
     <div id="viewer-panel-2" class="row container-fluid">
-      <div class="col-md-2"></div>
-      <div class="col-md-8 centered">
+      <div class="col-md-2 col-xs-2"></div>
+      <div class="col-md-8 col-xs-8 centered holder">
          <input id="viewer-input" class="span2" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();"/>
          <button class="btn-info">Search</button>
          <button class="btn-info">Random</button>
@@ -160,7 +154,7 @@ function wikisearch_input_timeout() {
     </div>
     <div id="viewer-panel-3" class="row container-fluid">
       <div class="col-md-2"></div>
-      <div class="col-md-8 dropdown centered">
+      <div class="col-md-8 centered dropdown">
           <ul class="dropdown-menu">
               <li id="viewer-dropdown-item1"><a href="#">Action</a></li>
               <li id="viewer-dropdown-item2"><a href="#">Another action</a></li>
