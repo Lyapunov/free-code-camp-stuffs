@@ -35,6 +35,10 @@ html, body {
    vertical-align:middle;
 }
 
+.invisible {
+   display:none;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -80,13 +84,23 @@ $.ajax({
   }
 });
 
+var closerVar;
+
 function wikisearch_input_oninput() {
    // https://jsfiddle.net/gsj5o3j6/4/
 
    console.log("xxx");
-   if ($('.dropdown').find('.dropdown-menu').is(":hidden")) {
+   if ($('.dropdown').find('.dropdown-menu').is(":hidden"))
+   {
+      console.log('openi!');
       $('.dropdown-toggle').dropdown('toggle');
+      closerVar = setTimeout(wikisearch_input_timeout, 3000);
    }
+}
+
+function wikisearch_input_timeout() {
+   console.log("boom");
+   $('.dropdown.open').removeClass('open');
 }
 
 </script>
@@ -103,9 +117,10 @@ function wikisearch_input_oninput() {
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
          <p class="viewer-text noselect">Searching in wikipedia</p>
+         <input id="viewer-input" class="span2" data-toggle="dropdown" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();" data-toggle="dropdown"/>
+         </input>
          <div class="dropdown">
-             <input id="viewer-input" class="dropdown-toggle span2" data-toggle="dropdown" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();" data-toggle="dropdown"/>
-             </input>
+             <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
              <ul class="dropdown-menu">
                  <li><a href="#">Action</a></li>
                  <li><a href="#">Another action</a></li>
