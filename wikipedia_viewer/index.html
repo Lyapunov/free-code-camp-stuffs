@@ -73,6 +73,7 @@ html, body {
 // https://www.mediawiki.org/w/api.php?action=query&list=prefixsearch&pssearch=Fay&format=json&
 
 var closeVar = null;
+var searchVar = 0;
 
 function wikisearch_input_oninput() {
    // https://jsfiddle.net/gsj5o3j6/4/
@@ -81,12 +82,17 @@ function wikisearch_input_oninput() {
    {
       var tval = $("#viewer-input").val();
       console.log(tval);
-      if ( tval ) {
+      if ( tval && !searchVar ) {
+         searchVar = 1;
          $.ajax({
             url: 'https://en.wikipedia.org/w/api.php',
             data: { action: 'query', list: 'prefixsearch', pssearch: tval, psprofile: 'fuzzy', format:'json' },
             dataType: 'jsonp',
             success: function (x) {
+               searchVar = 0;
+               if ( x.query.prefixsearch.length < 5 ) {
+                  return;
+               }
                $("#viewer-dropdown-item1").text(x.query.prefixsearch[0].title);
                $("#viewer-dropdown-item2").text(x.query.prefixsearch[1].title);
                $("#viewer-dropdown-item3").text(x.query.prefixsearch[2].title);
