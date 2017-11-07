@@ -43,6 +43,7 @@ html, body {
    display:none;
 }
 
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -51,6 +52,21 @@ html, body {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 </style>
 
@@ -131,7 +147,7 @@ function wikisearch_input_timeout() {
     <div id="viewer-panel-1" class="row container-fluid">
       <div class="col-md-2"></div>
       <div class="col-md-8 centered">
-         <p class="viewer-text" class="noselect">Wikipedia search engine demo</p>
+         <p class="viewer-text noselect">Wikipedia search engine demo</p>
       </div>
     </div>
     <div id="viewer-panel-2" class="row container-fluid">
