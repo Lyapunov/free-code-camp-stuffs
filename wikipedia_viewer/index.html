@@ -13,6 +13,14 @@ html, body {
   height: 100%;
 }
 
+.btn {
+  display: inline-block;
+  border: 2px outset rgba(0, 0, 0, 0.9);
+  text-shadow: 1px 1px 1px rgba(0,0,0, 20);
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+  letter-spacing: 2px;
+}
+
 .debug {
   background-color:green;
 }
@@ -174,8 +182,8 @@ $(document).ready(function(){
       <div class="col-md-2 col-xs-2"></div>
       <div class="col-md-8 col-xs-8 centered holder">
          <input id="viewer-input" class="span2" id="appendedInputButton" size="16" type="text" oninput="wikisearch_input_oninput();" onkeypress="wikisearch_input_keypress(event);"/>
-         <button class="btn-info" onclick="btn_search_click();">Search</button>
-         <button class="btn-info">Random</button>
+         <button class="btn-info btn" onclick="btn_search_click();">Search</button>
+         <a class="btn-info btn" href="https://en.wikipedia.org/wiki/Special:Random">Random</a>
       </div>
     </div>
     <div id="viewer-panel-3" class="row container-fluid">
