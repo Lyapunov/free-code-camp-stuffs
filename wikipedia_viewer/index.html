@@ -172,6 +172,11 @@ $(document).ready(function(){
    set_viewer_floating_dropdown_position();
 });
 
+function viewer_dropdown_click(e) {
+   $("#viewer-input").val( $("#"+e.target.id).text() );
+   btn_search_click();
+}
+
 </script>
 
 <!-- 
@@ -199,11 +204,11 @@ $(document).ready(function(){
     <div id="viewer-panel-3" class="row container-fluid">
       <div id="viewer-floating-dropdown" class="centered dropdown floating">
           <div class="dropdown-menu">
-              <a id="viewer-dropdown-item1" href="#">Action</a>
-              <a id="viewer-dropdown-item2" href="#">Another action</a>
-              <a id="viewer-dropdown-item3" href="#">Another action 2</a>
-              <a id="viewer-dropdown-item4" href="#">Another action 3</a>
-              <a id="viewer-dropdown-item5" href="#">Another action 4</a>
+              <a id="viewer-dropdown-item1" onclick="viewer_dropdown_click(event);" href="#">Action</a>
+              <a id="viewer-dropdown-item2" onclick="viewer_dropdown_click(event);" href="#">Another action</a>
+              <a id="viewer-dropdown-item3" onclick="viewer_dropdown_click(event);" href="#">Another action 2</a>
+              <a id="viewer-dropdown-item4" onclick="viewer_dropdown_click(event);" href="#">Another action 3</a>
+              <a id="viewer-dropdown-item5" onclick="viewer_dropdown_click(event);" href="#">Another action 4</a>
 
           </div>
           <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
