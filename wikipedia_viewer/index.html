@@ -62,6 +62,11 @@ html, body {
     position: relative;
 }
 
+.floating {
+    position: absolute;
+    z-index: 100;
+}
+
 </style>
 
 <!-- 
@@ -128,6 +133,16 @@ function wikisearch_input_timeout() {
    $('.dropdown.open').removeClass('open');
 }
 
+function set_viewer_floating_dropdown_position() {
+   $("#viewer-floating-dropdown").css('top', ( $("#viewer-input").offset().top  + $("#viewer-input").height() + 15 )+'px');
+   $("#viewer-floating-dropdown").css('left',( $("#viewer-input").offset().left + 5 )+'px');
+}
+
+$(document).ready(function(){
+   $(window).on('resize', set_viewer_floating_dropdown_position);
+   set_viewer_floating_dropdown_position();
+});
+
 </script>
 
 <!-- 
@@ -153,8 +168,7 @@ function wikisearch_input_timeout() {
       </div>
     </div>
     <div id="viewer-panel-3" class="row container-fluid">
-      <div class="col-md-2"></div>
-      <div class="col-md-8 centered dropdown">
+      <div id="viewer-floating-dropdown" class="centered dropdown floating">
           <ul class="dropdown-menu">
               <li id="viewer-dropdown-item1"><a href="#">Action</a></li>
               <li id="viewer-dropdown-item2"><a href="#">Another action</a></li>
