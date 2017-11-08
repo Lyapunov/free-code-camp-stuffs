@@ -75,6 +75,16 @@ html, body {
     z-index: 100;
 }
 
+.dropdown-menu a {
+    color: black;
+    padding: 4px 4px;
+    text-decoration: none;
+    display: block;
+}
+
+/* A trick to highlight the selected dropdown item */
+.dropdown a:hover {background-color: #ddd}
+
 </style>
 
 <!-- 
@@ -188,13 +198,14 @@ $(document).ready(function(){
     </div>
     <div id="viewer-panel-3" class="row container-fluid">
       <div id="viewer-floating-dropdown" class="centered dropdown floating">
-          <ul class="dropdown-menu">
-              <li id="viewer-dropdown-item1"><a href="#">Action</a></li>
-              <li id="viewer-dropdown-item2"><a href="#">Another action</a></li>
-              <li id="viewer-dropdown-item3"><a href="#">Another action 2</a></li>
-              <li id="viewer-dropdown-item4"><a href="#">Another action 3</a></li>
-              <li id="viewer-dropdown-item5"><a href="#">Another action 4</a></li>
-          </ul>
+          <div class="dropdown-menu">
+              <a id="viewer-dropdown-item1" href="#">Action</a>
+              <a id="viewer-dropdown-item2" href="#">Another action</a>
+              <a id="viewer-dropdown-item3" href="#">Another action 2</a>
+              <a id="viewer-dropdown-item4" href="#">Another action 3</a>
+              <a id="viewer-dropdown-item5" href="#">Another action 4</a>
+
+          </div>
           <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
       </div>
     </div>
