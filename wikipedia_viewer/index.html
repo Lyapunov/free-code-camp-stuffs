@@ -193,7 +193,6 @@ function btn_search_click() {
                return;
             }
 
-            console.log(x);
             for ( var i = 0; i < 5; ++i ) {
                $("#viewer-finding-headline-"+(i+1)).text(x.query.search[i].title);
                $("#viewer-finding-headline-"+(i+1)).attr("href", "http://en.wikipedia.org/?curid=" + x.query.search[i].pageid);
