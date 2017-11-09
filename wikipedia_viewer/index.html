@@ -196,17 +196,10 @@ function btn_search_click() {
             console.log(x);
             for ( var i = 0; i < 5; ++i ) {
                $("#viewer-finding-headline-"+(i+1)).text(x.query.search[i].title);
+               $("#viewer-finding-headline-"+(i+1)).attr("href", "http://en.wikipedia.org/?curid=" + x.query.search[i].pageid);
                $("#viewer-finding-content-"+(i+1)).html(x.query.search[i].snippet);
             }
 
-/*            $("#viewer-finding-headline-2").text(x.query.search[1].title);
-            $("#viewer-finding-headline-3").text(x.query.search[2].title);
-            $("#viewer-finding-headline-4").text(x.query.search[3].title);
-            $("#viewer-finding-headline-5").text(x.query.search[4].title);
-
-            $("#viewer-finding-content-1").html(x.query.search[0].snippet);*/
-
-//            console.log('title', x.query.search[0].title);
             $('#viewer-gap-upper').removeClass('vforty');
             $('#viewer-gap-upper').addClass('vsix');
             $('#viewer-panel-findings').removeClass('invisible');
@@ -284,37 +277,37 @@ function viewer_dropdown_click(e) {
        <div id ="viewer-finding-gap" class="vsix">
        </div>
        <div id ="viewer-finding-1" class="fbackground">
-          <span id="viewer-finding-headline-1">
+          <a id="viewer-finding-headline-1">
           First finding
-          </span>
+          </a>
           <div id="viewer-finding-content-1">
           </div>
        </div>
        <div id ="viewer-finding-2" class="fbackground">
-          <span id="viewer-finding-headline-2">
+          <a id="viewer-finding-headline-2">
           Second finding
-          </span>
+          </a>
           <div id="viewer-finding-content-2">
           </div>
        </div>
        <div id ="viewer-finding-3" class="fbackground">
-          <span id="viewer-finding-headline-3">
+          <a id="viewer-finding-headline-3">
           Third finding
-          </span>
+          </a>
           <div id="viewer-finding-content-3">
           </div>
        </div>
        <div id ="viewer-finding-4" class="fbackground">
-          <span id="viewer-finding-headline-4">
+          <a id="viewer-finding-headline-4">
           Fourth finding
-          </span>
+          </a>
           <div id="viewer-finding-content-4">
           </div>
        </div>
        <div id ="viewer-finding-5" class="fbackground">
-          <span id="viewer-finding-headline-5">
+          <a id="viewer-finding-headline-5">
           Fifth finding
-          </span>
+          </a>
           <div id="viewer-finding-content-5">
           </div>
        </div>
