@@ -13,6 +13,13 @@ html, body {
   height: 100%;
 }
 
+.fbackground {
+  background-color:lightblue;
+  width: 99%;
+  height: 12%;
+  margin: 10px 10px;
+}
+
 .btn {
   display: inline-block;
   border: 2px outset rgba(0, 0, 0, 0.9);
@@ -32,6 +39,10 @@ html, body {
 .vhundred {
   height:100%;
   width:100%;
+}
+
+.vsix {
+  height:6%;
 }
 
 .vforty {
@@ -148,6 +159,10 @@ function wikisearch_input_oninput() {
 
 function btn_search_click() {
    console.log("Search");
+   $('#viewer-gap-upper').removeClass('vforty');
+   $('#viewer-gap-upper').addClass('vsix');
+   $('#viewer-panel-findings').removeClass('invisible');
+   set_viewer_floating_dropdown_position();
 }
 
 function wikisearch_input_keypress(e) {
@@ -214,5 +229,35 @@ function viewer_dropdown_click(e) {
           <a href="#" data-toggle="dropdown" class="dropdown-toggle invisible">Dropdown<b class="caret"></b></a>
       </div>
     </div>
+    <div id="viewer-panel-findings" class="invisible">
+       <div id ="viewer-finding-gap" class="vsix">
+       </div>
+       <div id ="viewer-finding-1" class="fbackground">
+          <span id="viewer-finding-headline-1">
+          First finding
+          </span>
+       </div>
+       <div id ="viewer-finding-2" class="fbackground">
+          <span id="viewer-finding-headline-2">
+          Second finding
+          </span>
+       </div>
+       <div id ="viewer-finding-3" class="fbackground">
+          <span id="viewer-finding-headline-3">
+          Third finding
+          </span>
+       </div>
+       <div id ="viewer-finding-4" class="fbackground">
+          <span id="viewer-finding-headline-4">
+          Fourth finding
+          </span>
+       </div>
+       <div id ="viewer-finding-5" class="fbackground">
+          <span id="viewer-finding-headline-5">
+          Fifth finding
+          </span>
+       </div>
+    </div>
+
   </div>
 </body>
