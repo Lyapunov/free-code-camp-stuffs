@@ -14,6 +14,14 @@ html, body {
   overflow-x: hidden;
 }
 
+/*
+.animated {
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}*/
+
 .foutline {
   padding: 8px 16px;
   width: 100%;
@@ -160,6 +168,7 @@ function wikisearch_input_oninput() {
                if ( x.query.prefixsearch.length < 5 ) {
                   return;
                }
+               set_viewer_floating_dropdown_position();
                $("#viewer-dropdown-item1").text(x.query.prefixsearch[0].title);
                $("#viewer-dropdown-item2").text(x.query.prefixsearch[1].title);
                $("#viewer-dropdown-item3").text(x.query.prefixsearch[2].title);
@@ -228,7 +237,6 @@ function btn_search_click() {
             $('#viewer-gap-upper').removeClass('vforty');
             $('#viewer-gap-upper').addClass('vsix');
             $('#viewer-panel-findings').removeClass('invisible');
-            set_viewer_floating_dropdown_position();
          }
       });
 
