@@ -9,15 +9,24 @@
 <style>
 html, body {
   background-color:darkblue;
-  width: 99%;
+  width: 100%;
   height: 100%;
+  overflow-x: hidden;
+}
+
+.foutline {
+  padding: 8px 16px;
+  width: 100%;
+  height: 15%;
 }
 
 .fbackground {
   background-color:lightblue;
-  width: 99%;
-  height: 12%;
-  margin: 10px 10px;
+  height: 100%;
+}
+
+.fheadline {
+  text-decoration: underline;
 }
 
 .minimargin {
@@ -279,42 +288,51 @@ function viewer_dropdown_click(e) {
     <div id="viewer-panel-findings" class="invisible">
        <div id ="viewer-finding-gap" class="vsix">
        </div>
-       <div id ="viewer-finding-1" class="fbackground">
-          <a id="viewer-finding-headline-1" class="minimargin">
-          First finding
-          </a>
-          <div id="viewer-finding-content-1" class="minimargin">
+       <div id ="viewer-outline-1" class="foutline">
+          <div id ="viewer-finding-1" class="fbackground">
+             <a id="viewer-finding-headline-1" class="minimargin fheadline">
+             First finding
+             </a>
+             <div id="viewer-finding-content-1" class="minimargin">
+             </div>
           </div>
        </div>
-       <div id ="viewer-finding-2" class="fbackground">
-          <a id="viewer-finding-headline-2" class="minimargin">
-          Second finding
-          </a>
-          <div id="viewer-finding-content-2" class="minimargin">
+       <div id ="viewer-outline-2" class="foutline">
+          <div id ="viewer-finding-2" class="fbackground">
+             <a id="viewer-finding-headline-2" class="minimargin fheadline">
+             Second finding
+             </a>
+             <div id="viewer-finding-content-2" class="minimargin">
+             </div>
           </div>
        </div>
-       <div id ="viewer-finding-3" class="fbackground">
-          <a id="viewer-finding-headline-3" class="minimargin">
-          Third finding
-          </a>
-          <div id="viewer-finding-content-3" class="minimargin">
+       <div id ="viewer-outline-3" class="foutline">
+          <div id ="viewer-finding-3" class="fbackground">
+             <a id="viewer-finding-headline-3" class="minimargin fheadline">
+             Third finding
+             </a>
+             <div id="viewer-finding-content-3" class="minimargin">
+             </div>
           </div>
        </div>
-       <div id ="viewer-finding-4" class="fbackground">
-          <a id="viewer-finding-headline-4" class="minimargin">
-          Fourth finding
-          </a>
-          <div id="viewer-finding-content-4" class="minimargin">
+       <div id ="viewer-outline-4" class="foutline">
+          <div id ="viewer-finding-4" class="fbackground">
+             <a id="viewer-finding-headline-4" class="minimargin fheadline">
+             Fourth finding
+             </a>
+             <div id="viewer-finding-content-4" class="minimargin">
+             </div>
           </div>
        </div>
-       <div id ="viewer-finding-5" class="fbackground">
-          <a id="viewer-finding-headline-5" class="minimargin">
-          Fifth finding
-          </a>
-          <div id="viewer-finding-content-5" class="minimargin">
+       <div id ="viewer-outline-5" class="foutline">
+          <div id ="viewer-finding-5" class="fbackground">
+             <a id="viewer-finding-headline-5" class="minimargin fheadline">
+             Fifth finding
+             </a>
+             <div id="viewer-finding-content-5" class="minimargin">
+             </div>
           </div>
        </div>
     </div>
-
   </div>
 </body>
