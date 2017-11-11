@@ -9,13 +9,24 @@
 <style>
 
 html, body {
-  width: 100%;
   height: 100%;
   background: #FFFF88;
 }
 
 .center-container {
   background:white;  
+}
+
+.center-container-row-headline {
+  width:100%;
+  min-height:60px;
+  max-height:60px;
+}
+
+.center-container-row {
+  width:100%;
+  min-height:60px;
+  max-height:60px;
 }
 
 </style>
@@ -33,13 +44,20 @@ html, body {
 <body>
   <div id="app_main_div">
     <div id="app_main_row" class="row container-fluid">
-       <div class="col-md-4 col-xs-4">  
-       </div>
-       <div id="app_center_container" class="col-md-4 col-xs-4 center-container ">
-       <span>
-       Oly meddok, mint a nedves oszi kertek.
-       </span>
-       </div>
+      <div class="col-md-4 col-xs-4">
+      </div>
+      <div id="app_center_container" class="col-md-4 col-xs-4 center-container ">
+        <div id="app_center_button_row" class="center-container-row-headline">
+          <span>
+          Oly meddok, mint a nedves oszi kertek.
+          </span>
+        </div>
+        <div id="app_center_button_row" class="center-container-row">
+          <span>
+          Oly meddok, mint a nedves oszi kertek.
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </body>
