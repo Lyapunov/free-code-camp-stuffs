@@ -118,6 +118,20 @@ button {
   JS 
 -->
 <script>
+
+function load_api_data() {
+//   $.getJSON('https://wind-bow.gomix.me/twitch-api/freecodecamp?callback=?', function(data) {
+
+   $.getJSON('https://api.twitch.tv/kraken/streams/freecodecamp?callback=?', function(data) {
+      console.log(data);
+   });
+}
+
+$(document).ready(function(){
+   console.log("READY");
+   load_api_data();
+});
+
 </script>
 
 <!-- 
