@@ -32,7 +32,7 @@ html, body {
 .new-way {
   position: relative;
   margin: 100px auto;
-  background: #88b7d5;
+  background: orange;
   width: 100px;
   padding: 20px;
   text-align: center;
@@ -43,7 +43,7 @@ html, body {
   position: absolute;
   top: 100%;
   left: calc(50% - 10px);
-  background: #88b7d5;
+  background: orange;
   width: 20px;
   height: 20px;
   
@@ -91,15 +91,20 @@ html, body {
                                   supported by Chrome and Opera */
 }
 
-.dropdown-menu button {
+/*.dropdown-menu button {
     color: black;
     padding: 4px 4px;
     text-decoration: none;
     display: block;
+}*/
+
+button {
+   background-color: gold;
+   border: 2px solid yellow;
 }
 
 /* A trick to highlight the selected dropdown item */
-.dropdown button:hover {background-color: #ddd}
+.app-center-button:hover {background-color: orange}
 
 </style>
 
@@ -114,21 +119,21 @@ html, body {
 -->
 
 <body>
-  <div id="app_main_div">
-    <div id="app_main_row">
-      <div id="app_center_container" class="center-container ">
-        <div id="app_center_button_row" class="center-container-headline noselect">
-           <button class="btn-info center-container-headline-button new-way">All</button>
-           <button class="btn-info center-container-headline-button">Online</button>
-           <button class="btn-info center-container-headline-button">Offline</button>
+  <div id="app-main-div">
+    <div id="app-main-row">
+      <div id="app-center-container" class="center-container ">
+        <div id="app-center-button-row" class="center-container-headline noselect">
+           <button class="app-center-button center-container-headline-button new-way">All</button>
+           <button class="app-center-button center-container-headline-button">Online</button>
+           <button class="app-center-button center-container-headline-button">Offline</button>
         </div>
         <div>
-          <div id="app_content_row_1" class="center-container-row">
+          <div id="app-content-row-1" class="center-container-row">
             <span class="noselect">
             Row1
             </span>
           </div>
-          <div id="app_content_row_1" class="center-container-row">
+          <div id="app-content-row-1" class="center-container-row">
             <span class="noselect">
             Row2
             </span>
