@@ -16,6 +16,16 @@ html, body {
 
 .center-container {
   background:white;  
+  /* https://stackoverflow.com/questions/17069435/center-fixed-div-with-dynamic-width-css */
+  position: fixed;
+  /* center the element */
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  /* give it dimensions */
+  max-width: 350px;
+  min-width: 350px;
 }
 
 .center-container-row-headline {
@@ -45,9 +55,7 @@ html, body {
 <body>
   <div id="app_main_div">
     <div id="app_main_row" class="row container-fluid">
-      <div class="col-md-4 col-xs-4">
-      </div>
-      <div id="app_center_container" class="col-md-4 col-xs-4 center-container ">
+      <div id="app_center_container" class="center-container ">
         <div id="app_center_button_row" class="center-container-row-headline">
           <span>
           Buttons
