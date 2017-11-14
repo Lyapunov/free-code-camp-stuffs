@@ -120,10 +120,29 @@ button {
 <script>
 
 function load_api_data() {
-//   $.getJSON('https://wind-bow.gomix.me/twitch-api/freecodecamp?callback=?', function(data) {
-
-   $.getJSON('https://api.twitch.tv/kraken/streams/freecodecamp?callback=?', function(data) {
-      console.log(data);
+/*   $.ajax({
+      type: 'GET',
+      url: 'https://api.twitch.tv/kraken/channels/twitch',
+      headers: {
+         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
+      },
+      success: function(data) {
+         console.log(data);
+      }
+   });*/
+  
+   $.ajax({
+      type: 'GET',
+      url: 'https://api.twitch.tv/kraken/streams',
+      channel: ["ESL_SC2", "OgamingSC2", "cretetion",
+                 "freecodecamp", "storbeck", "habathcx",
+                 "RobotCaleb", "noobs2ninjas"],
+      headers: {
+         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
+      },
+      success: function(data) {
+         console.log(data);
+      }
    });
 }
 
