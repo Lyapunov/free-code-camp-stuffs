@@ -118,7 +118,7 @@ button {
   JS 
 -->
 <script>
-var listOfLogins = ["esl_sc2", "ogamingsc2", "cretetion", "freecodecamp", "storbeck", "habathcx", "robotcaleb", "noobs2ninjas"];
+var listOfLogins = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
 var userIDByLogin = {};
 
 function get_stream_infos( logins, nextcallback, successcallback ) {
@@ -126,7 +126,7 @@ function get_stream_infos( logins, nextcallback, successcallback ) {
       return;
    }
    var login = logins.pop();
-   var userID = userIDByLogin[login];
+   var userID = userIDByLogin[login.toLowerCase()];
    var userurl = 'https://api.twitch.tv/kraken/streams/' + userID;
    $.ajax({
       type: 'GET',
