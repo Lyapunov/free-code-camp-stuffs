@@ -118,12 +118,16 @@ button {
   JS 
 -->
 <script>
-var listOfLogins = ["esl_sc2", "ogamingsC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "robotcaleb", "noobs2ninjas"];
+var listOfLogins = ["esl_sc2", "ogamingsc2", "cretetion", "freecodecamp", "storbeck", "habathcx", "robotcaleb", "noobs2ninjas"];
 var userIDByLogin = {};
 
-function translate_logins_to_userids( nexttask ) {
-   var userurl = 'https://api.twitch.tv/kraken/users?login=' + listOfLogins.join(",");
-   console.log(userurl);
+function get_stream_infos( logins, nextcallback, successcallback ) {
+   if ( !logins.length ) {
+      return;
+   }
+   var login = logins.pop();
+   var userID = userIDByLogin[login];
+   var userurl = 'https://api.twitch.tv/kraken/streams/' + userID;
    $.ajax({
       type: 'GET',
       url: userurl,
@@ -132,7 +136,39 @@ function translate_logins_to_userids( nexttask ) {
          'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
       },
       success: function(data) {
-         console.log(data);
+         successcallback(login, data);
+         nextcallback(logins, nextcallback, successcallback);
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+         successcallback(login, undefined);
+         nextcallback(logins, nextcallback, successcallback);
+         console.log("Status: " + textStatus);
+         console.log("Error: " + errorThrown); 
+      }  
+   });   
+}
+
+
+function update_stream_infos() {
+   // https://dev.twitch.tv/docs/v5/reference/streams#get-stream-by-user
+   // return {stream:null} if channel is offline.
+   get_stream_infos(listOfLogins, get_stream_infos, (x,y)=>console.log('--->',x,y));
+}
+
+function update_stream_infos_first() {
+   update_stream_infos();
+}
+
+function translate_logins_to_userids( nexttask ) {
+   var userurl = 'https://api.twitch.tv/kraken/users?login=' + listOfLogins.join(",");
+   $.ajax({
+      type: 'GET',
+      url: userurl,
+      headers: {
+         'Accept': 'application/vnd.twitchtv.v5+json',
+         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
+      },
+      success: function(data) {
          var arr = data.users;
          for ( var i = 0; i < arr.length; ++i ) {
             userIDByLogin[arr[i].name] = arr[i]._id;
@@ -150,7 +186,7 @@ function translate_logins_to_userids( nexttask ) {
 }
   
 function load_api_data() {
-   translate_logins_to_userids();
+   translate_logins_to_userids( update_stream_infos_first );
 }
 
 $(document).ready(function(){
