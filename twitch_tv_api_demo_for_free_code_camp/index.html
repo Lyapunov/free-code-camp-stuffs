@@ -9,9 +9,7 @@
 <style>
 
 html, body {
-  height: 100%;
   background: #FFFF88;
-  overflow-x: hidden;
 }
 
 a {
@@ -70,7 +68,6 @@ a:active {color: black;}    /* selected link */
 
 .center-container-headline-button {
   width:117px;
-  height:100%;
   min-height:60px;
   max-height:60px;
   margin: 0px 0px;
@@ -330,6 +327,11 @@ function update_stream_record_info(name, data) {
   }
 }
 
+function update_stream_infos_plus_set_interval() {
+   update_stream_infos();
+   self.setInterval(update_stream_infos,10000);
+}
+
 function update_stream_infos() {
   // https://dev.twitch.tv/docs/v5/reference/streams#get-stream-by-user
   // return {stream:null} if channel is offline.
@@ -373,7 +375,7 @@ function update_stream_infos_first() {
     myList,
     get_channel_infos,
     add_user_entry,
-    update_stream_infos
+    update_stream_infos_plus_set_interval
   );
 }
 
