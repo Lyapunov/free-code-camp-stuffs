@@ -14,6 +14,15 @@ html, body {
   overflow-x: hidden;
 }
 
+a {
+  outline:0;
+}
+
+a:link {color: black;}      /* unvisited link */
+a:visited {color: black;}   /* visited link */
+a:hover {color: black;}     /* mouse over link */
+a:active {color: black;}    /* selected link */
+
 .center-container {
   background:white;  
   /* https://stackoverflow.com/questions/17069435/center-fixed-div-with-dynamic-width-css */
@@ -135,9 +144,11 @@ button {
 }
 
 .row-offline {
+   display:auto;
 }
 
 .row-online {
+   display:auto;
 }
 
 .row-main-text {
@@ -166,6 +177,9 @@ button {
   overflow: hidden;
 }
 
+.invisible {
+   display:none;
+}
 </style>
 
 <!-- 
@@ -330,6 +344,7 @@ function add_user_entry(name, data) {
   }
 
   $("#app-content-users").append(
+    "<a href='"+data.url+"' target='_blank'>" +
     "<div id='row-" +
       name.toLowerCase() +
       "' class='center-container-row row row-offline "+(selecteds==="online"?"invisible":"")+"'>" +
@@ -347,7 +362,8 @@ function add_user_entry(name, data) {
       '\' class="noselect elliptictext status-text status-offline">Offline' +
       "</p>" +
       "</div>" +
-      "</div>"
+      "</div>" +
+      "</a>"
   );
 }
 
@@ -408,9 +424,9 @@ $(document).ready(function() {
     <div id="app-main-row">
       <div id="app-center-container" class="center-container ">
         <div id="app-center-button-row" class="center-container-headline noselect">
-           <button class="app-center-button center-container-headline-button new-way">All</button>
-           <button class="app-center-button center-container-headline-button">Online</button>
-           <button class="app-center-button center-container-headline-button">Offline</button>
+           <button id="select-all-button" class="app-center-button center-container-headline-button new-way" onclick="select_all();">All</button>
+           <button id="select-online-button" class="app-center-button center-container-headline-button"  onclick="select_online();">Online</button>
+           <button id="select-offline-button" class="app-center-button center-container-headline-button" onclick="select_offline();">Offline</button>
         </div>
         <div id="app-content-row-1" class="center-container-halfrow">
         </div>
