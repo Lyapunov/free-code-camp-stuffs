@@ -198,7 +198,6 @@ var userIDByLogin = {};
 var selecteds = "";
 
 function select_all() {
-  console.log("select all");
   $("#select-all-button").addClass("new-way");
   $("#select-online-button").removeClass("new-way");
   $("#select-offline-button").removeClass("new-way");
@@ -209,7 +208,6 @@ function select_all() {
 }
 
 function select_online() {
-  console.log("select online");
   $("#select-all-button").removeClass("new-way");
   $("#select-online-button").addClass("new-way");
   $("#select-offline-button").removeClass("new-way");
@@ -220,7 +218,6 @@ function select_online() {
 }
 
 function select_offline() {
-  console.log("select offline");
   $("#select-all-button").removeClass("new-way");
   $("#select-online-button").removeClass("new-way");
   $("#select-offline-button").addClass("new-way");
@@ -237,7 +234,6 @@ function get_channel_infos(
   finishcallback
 ) {
   if (!logins.length) {
-    console.log("finishcallback");
     finishcallback();
     return;
   }
@@ -258,8 +254,6 @@ function get_channel_infos(
     error: function(XMLHttpRequest, textStatus, errorThrown) {
       successcallback(login, undefined);
       nextcallback(logins, nextcallback, successcallback, finishcallback);
-      console.log("Status: " + textStatus);
-      console.log("Error: " + errorThrown);
     }
   });
 }
@@ -285,14 +279,11 @@ function get_stream_infos(logins, nextcallback, successcallback) {
     error: function(XMLHttpRequest, textStatus, errorThrown) {
       successcallback(login, undefined);
       nextcallback(logins, nextcallback, successcallback);
-      console.log("Status: " + textStatus);
-      console.log("Error: " + errorThrown);
     }
   });
 }
 
 function update_stream_record_info(name, data) {
-  console.log("--->", name, data);
   if (!data.stream) {
     $("#row-" + name.toLowerCase()).removeClass("row-online");
     $("#row-" + name.toLowerCase()).addClass("row-offline");
@@ -340,7 +331,6 @@ function update_stream_infos() {
 }
 
 function add_user_entry(name, data) {
-  console.log("===>", name, data);
   if (data === undefined) {
     return;
   }
@@ -394,14 +384,12 @@ function translate_logins_to_userids(nexttask) {
       for (var i = 0; i < arr.length; ++i) {
         userIDByLogin[arr[i].name] = arr[i]._id;
       }
-      console.log(userIDByLogin);
       if (nexttask !== undefined) {
         nexttask();
       }
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      console.log("Status: " + textStatus);
-      console.log("Error: " + errorThrown);
+       // TODO
     }
   });
 }
@@ -411,7 +399,6 @@ function load_api_data() {
 }
 
 $(document).ready(function() {
-  console.log("READY");
   load_api_data();
 });
 
