@@ -238,11 +238,13 @@ function update_stream_record_info(name, data) {
       $('#row-'+name.toLowerCase()).addClass("row-offline");
       $('#status-'+name.toLowerCase()).removeClass("status-online");
       $('#status-'+name.toLowerCase()).addClass("status-offline");
+      $('#status-'+name.toLowerCase()).text("Offline");
    } else {
       $('#row-'+name.toLowerCase()).removeClass("row-offline");
       $('#row-'+name.toLowerCase()).addClass("row-online");
       $('#status-'+name.toLowerCase()).removeClass("status-offline");
       $('#status-'+name.toLowerCase()).addClass("status-online");
+     $('#status-'+name.toLowerCase()).text("Live, "+data.stream.game+", "+data.stream.video_height+"px, "+data.stream.viewers+" viewers");
    }
 }
 
@@ -258,7 +260,7 @@ function add_user_entry(name, data) {
    if ( data === undefined ) {
      return;
    }
-  
+
    $( "#app-content-users" ).append(
       "<div id='row-"+name.toLowerCase()+"' class='center-container-row row row-offline'>" +
       '<div class="image-holder col-md-2 col-xs-2">'+
@@ -310,7 +312,7 @@ function translate_logins_to_userids( nexttask ) {
       }  
    });
 }
-  
+
 function load_api_data() {
    translate_logins_to_userids( update_stream_infos_first );
 }
