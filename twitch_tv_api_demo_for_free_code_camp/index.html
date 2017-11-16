@@ -172,154 +172,229 @@ button {
   JS 
 -->
 <script>
-var listOfLogins = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
+var listOfLogins = [
+  "ESL_SC2",
+  "OgamingSC2",
+  "cretetion",
+  "freecodecamp",
+  "storbeck",
+  "habathcx",
+  "RobotCaleb",
+  "noobs2ninjas"
+];
 var userIDByLogin = {};
 
-function get_channel_infos( logins, nextcallback, successcallback, finishcallback ) {
-   if ( !logins.length ) {
-      console.log('finishcallback');
-      finishcallback();
-      return;
-   }
-   var login = logins.pop();
-   var userID = userIDByLogin[login.toLowerCase()];
-   var userurl = 'https://api.twitch.tv/kraken/channels/' + userID;
-   $.ajax({
-      type: 'GET',
-      url: userurl,
-      headers: {
-         'Accept': 'application/vnd.twitchtv.v5+json',
-         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
-      },
-      success: function(data) {
-         successcallback(login, data);
-         nextcallback(logins, nextcallback, successcallback, finishcallback);
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) { 
-         successcallback(login, undefined);
-         nextcallback(logins, nextcallback, successcallback, finishcallback);
-         console.log("Status: " + textStatus);
-         console.log("Error: " + errorThrown); 
-      }  
-   });   
+var selecteds = "";
+
+function select_all() {
+  console.log("select all");
+  $("#select-all-button").addClass("new-way");
+  $("#select-online-button").removeClass("new-way");
+  $("#select-offline-button").removeClass("new-way");
+  selecteds = "";
+  
+  $(".row-online").removeClass("invisible");
+  $(".row-offline").removeClass("invisible");
 }
 
-function get_stream_infos( logins, nextcallback, successcallback ) {
-   if ( !logins.length ) {
-      return;
-   }
-   var login = logins.pop();
-   var userID = userIDByLogin[login.toLowerCase()];
-   var userurl = 'https://api.twitch.tv/kraken/streams/' + userID;
-   $.ajax({
-      type: 'GET',
-      url: userurl,
-      headers: {
-         'Accept': 'application/vnd.twitchtv.v5+json',
-         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
-      },
-      success: function(data) {
-         successcallback(login, data);
-         nextcallback(logins, nextcallback, successcallback);
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) { 
-         successcallback(login, undefined);
-         nextcallback(logins, nextcallback, successcallback);
-         console.log("Status: " + textStatus);
-         console.log("Error: " + errorThrown); 
-      }  
-   });   
+function select_online() {
+  console.log("select online");
+  $("#select-all-button").removeClass("new-way");
+  $("#select-online-button").addClass("new-way");
+  $("#select-offline-button").removeClass("new-way");
+  selecteds = "online";
+
+  $(".row-online").removeClass("invisible");
+  $(".row-offline").addClass("invisible");
+}
+
+function select_offline() {
+  console.log("select offline");
+  $("#select-all-button").removeClass("new-way");
+  $("#select-online-button").removeClass("new-way");
+  $("#select-offline-button").addClass("new-way");
+  selecteds = "offline";
+
+  $(".row-online").addClass("invisible");
+  $(".row-offline").removeClass("invisible");
+}
+
+function get_channel_infos(
+  logins,
+  nextcallback,
+  successcallback,
+  finishcallback
+) {
+  if (!logins.length) {
+    console.log("finishcallback");
+    finishcallback();
+    return;
+  }
+  var login = logins.pop();
+  var userID = userIDByLogin[login.toLowerCase()];
+  var userurl = "https://api.twitch.tv/kraken/channels/" + userID;
+  $.ajax({
+    type: "GET",
+    url: userurl,
+    headers: {
+      Accept: "application/vnd.twitchtv.v5+json",
+      "Client-ID": "zexrs7302vvw76os4f4r99nz5945og"
+    },
+    success: function(data) {
+      successcallback(login, data);
+      nextcallback(logins, nextcallback, successcallback, finishcallback);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      successcallback(login, undefined);
+      nextcallback(logins, nextcallback, successcallback, finishcallback);
+      console.log("Status: " + textStatus);
+      console.log("Error: " + errorThrown);
+    }
+  });
+}
+
+function get_stream_infos(logins, nextcallback, successcallback) {
+  if (!logins.length) {
+    return;
+  }
+  var login = logins.pop();
+  var userID = userIDByLogin[login.toLowerCase()];
+  var userurl = "https://api.twitch.tv/kraken/streams/" + userID;
+  $.ajax({
+    type: "GET",
+    url: userurl,
+    headers: {
+      Accept: "application/vnd.twitchtv.v5+json",
+      "Client-ID": "zexrs7302vvw76os4f4r99nz5945og"
+    },
+    success: function(data) {
+      successcallback(login, data);
+      nextcallback(logins, nextcallback, successcallback);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      successcallback(login, undefined);
+      nextcallback(logins, nextcallback, successcallback);
+      console.log("Status: " + textStatus);
+      console.log("Error: " + errorThrown);
+    }
+  });
 }
 
 function update_stream_record_info(name, data) {
-   console.log('--->',name,data);
-   if ( !data.stream ) {
-      $('#row-'+name.toLowerCase()).removeClass("row-online");
-      $('#row-'+name.toLowerCase()).addClass("row-offline");
-      $('#status-'+name.toLowerCase()).removeClass("status-online");
-      $('#status-'+name.toLowerCase()).addClass("status-offline");
-      $('#status-'+name.toLowerCase()).text("Offline");
-   } else {
-      $('#row-'+name.toLowerCase()).removeClass("row-offline");
-      $('#row-'+name.toLowerCase()).addClass("row-online");
-      $('#status-'+name.toLowerCase()).removeClass("status-offline");
-      $('#status-'+name.toLowerCase()).addClass("status-online");
-     $('#status-'+name.toLowerCase()).text("Live, "+data.stream.game+", "+data.stream.video_height+"px, "+data.stream.viewers+" viewers");
-   }
+  console.log("--->", name, data);
+  if (!data.stream) {
+    $("#row-" + name.toLowerCase()).removeClass("row-online");
+    $("#row-" + name.toLowerCase()).addClass("row-offline");
+    $("#status-" + name.toLowerCase()).removeClass("status-online");
+    $("#status-" + name.toLowerCase()).addClass("status-offline");
+    if ( selecteds === "online") {
+       $("#row-" + name.toLowerCase()).addClass("invisible");
+    } else {
+       $("#row-" + name.toLowerCase()).removeClass("invisible");
+    }
+    $("#status-" + name.toLowerCase()).text("Offline");
+    
+  } else {
+    $("#row-" + name.toLowerCase()).removeClass("row-offline");
+    $("#row-" + name.toLowerCase()).addClass("row-online");
+    $("#status-" + name.toLowerCase()).removeClass("status-offline");
+    $("#status-" + name.toLowerCase()).addClass("status-online");
+    if ( selecteds === "offline") {
+       $("#row-" + name.toLowerCase()).addClass("invisible");
+    } else {
+       $("#row-" + name.toLowerCase()).removeClass("invisible");
+    }
+    $("#status-" + name.toLowerCase()).text(
+      "Live, " +
+        data.stream.game +
+        ", " +
+        data.stream.video_height +
+        "px, " +
+        data.stream.viewers +
+        " viewers"
+    );
+  }
 }
 
 function update_stream_infos() {
-   // https://dev.twitch.tv/docs/v5/reference/streams#get-stream-by-user
-   // return {stream:null} if channel is offline.
-   var myList = listOfLogins.slice();
-   get_stream_infos(myList, get_stream_infos, update_stream_record_info);
+  // https://dev.twitch.tv/docs/v5/reference/streams#get-stream-by-user
+  // return {stream:null} if channel is offline.
+  var myList = listOfLogins.slice();
+  get_stream_infos(myList, get_stream_infos, update_stream_record_info);
 }
 
 function add_user_entry(name, data) {
-   console.log('===>', name, data);
-   if ( data === undefined ) {
-     return;
-   }
+  console.log("===>", name, data);
+  if (data === undefined) {
+    return;
+  }
 
-   $( "#app-content-users" ).append(
-      "<div id='row-"+name.toLowerCase()+"' class='center-container-row row row-offline'>" +
-      '<div class="image-holder col-md-2 col-xs-2">'+
-       (data.logo
-        ?'<img src="'+data.logo+'" height="40" width="40"/>'
-        :"<div class='image-replacer' height='40' width='40'/>")+
-       '</div>'+
+  $("#app-content-users").append(
+    "<div id='row-" +
+      name.toLowerCase() +
+      "' class='center-container-row row row-offline "+(selecteds==="online"?"invisible":"")+"'>" +
+      '<div class="image-holder col-md-2 col-xs-2">' +
+      (data.logo
+        ? '<img src="' + data.logo + '" height="40" width="40"/>'
+        : "<div class='image-replacer' height='40' width='40'/>") +
+      "</div>" +
       "<div class='row-main-text col-md-9 col-xs-9'>" +
-      "<p class=\"noselect elliptictext name-text\">" +
+      '<p class="noselect elliptictext name-text">' +
       data.display_name +
       "</p>" +
-      "<p id='status-"+name.toLowerCase()+"' class=\"noselect elliptictext status-text status-offline\">Offline" +
+      "<p id='status-" +
+      name.toLowerCase() +
+      '\' class="noselect elliptictext status-text status-offline">Offline' +
       "</p>" +
-      "</div>"+
+      "</div>" +
       "</div>"
-   );
+  );
 }
 
 function update_stream_infos_first() {
-   var myList = listOfLogins.slice();
-   get_channel_infos(myList, 
-                     get_channel_infos, 
-                     add_user_entry,
-                     update_stream_infos);
+  var myList = listOfLogins.slice();
+  get_channel_infos(
+    myList,
+    get_channel_infos,
+    add_user_entry,
+    update_stream_infos
+  );
 }
 
-function translate_logins_to_userids( nexttask ) {
-   var userurl = 'https://api.twitch.tv/kraken/users?login=' + listOfLogins.join(",");
-   $.ajax({
-      type: 'GET',
-      url: userurl,
-      headers: {
-         'Accept': 'application/vnd.twitchtv.v5+json',
-         'Client-ID': 'zexrs7302vvw76os4f4r99nz5945og'
-      },
-      success: function(data) {
-         var arr = data.users;
-         for ( var i = 0; i < arr.length; ++i ) {
-            userIDByLogin[arr[i].name] = arr[i]._id;
-         }
-         console.log(userIDByLogin);
-         if ( nexttask !== undefined ) {
-            nexttask();
-         }
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        console.log("Status: " + textStatus);
-        console.log("Error: " + errorThrown); 
-      }  
-   });
+function translate_logins_to_userids(nexttask) {
+  var userurl =
+    "https://api.twitch.tv/kraken/users?login=" + listOfLogins.join(",");
+  $.ajax({
+    type: "GET",
+    url: userurl,
+    headers: {
+      Accept: "application/vnd.twitchtv.v5+json",
+      "Client-ID": "zexrs7302vvw76os4f4r99nz5945og"
+    },
+    success: function(data) {
+      var arr = data.users;
+      for (var i = 0; i < arr.length; ++i) {
+        userIDByLogin[arr[i].name] = arr[i]._id;
+      }
+      console.log(userIDByLogin);
+      if (nexttask !== undefined) {
+        nexttask();
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      console.log("Status: " + textStatus);
+      console.log("Error: " + errorThrown);
+    }
+  });
 }
 
 function load_api_data() {
-   translate_logins_to_userids( update_stream_infos_first );
+  translate_logins_to_userids(update_stream_infos_first);
 }
 
-$(document).ready(function(){
-   console.log("READY");
-   load_api_data();
+$(document).ready(function() {
+  console.log("READY");
+  load_api_data();
 });
 
 </script>
