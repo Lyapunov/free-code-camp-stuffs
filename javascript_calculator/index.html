@@ -7,6 +7,21 @@
   CSS 
 -->
 <style>
+
+.center-container {
+  background:white;  
+  /* https://stackoverflow.com/questions/17069435/center-fixed-div-with-dynamic-width-css */
+  position: fixed;
+  /* center the element */
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 20px;
+  /* give it dimensions */
+  max-width: 360px;
+  min-width: 360px;
+}
 </style>
 
 <!-- 
@@ -19,3 +34,12 @@
   HTML  
 -->
 
+<body>
+  <div id="app-main-div">
+    <div id="app-main-row">
+      <div id="app-center-container" class="center-container">
+          Hello world.
+      </div>
+    </div>
+  </div>
+</body>
