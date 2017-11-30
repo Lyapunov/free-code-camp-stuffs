@@ -9,7 +9,7 @@
 <style>
 
 .center-container {
-  background:white;  
+  background:gray;
   /* https://stackoverflow.com/questions/17069435/center-fixed-div-with-dynamic-width-css */
   position: fixed;
   /* center the element */
@@ -19,9 +19,44 @@
   margin-left: auto;
   margin-top: 20px;
   /* give it dimensions */
-  max-width: 360px;
-  min-width: 360px;
+  max-width: 305px;
+  min-width: 305px;
 }
+
+.center-container-row {
+  width:100%;
+  min-height:40px;
+  max-height:40px;
+  display: inline-block;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.center-container-table {
+  width:100%;
+}
+
+.center-container-display {
+  width:295px;
+}
+
+.normal-button {
+  width:70px;
+}
+
+.double-button {
+  width:145px;
+}
+
+
 </style>
 
 <!-- 
@@ -38,7 +73,65 @@
   <div id="app-main-div">
     <div id="app-main-row">
       <div id="app-center-container" class="center-container">
-          Hello world.
+          <table class="center-container-table">
+          <tr class="center-container-row">
+          <td>
+          <input id="text" class="center-container-display noselect"></input>
+          </td>
+          </tr>
+          <tr class="center-container-row">
+          <td>
+          <button id="btn7" class="normal-button">7</button>
+          </td>
+          <td>
+          <button id="btn8" class="normal-button">8</button>
+          </td>
+          <td>
+          <button id="btn9" class="normal-button">9</button>
+          </td>
+          <td>
+          <button id="btndiv" class="normal-button">/</button>
+          </td>
+          </tr>
+          <tr class="center-container-row">
+          <td>
+          <button id="btn4" class="normal-button">4</button>
+          </td>
+          <td>
+          <button id="btn5" class="normal-button">5</button>
+          </td>
+          <td>
+          <button id="btn6" class="normal-button">6</button>
+          </td>
+          <td>
+          <button id="btnmul" class="normal-button">*</button>
+          </td>
+          </tr>
+          <tr class="center-container-row">
+          <td>
+          <button id="btn1" class="normal-button">1</button>
+          </td>
+          <td>
+          <button id="btn2" class="normal-button">2</button>
+          </td>
+          <td>
+          <button id="btn3" class="normal-button">3</button>
+          </td>
+          <td>
+          <button id="btnmin" class="normal-button">-</button>
+          </td>
+          </tr>
+          <tr class="center-container-row">
+          <td>
+          <button id="btn0" class="normal-button">0</button>
+          </td>
+          <td>
+          <button id="btnequals" class="double-button">=</button>
+          </td>
+          <td>
+          <button id="btnpllus" class="normal-button">+</button>
+          </td>
+          </tr>
       </div>
     </div>
   </div>
