@@ -48,6 +48,8 @@
   width:293px;
   height:34px;
   margin: 2px 2px;
+  direction:RTL;
+  color: transparent;text-shadow: 0 0 0 black;
 }
 
 .normal-button {
@@ -82,7 +84,21 @@
           <table class="center-container-table">
           <tr class="center-container-row">
           <td>
-          <input id="text" class="center-container-display noselect"></input>
+          <input id="text" class="center-container-display noselect" value="0" readonly="readonly"></input>
+          </td>
+          </tr>
+          <tr class="center-container-row">
+          <td>
+          <p class="normal-button"></p>
+          </td>
+          <td>
+          <p class="normal-button"></p>
+          </td>
+          <td>
+          <p class="normal-button"></p>
+          </td>
+          <td>
+          <button id="btnclr" class="normal-button">Clr</button>
           </td>
           </tr>
           <tr class="center-container-row">
