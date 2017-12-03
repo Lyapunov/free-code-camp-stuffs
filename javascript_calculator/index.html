@@ -83,6 +83,10 @@ function button_click(e) {
    var hasdot = input.split("").filter(x=>x=='.').length;
    var nextval = '0';
    if ( pushed_button >= '0' && pushed_button <= '9' ) {
+      if ( fragile ) {
+         fragile = false;
+         input = '0';
+      }
       if ( input == '0' ) {
          nextval = pushed_button;
       } else if ( idigs < MAX_DIGITS ) {
@@ -91,6 +95,10 @@ function button_click(e) {
          nextval = input;
       }
    } else if ( pushed_button == '.' ) {
+      if ( fragile ) {
+         fragile = false;
+         input = '0';
+      }
       if ( idigs < MAX_DIGITS && !hasdot ) {
          nextval = input + '.';
          console.log('--->', nextval);
@@ -105,6 +113,8 @@ function button_click(e) {
    } else if ( ['+','-','/','*'].indexOf(pushed_button) >= 0 ) {
       memory.push(parseFloat(input));
       ops.push(pushed_button);
+      nextval = input;
+      fragile = true;
    } else if ( pushed_button == "=" ) {
       if ( memory.length ) {
          memory.push(parseFloat(input));
@@ -121,6 +131,7 @@ function button_click(e) {
             }
          }
          console.log("===>", result);
+         memory  = [result];
          nextval = result;
       }
    }
