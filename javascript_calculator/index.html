@@ -119,14 +119,16 @@ function button_click(e) {
       memory  = [];
       ops = [];
    } else if ( ['+','-','/','*'].indexOf(pushed_button) >= 0 ) {
-      memory.push( highprecision ? highprecision : parseFloat(input) );
+      var value = highprecision ? highprecision : parseFloat(input);
+      memory.push( value );
       ops.push(pushed_button);
-      nextval = input;
+      nextval = value.toFixed(MAX_DIGITS);
       fragile = true;
       highprecision = false;
    } else if ( pushed_button == "=" ) {
       if ( memory.length ) {
-         memory.push(parseFloat(input));
+         var value = highprecision ? highprecision : parseFloat(input);
+         memory.push( value );
          var result = memory[0];
          for ( var i = 1; i < memory.length; ++i ) {
             if ( ops[i-1] == '+' ) {
@@ -142,12 +144,12 @@ function button_click(e) {
          console.log("===>", result);
          memory  = [];
          ops     = [];
-         nextval = result;
+         nextval = result.toFixed(MAX_DIGITS);
          highprecision = result;
          fragile = true;
       } else {
          if ( highprecision ) {
-            nextval = highprecision;
+            nextval = highprecision.toFixed(MAX_DIGITS);
          }
       }
    }
