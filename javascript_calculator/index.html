@@ -102,6 +102,22 @@ function chop_float(value) {
    return retval;
 }
 
+function compute_stored_ops() {
+   var result = memory[0];
+   for ( var i = 1; i < memory.length; ++i ) {
+      if ( ops[i-1] == '+' ) {
+         result += memory[i];
+      } else if ( ops[i-1] == '-' ) {
+         result -= memory[i];
+      } else if ( ops[i-1] == '*' ) {
+         result *= memory[i];
+      } else if ( ops[i-1] == '/' ) {
+         result /= memory[i];
+      }
+   }
+   return result;
+}
+
 function button_click(e) {
    var pushed_button = e.target.innerText;
    var input = $('#normal-text').val();
@@ -171,18 +187,7 @@ function button_click(e) {
       if ( memory.length ) {
          var value = highprecision ? highprecision : parseFloat(input);
          memory.push( value );
-         var result = memory[0];
-         for ( var i = 1; i < memory.length; ++i ) {
-            if ( ops[i-1] == '+' ) {
-               result += memory[i];
-            } else if ( ops[i-1] == '-' ) {
-               result -= memory[i];
-            } else if ( ops[i-1] == '*' ) {
-               result *= memory[i];
-            } else if ( ops[i-1] == '/' ) {
-               result /= memory[i];
-            }
-         }
+         var result = compute_stored_ops();
          console.log("===>", result);
          memory  = [];
          ops     = [];
