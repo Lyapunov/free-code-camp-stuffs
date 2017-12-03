@@ -72,6 +72,7 @@
 -->
 <script>
 var MAX_DIGITS = 9;
+var memory = [];
 
 function button_click(e) {
    var pushed_button = e.target.innerText;
@@ -85,11 +86,18 @@ function button_click(e) {
       } else if ( idigs < MAX_DIGITS ) {
          nextval = input + pushed_button;
       }
-   } else if ( pushed_button == '.' && idigs < MAX_DIGITS && !hasdot ) {
-      nextval = input + '.';
-      console.log('--->', nextval);
+   } else if ( pushed_button == '.' ) {
+      if ( idigs < MAX_DIGITS && !hasdot ) {
+         nextval = input + '.';
+         console.log('--->', nextval);
+      } else {
+         nextval = input;
+      }
    } else if ( pushed_button == 'Clr' ) {
       nextval = '0';
+   } else if ( pushed_button == 'Rst' ) {
+      nextval = '0';
+      memory  = [];
    }
    $('#normal-text').val(nextval);
 }
