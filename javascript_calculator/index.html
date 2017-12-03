@@ -30,6 +30,13 @@
   display: inline-block;
 }
 
+.center-container-padding {
+  width:100%;
+  min-height:20px;
+  max-height:20px;
+  display: inline-block;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -183,6 +190,11 @@ function button_click(e) {
     <div id="app-main-row">
       <div id="app-center-container" class="center-container">
           <table class="center-container-table">
+          <tr class="center-container-padding">
+          <td>
+          <p></p>
+          </td>
+          </tr>
           <tr class="center-container-row">
           <td>
           <input id="normal-text" class="center-container-display noselect" value="0" readonly="readonly"></input>
@@ -257,6 +269,11 @@ function button_click(e) {
           <td>
           <button id="btnpllus" class="normal-button btn-primary" onclick="button_click(event);">+</button>
           </td>
+          <tr class="center-container-padding">
+          <td>
+          <p></p>
+          </td>
+          </tr>
           </tr>
       </div>
     </div>
