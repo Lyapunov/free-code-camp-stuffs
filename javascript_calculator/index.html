@@ -167,7 +167,6 @@ function button_click(e) {
       }
       if ( idigs < MAX_DIGITS && !hasdot ) {
          nextval = input + '.';
-         console.log('--->', nextval);
       } else {
          nextval = input;
       }
@@ -210,7 +209,6 @@ function button_click(e) {
          var value = highprecision ? highprecision : parseFloat(input);
          memory.push( value );
          var result = compute_stored_ops();
-         console.log("===>", result);
          memory  = [];
          ops     = [];
          nextval = chop_float( result );
@@ -222,7 +220,6 @@ function button_click(e) {
          }
       }
    }
-   console.log(memory,ops,nextval);
    $('#normal-text').val(nextval);
 }
 </script>
