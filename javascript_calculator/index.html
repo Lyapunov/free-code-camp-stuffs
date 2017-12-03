@@ -55,8 +55,10 @@
   width:293px;
   height:34px;
   margin: 2px 2px;
-  direction:RTL;
+// Direction rtl is not a good idea: https://stackoverflow.com/questions/20798667/why-is-a-trailing-punctuation-mark-rendered-at-the-start-with-directionrtl
+//  direction:RTL;
   color: transparent;text-shadow: 0 0 0 black;
+  text-align: right;
 }
 
 .normal-button {
@@ -133,9 +135,13 @@ function button_click(e) {
       }
    } else if ( pushed_button == '+/-' ) {
       if ( fragile ) {
-         fragile = false;
-         highprecision = false;
-         input = '0';
+         if ( highprecision ) {
+            highprecision = -highprecision;
+         } else {
+            fragile = false;
+            highprecision = false;
+            input = '0';
+         }
       }
       if ( input !== '0' ) {
          if ( input[0] == '-' ) {
