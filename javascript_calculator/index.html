@@ -77,6 +77,22 @@ var ops    = [];
 var fragile = false;
 var highprecision = false;
 
+function chop_float(value) {
+   var ival = value.toString();
+   var retval = "";
+   var counter = 0;
+   for ( var i = 0; i < ival.length; ++i ) {
+      retval += ival[i];
+      if ( ival[i] >= '0' && ival[i] <= '9' ) {
+         ++counter; 
+      }
+      if ( counter >= MAX_DIGITS ) {
+         return retval;
+      }
+   }
+   return retval;
+}
+
 function button_click(e) {
    var pushed_button = e.target.innerText;
    var input = $('#normal-text').val();
@@ -122,7 +138,7 @@ function button_click(e) {
       var value = highprecision ? highprecision : parseFloat(input);
       memory.push( value );
       ops.push(pushed_button);
-      nextval = value.toFixed(MAX_DIGITS);
+      nextval = chop_float( value );
       fragile = true;
       highprecision = false;
    } else if ( pushed_button == "=" ) {
@@ -144,12 +160,12 @@ function button_click(e) {
          console.log("===>", result);
          memory  = [];
          ops     = [];
-         nextval = result.toFixed(MAX_DIGITS);
+         nextval = chop_float( result );
          highprecision = result;
          fragile = true;
       } else {
          if ( highprecision ) {
-            nextval = highprecision.toFixed(MAX_DIGITS);
+            nextval = chop_float( highprecision );
          }
       }
    }
