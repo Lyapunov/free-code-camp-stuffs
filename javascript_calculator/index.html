@@ -103,19 +103,41 @@ function chop_float(value) {
 }
 
 function compute_stored_ops() {
-   var result = memory[0];
    for ( var i = 1; i < memory.length; ++i ) {
-      if ( ops[i-1] == '+' ) {
-         result += memory[i];
-      } else if ( ops[i-1] == '-' ) {
-         result -= memory[i];
-      } else if ( ops[i-1] == '*' ) {
-         result *= memory[i];
+      var delnext = false;
+      if ( ops[i-1] == '*' ) {
+         memory[i-1] *= memory[i];
+         delnext = true;
       } else if ( ops[i-1] == '/' ) {
-         result /= memory[i];
+         memory[i-1] /= memory[i];
+         delnext = true;
+      }
+
+      if ( delnext ) {
+         memory.splice(i,1);
+         ops.splice(i-1,1);
+         --i;
       }
    }
-   return result;
+
+   for ( var i = 1; i < memory.length; ++i ) {
+      var delnext = false;
+      if ( ops[i-1] == '+' ) {
+         memory[i-1] += memory[i];
+         delnext = true;
+      } else if ( ops[i-1] == '-' ) {
+         memory[i-1] -= memory[i];
+         delnext = true;
+      }
+
+      if ( delnext ) {
+         memory.splice(i,1);
+         ops.splice(i-1,1);
+         --i;
+      }
+   }
+
+   return memory[0];
 }
 
 function button_click(e) {
