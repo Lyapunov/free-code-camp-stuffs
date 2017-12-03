@@ -132,6 +132,11 @@ function button_click(e) {
          nextval = input;
       }
    } else if ( pushed_button == '+/-' ) {
+      if ( fragile ) {
+         fragile = false;
+         highprecision = false;
+         input = '0';
+      }
       if ( input !== '0' ) {
          if ( input[0] == '-' ) {
             nextval = input.substr(1);
