@@ -107,9 +107,11 @@ function button_click(e) {
       }
    } else if ( pushed_button == 'Clr' ) {
       nextval = '0';
+      fragile = false;
    } else if ( pushed_button == 'Rst' ) {
       nextval = '0';
       memory  = [];
+      fragile = false;
    } else if ( ['+','-','/','*'].indexOf(pushed_button) >= 0 ) {
       memory.push(parseFloat(input));
       ops.push(pushed_button);
@@ -131,8 +133,10 @@ function button_click(e) {
             }
          }
          console.log("===>", result);
-         memory  = [result];
+         memory  = [];
+         ops     = [];
          nextval = result;
+         fragile = true;
       }
    }
    console.log(memory,ops,nextval);
