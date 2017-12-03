@@ -73,6 +73,8 @@
 <script>
 var MAX_DIGITS = 9;
 var memory = [];
+var ops    = [];
+var fragile = false;
 
 function button_click(e) {
    var pushed_button = e.target.innerText;
@@ -85,6 +87,8 @@ function button_click(e) {
          nextval = pushed_button;
       } else if ( idigs < MAX_DIGITS ) {
          nextval = input + pushed_button;
+      } else {
+         nextval = input;
       }
    } else if ( pushed_button == '.' ) {
       if ( idigs < MAX_DIGITS && !hasdot ) {
@@ -98,7 +102,29 @@ function button_click(e) {
    } else if ( pushed_button == 'Rst' ) {
       nextval = '0';
       memory  = [];
+   } else if ( ['+','-','/','*'].indexOf(pushed_button) >= 0 ) {
+      memory.push(parseFloat(input));
+      ops.push(pushed_button);
+   } else if ( pushed_button == "=" ) {
+      if ( memory.length ) {
+         memory.push(parseFloat(input));
+         var result = memory[0];
+         for ( var i = 1; i < memory.length; ++i ) {
+            if ( ops[i-1] == '+' ) {
+               result += memory[i];
+            } else if ( ops[i-1] == '-' ) {
+               result -= memory[i];
+            } else if ( ops[i-1] == '*' ) {
+               result *= memory[i];
+            } else if ( ops[i-1] == '/' ) {
+               result /= memory[i];
+            }
+         }
+         console.log("===>", result);
+         nextval = result;
+      }
    }
+   console.log(memory,ops,nextval);
    $('#normal-text').val(nextval);
 }
 </script>
