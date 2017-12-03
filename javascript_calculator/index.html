@@ -131,6 +131,14 @@ function button_click(e) {
       } else {
          nextval = input;
       }
+   } else if ( pushed_button == '+/-' ) {
+      if ( input !== '0' ) {
+         if ( input[0] == '-' ) {
+            nextval = input.substr(1);
+         } else {
+            nextval = "-"+input;
+         }
+      }
    } else if ( pushed_button == 'Clr' ) {
       nextval = '0';
       fragile = false;
