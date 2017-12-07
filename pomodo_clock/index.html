@@ -5,6 +5,8 @@
 
 <!-- 
   CSS 
+
+  https://css-tricks.com/almanac/properties/s/stroke-dashoffset/
 -->
 <style>
 html, body {
@@ -23,7 +25,18 @@ html, body {
   fill: none;
   stroke: #00FF00;
   stroke-width: 4px;
-  transition: stroke-dashoffset 0.7s;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 5s linear forwards;
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .e-c-pointer {
