@@ -10,6 +10,26 @@
 html, body {
   max-width: 100%;
   overflow-x: hidden;
+  background: #000000;
+}
+
+.e-c-base {
+  fill: none;
+  stroke: #444444;
+  stroke-width: 4px
+}
+
+.e-c-progress {
+  fill: none;
+  stroke: #00FF00;
+  stroke-width: 4px;
+  transition: stroke-dashoffset 0.7s;
+}
+
+.e-c-pointer {
+  fill: #FFF;
+  stroke: #F7958E;
+  stroke-width: 2px;
 }
 </style>
 
@@ -32,6 +52,9 @@ html, body {
       <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(110,110)">
           <circle r="100" class="e-c-base"/>
+          <g transform="rotate(-90)">
+            <circle r="100" class="e-c-progress"/>
+          </g>
         </g>
       </svg>
     </div>
