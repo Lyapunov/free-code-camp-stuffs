@@ -12,6 +12,7 @@
 html, body {
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: hidden;
   background: #000000;
 }
 
@@ -53,6 +54,19 @@ html, body {
   stroke: #F7958E;
   stroke-width: 2px;
 }
+
+#clockbody {
+  position:relative;
+}
+
+#clocktext {
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:100%;
+  height:100%;
+}
+
 </style>
 
 <!-- 
@@ -70,7 +84,7 @@ html, body {
 <body>
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
-    <div class="circle col-md-4 col-xs-4">
+    <div id="clockbody" class="circle col-md-4 col-xs-4">
       <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(110,110)">
           <circle r="100" class="e-c-base"/>
@@ -79,11 +93,15 @@ html, body {
           </g>
         </g>
       </svg>
+      <div id="clocktext">
+        <p class="centered">
+        Pomodo clock
+        </p>
+        <p class="centered">
+        50
+        </p>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4 col-xs-4"></div>
-    <div class="col-md-4 col-xs-4 centered">Pomodo clock</div>
   </div>
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
