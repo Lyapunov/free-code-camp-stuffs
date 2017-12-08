@@ -15,6 +15,15 @@ html, body {
   background: #000000;
 }
 
+.centered {
+   white-space: normal;
+   overflow-wrap:break-word;
+   text-align: center;
+   display: table-cell;
+   justify-content: center;
+   vertical-align:middle;
+}
+
 .e-c-base {
   fill: none;
   stroke: #444444;
@@ -70,6 +79,33 @@ html, body {
           </g>
         </g>
       </svg>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 col-xs-4"></div>
+    <div class="col-md-4 col-xs-4 centered">Pomodo clock</div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 col-xs-4"></div>
+    <div class="col-md-2 col-xs-2">
+      <p>
+      Break length
+      </p>
+      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+      <p>
+      10
+      </p>
+      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+    </div>
+    <div class="col-md-2 col-xs-2">
+      <p>
+      Session length
+      </p>
+      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+      <p>
+      50
+      </p>
+      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
     </div>
   </div>
 </body
