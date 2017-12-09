@@ -67,6 +67,16 @@ html, body {
   height:100%;
 }
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 </style>
 
 <!-- 
@@ -94,10 +104,10 @@ html, body {
         </g>
       </svg>
       <div id="clocktext">
-        <p class="centered">
+        <p class="noselect">
         Pomodo clock
         </p>
-        <p class="centered">
+        <p class="noselect">
         50
         </p>
       </div>
@@ -106,7 +116,7 @@ html, body {
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
     <div class="col-md-2 col-xs-2">
-      <p>
+      <p class="noselect">
       Break length
       </p>
       <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
@@ -116,11 +126,11 @@ html, body {
       <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
     </div>
     <div class="col-md-2 col-xs-2">
-      <p>
+      <p class="noselect">
       Session length
       </p>
       <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
-      <p>
+      <p class="noselect">
       50
       </p>
       <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
