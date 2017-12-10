@@ -61,9 +61,14 @@ html, body {
 
 #clocktext-holder {
   position:absolute;
-  text-align: center;
-  top:50%;
   left:50%;
+  top:50%;
+}
+
+#clocktext-holder-2 {
+  text-align: center;
+  position:relative;
+  left:-50%;
 }
 
 #clocktext {
@@ -109,7 +114,7 @@ html, body {
 <body>
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
-    <div id="clockbody" class="circle col-md-4 col-xs-4">
+    <div id="clockbody" class="circle col-md-4 col-xs-4 debug2">
       <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(110,110)">
           <circle r="100" class="e-c-base"/>
@@ -119,12 +124,14 @@ html, body {
         </g>
       </svg>
       <div id="clocktext-holder" class="debug">
-        <p class="noselect clocktext">
-        Pomodo clock
-        </p>
-        <p class="noselect clocktext">
-        50
-        </p>
+        <div id="clocktext-holder-2">
+          <p class="noselect clocktext">
+          Pomodo clock
+          </p>
+          <p class="noselect clocktext">
+          50
+          </p>
+        </div>
       </div>
     </div>
   </div>
