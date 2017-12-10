@@ -77,6 +77,19 @@ html, body {
                                   supported by Chrome and Opera */
 }
 
+.debug {
+  background-color: green;
+}
+
+.debug2 {
+  background-color: blue;
+}
+
+.container-row {
+  display: block-inline;
+  text-align:center;
+}
+
 </style>
 
 <!-- 
@@ -116,24 +129,28 @@ html, body {
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
     <div class="col-md-2 col-xs-2">
-      <p class="noselect">
-      Break length
-      </p>
-      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
-      <p>
-      10
-      </p>
-      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+      <div class="container-row">
+        <p class="noselect">
+        Break length:
+        </p>
+        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+        <span class="noselect">
+        10
+        </span>
+        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+      </div>
     </div>
     <div class="col-md-2 col-xs-2">
-      <p class="noselect">
-      Session length
-      </p>
-      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
-      <p class="noselect">
-      50
-      </p>
-      <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+      <div class="container-row">
+        <p class="noselect">
+        Session length:
+        </p>
+        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+        <span class="noselect">
+        50
+        </span>
+        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+      </div>
     </div>
   </div>
 </body
