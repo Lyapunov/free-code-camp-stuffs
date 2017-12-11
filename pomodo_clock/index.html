@@ -107,6 +107,34 @@ html, body {
   JS 
 -->
 <script>
+
+function fitbox(identif, holder, magic) {
+    var w = $(holder).width();
+    var h = $(holder).height();
+    var a = Math.sqrt(w*h);
+  
+    var constraint = a/magic;
+    console.log(a,constraint);
+    $(identif).css('font-size', (2*constraint)+'em');
+    $(identif).css('font-size', constraint+'em');
+}
+
+/* see also https://stackoverflow.com/questions/25742441/responsive-font-size-using-css-jquery*/
+function textfit() {
+    fitbox('#clocktext-upper', '#clockbody', 200);
+    fitbox('#clocktext-lower', '#clockbody', 150);
+    fitbox('#break-text', '#clockbody', 300);
+    fitbox('#session-text', '#clockbody', 300);
+    fitbox('#break-counter', '#clockbody', 300);
+    fitbox('#session-counter', '#clockbody', 300);
+}
+
+$(window).on('resize', textfit);
+
+$(document).ready(function(){
+   textfit();
+});
+
 </script>
 
 <!-- 
@@ -129,10 +157,10 @@ html, body {
       </svg>
       <div id="clocktext-holder">
         <div id="clocktext-holder-2">
-          <p class="noselect clocktext">
+          <p id="clocktext-upper" class="noselect clocktext">
           Pomodo clock
           </p>
-          <p class="noselect clocktext">
+          <p id="clocktext-lower" class="noselect clocktext">
           50
           </p>
         </div>
@@ -143,11 +171,11 @@ html, body {
     <div class="col-md-4 col-xs-4"></div>
     <div class="col-md-2 col-xs-2">
       <div class="container-row">
-        <p class="noselect">
+        <p id="break-text" class="noselect">
         Break length:
         </p>
         <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
-        <span class="noselect">
+        <span id="break-counter" class="noselect">
         10
         </span>
         <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
@@ -155,11 +183,11 @@ html, body {
     </div>
     <div class="col-md-2 col-xs-2">
       <div class="container-row">
-        <p class="noselect">
+        <p id="session-text" class="noselect">
         Session length:
         </p>
         <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
-        <span class="noselect">
+        <span id="session-counter" class="noselect">
         50
         </span>
         <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
