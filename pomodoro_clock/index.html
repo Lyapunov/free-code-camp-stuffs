@@ -18,6 +18,16 @@ html, body {
   color:black;
 }
 
+button {
+  border: 0;
+  background: none;
+  background-repeat:no-repeat;
+  box-shadow:none;
+  border-radius: 0px;
+  -webkit-appearance: none;
+  color:none;
+}
+
 .centered {
    white-space: normal;
    overflow-wrap:break-word;
@@ -172,27 +182,27 @@ $(document).ready(function(){
   <div class="row">
     <div class="col-md-4 col-xs-4"></div>
     <div class="col-md-2 col-xs-2">
-      <div class="container-row">
+      <div class="container-row noselect">
         <p id="break-text" class="noselect">
         Break length:
         </p>
-        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+        <button id="btndot" class="normal-button " onclick="button_click(event);">-</button>
         <span id="break-counter" class="noselect">
         10
         </span>
-        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+        <button id="btndot" class="normal-button " onclick="button_click(event);">+</button>
       </div>
     </div>
     <div class="col-md-2 col-xs-2">
-      <div class="container-row">
+      <div class="container-row noselect">
         <p id="session-text" class="noselect">
         Session length:
         </p>
-        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">+</button>
+        <button id="btndot" class="normal-button" onclick="button_click(event);">-</button>
         <span id="session-counter" class="noselect">
         50
         </span>
-        <button id="btndot" class="normal-button btn-default" onclick="button_click(event);">-</button>
+        <button id="btndot" class="normal-button " onclick="button_click(event);">+</button>
       </div>
     </div>
   </div>
