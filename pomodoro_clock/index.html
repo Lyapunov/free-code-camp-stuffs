@@ -43,18 +43,18 @@ button {
   stroke-width: 4px
 }
 
-.e-c-progress {
+.e-c-pointer {
+  fill: #FFF;
+  stroke: #F7958E;
+  stroke-width: 2px;
+}
+
+#e-c-progress {
   fill: none;
   stroke: #00FF00;
   stroke-width: 4px;
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-}
-
-.e-c-pointer {
-  fill: #FFF;
-  stroke: #F7958E;
-  stroke-width: 2px;
 }
 
 #clockbody {
@@ -111,33 +111,58 @@ button {
 <script>
 
 function fitbox(identif, holder, magic) {
-    var w = $(holder).width();
-    var h = $(holder).height();
-    var a = Math.sqrt(w*h);
+   var w = $(holder).width();
+   var h = $(holder).height();
+   var a = Math.sqrt(w*h);
   
-    var constraint = a/magic;
-    $(identif).css('font-size', (2*constraint)+'em');
-    $(identif).css('font-size', constraint+'em');
+   var constraint = a/magic;
+   $(identif).css('font-size', (2*constraint)+'em');
+   $(identif).css('font-size', constraint+'em');
 }
 
 /* see also https://stackoverflow.com/questions/25742441/responsive-font-size-using-css-jquery*/
 function textfit() {
-    fitbox('#clocktext-upper', '#clockbody', 200);
-    fitbox('#clocktext-lower', '#clockbody', 150);
-    fitbox('#break-text', '#clockbody', 300);
-    fitbox('#session-text', '#clockbody', 300);
-    fitbox('#break-counter', '#clockbody', 300);
-    fitbox('#session-counter', '#clockbody', 300);
+   fitbox('#clocktext-upper', '#clockbody', 200);
+   fitbox('#clocktext-lower', '#clockbody', 150);
+   fitbox('#break-text',      '#clockbody', 300);
+   fitbox('#session-text',    '#clockbody', 300);
+   fitbox('#break-counter',   '#clockbody', 300);
+   fitbox('#session-counter', '#clockbody', 300);
 }
 
 $(window).on('resize', textfit);
 
 var works = false;
+var workdata = {};
 
 function tick() {
-   console.log("Tick");
+   if ( works ) {
+      // 1000 means empty, ( 1000 - 628 ) is full 
+      var current = new Date() / 1000;
+      var elapsed = current - workdata['started'];
+      var len = workdata[workdata['current']];
+      var perc = elapsed/len;
+      if ( perc >= 1.0 ) {
+         perc = 1.0;
+      }
 
-   setTimeout( tick, 5000 );
+      $('#e-c-progress').css('stroke-dashoffset', 1000-perc*628);
+      $('#e-c-progress').css('stroke', '#FFFF00');
+
+      if ( perc == 1.0 ) {
+         workdata['started'] += workdata[workdata['current']];
+         $('#e-c-progress').css('stroke-dashoffset', 1000);
+         if ( workdata['current'] == "session" ) {
+            workdata['current'] = "break";
+            $('#e-c-progress').css('stroke', '#00FF00');
+         } else { 
+            workdata['current'] = "session";
+            $('#e-c-progress').css('stroke', '#FFFF00');
+         }
+      }
+   }
+
+   setTimeout( tick, 1000 / 15 );
 }
 
 $(document).ready(function(){
@@ -185,7 +210,25 @@ function decrease_session() {
 
 function clockbody_button_click() {
    console.log('click');
+   workdata = {};
+   $('#e-c-progress').css('stroke-dashoffset', 1000);
+   $('#e-c-progress').css('stroke', '#FFFF00');
+
+   if ( !works ) {
+
+      // everything is in seconds
+      workdata['session'] = parseInt( $('#session-counter').text() ) * 60;
+      workdata['break'  ] = parseInt( $('#break-counter').text() ) * 60;
+      workdata['started'] = new Date() / 1000;
+      workdata['current'] = 'session';
+
+      console.log(workdata);
+   } else {
+      console.log(workdata);
+   }
+   works = !works;
 }
+
 </script>
 
 <!-- 
@@ -203,7 +246,7 @@ function clockbody_button_click() {
           <g transform="translate(110,110)">
             <circle r="100" class="e-c-base"/>
             <g transform="rotate(-90)">
-              <circle r="100" class="e-c-progress"/>
+              <circle id="e-c-progress" r="100"/>
             </g>
           </g>
         </svg>
@@ -241,7 +284,7 @@ function clockbody_button_click() {
         </p>
         <button id="btndot" class="normal-button" onclick="decrease_session();">-</button>
         <span id="session-counter" class="noselect">
-        50
+        30
         </span>
         <button id="btndot" class="normal-button " onclick="increase_session();">+</button>
       </div>
