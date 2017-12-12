@@ -147,7 +147,6 @@ function tick() {
       }
 
       $('#e-c-progress').css('stroke-dashoffset', 1000-perc*628);
-      $('#e-c-progress').css('stroke', '#FFFF00');
 
       if ( perc == 1.0 ) {
          workdata['started'] += workdata[workdata['current']];
@@ -155,9 +154,11 @@ function tick() {
          if ( workdata['current'] == "session" ) {
             workdata['current'] = "break";
             $('#e-c-progress').css('stroke', '#00FF00');
+            $('#clocktext-upper').text( "<break>" );
          } else { 
             workdata['current'] = "session";
             $('#e-c-progress').css('stroke', '#FFFF00');
+            $('#clocktext-upper').text( "<session>" );
          }
       }
    }
@@ -223,8 +224,10 @@ function clockbody_button_click() {
       workdata['current'] = 'session';
 
       console.log(workdata);
+      $('#clocktext-upper').text( "<session>" );
    } else {
       console.log(workdata);
+      $('#clocktext-upper').text( "Pomodoro timer" );
    }
    works = !works;
 }
