@@ -147,6 +147,47 @@ $(document).ready(function(){
    textfit();
 });
 
+var works = false;
+
+function increase_break() {
+   if ( !works ) {
+      var value = parseInt( $('#break-counter').text() );
+      console.log( value );
+      if ( value < 90 ) {
+         $('#break-counter').text( (value + 1) );
+      }
+   }
+}
+
+function decrease_break() {
+   if ( !works ) {
+      var value = parseInt( $('#break-counter').text() );
+      console.log( value );
+      if ( value > 1 ) {
+         $('#break-counter').text( (value - 1) );
+      }
+   }
+}
+
+function increase_session() {
+   if ( !works ) {
+      var value = parseInt( $('#session-counter').text() );
+      console.log( value );
+      if ( value < 90 ) {
+         $('#session-counter').text( (value + 1) );
+      }
+   }
+}
+
+function decrease_session() {
+   if ( !works ) {
+      var value = parseInt( $('#session-counter').text() );
+      console.log( value );
+      if ( value > 1 ) {
+         $('#session-counter').text( (value - 1) );
+      }
+   }
+}
 </script>
 
 <!-- 
@@ -186,11 +227,11 @@ $(document).ready(function(){
         <p id="break-text" class="noselect">
         Break length:
         </p>
-        <button id="btndot" class="normal-button " onclick="button_click(event);">-</button>
+        <button id="btndot" class="normal-button " onclick="decrease_break();">-</button>
         <span id="break-counter" class="noselect">
         10
         </span>
-        <button id="btndot" class="normal-button " onclick="button_click(event);">+</button>
+        <button id="btndot" class="normal-button " onclick="increase_break();">+</button>
       </div>
     </div>
     <div class="col-md-2 col-xs-2">
@@ -198,11 +239,11 @@ $(document).ready(function(){
         <p id="session-text" class="noselect">
         Session length:
         </p>
-        <button id="btndot" class="normal-button" onclick="button_click(event);">-</button>
+        <button id="btndot" class="normal-button" onclick="decrease_session();">-</button>
         <span id="session-counter" class="noselect">
         50
         </span>
-        <button id="btndot" class="normal-button " onclick="button_click(event);">+</button>
+        <button id="btndot" class="normal-button " onclick="increase_session();">+</button>
       </div>
     </div>
   </div>
