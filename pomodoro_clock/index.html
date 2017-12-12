@@ -132,6 +132,8 @@ function textfit() {
 
 $(window).on('resize', textfit);
 
+var works = false;
+
 function tick() {
    console.log("Tick");
 
@@ -144,8 +146,6 @@ $(document).ready(function(){
    // A function which is called continuously
    tick();
 });
-
-var works = false;
 
 function increase_break() {
    if ( !works ) {
