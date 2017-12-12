@@ -132,8 +132,17 @@ function textfit() {
 
 $(window).on('resize', textfit);
 
+function tick() {
+   console.log("Tick");
+
+   setTimeout( tick, 5000 );
+}
+
 $(document).ready(function(){
    textfit();
+
+   // A function which is called continuously
+   tick();
 });
 
 var works = false;
