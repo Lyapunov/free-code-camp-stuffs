@@ -145,8 +145,13 @@ function tick() {
       if ( perc >= 1.0 ) {
          perc = 1.0;
       }
+      var rest = (len - elapsed)|0;
+      var restsec = rest % 60;
+      var restmin = (rest - restsec)/60;
+      var rtext = ""+(restmin<10?"0"+restmin:restmin)+":"+(restsec<10?"0"+restsec:restsec);
 
       $('#e-c-progress').css('stroke-dashoffset', 1000-perc*628);
+      $('#clocktext-lower').text( rtext );
 
       if ( perc == 1.0 ) {
          workdata['started'] += workdata[workdata['current']];
@@ -228,6 +233,7 @@ function clockbody_button_click() {
    } else {
       console.log(workdata);
       $('#clocktext-upper').text( "Pomodoro timer" );
+      $('#clocktext-lower').text( "-" );
    }
    works = !works;
 }
@@ -254,7 +260,7 @@ function clockbody_button_click() {
           </g>
         </svg>
       </button>
-      <div id="clocktext-holder">
+      <button id="clocktext-holder" onclick="clockbody_button_click();">
         <div id="clocktext-holder-2">
           <p id="clocktext-upper" class="noselect clocktext">
           Pomodoro timer
@@ -263,7 +269,7 @@ function clockbody_button_click() {
           -
           </p>
         </div>
-      </div>
+      </button>
     </div>
   </div>
   <div class="row">
