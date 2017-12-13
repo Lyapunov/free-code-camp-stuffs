@@ -182,7 +182,7 @@ function increase_break() {
    if ( !works ) {
       var value = parseInt( $('#break-counter').text() );
       if ( value < 90 ) {
-         $('#break-counter').text( (value + 1) );
+         $('#break-counter').text( (value + 1) + " min" );
       }
    }
 }
@@ -191,7 +191,7 @@ function decrease_break() {
    if ( !works ) {
       var value = parseInt( $('#break-counter').text() );
       if ( value > 1 ) {
-         $('#break-counter').text( (value - 1) );
+         $('#break-counter').text( (value - 1) + " min" );
       }
    }
 }
@@ -200,7 +200,7 @@ function increase_session() {
    if ( !works ) {
       var value = parseInt( $('#session-counter').text() );
       if ( value < 90 ) {
-         $('#session-counter').text( (value + 1) );
+         $('#session-counter').text( (value + 1) + " min" );
       }
    }
 }
@@ -209,7 +209,7 @@ function decrease_session() {
    if ( !works ) {
       var value = parseInt( $('#session-counter').text() );
       if ( value > 1 ) {
-         $('#session-counter').text( (value - 1) );
+         $('#session-counter').text( (value - 1) + " min" );
       }
    }
 }
@@ -281,7 +281,7 @@ function clockbody_button_click() {
         </p>
         <button id="btndot" class="normal-button " onclick="decrease_break();">-</button>
         <span id="break-counter" class="noselect">
-        10
+        10 min
         </span>
         <button id="btndot" class="normal-button " onclick="increase_break();">+</button>
       </div>
@@ -293,7 +293,7 @@ function clockbody_button_click() {
         </p>
         <button id="btndot" class="normal-button" onclick="decrease_session();">-</button>
         <span id="session-counter" class="noselect">
-        30
+        30 min
         </span>
         <button id="btndot" class="normal-button " onclick="increase_session();">+</button>
       </div>
