@@ -145,7 +145,7 @@ function tick() {
       if ( perc >= 1.0 ) {
          perc = 1.0;
       }
-      var rest = (len - elapsed)|0;
+      var rest = Math.max(0,(len - elapsed)|0);
       var restsec = rest % 60;
       var restmin = (rest - restsec)/60;
       var rtext = ""+(restmin<10?"0"+restmin:restmin)+":"+(restsec<10?"0"+restsec:restsec);
@@ -154,16 +154,18 @@ function tick() {
       $('#clocktext-lower').text( rtext );
 
       if ( perc == 1.0 ) {
-         workdata['started'] += workdata[workdata['current']];
-         $('#e-c-progress').css('stroke-dashoffset', 1000);
          if ( workdata['current'] == "session" ) {
+            workdata['started'] += workdata[workdata['current']];
+            $('#e-c-progress').css('stroke-dashoffset', 1000);
             workdata['current'] = "break";
             $('#e-c-progress').css('stroke', '#00FF00');
             $('#clocktext-upper').text( "<break>" );
          } else { 
+   /*         workdata['started'] += workdata[workdata['current']];
+            $('#e-c-progress').css('stroke-dashoffset', 1000);
             workdata['current'] = "session";
             $('#e-c-progress').css('stroke', '#FFFF00');
-            $('#clocktext-upper').text( "<session>" );
+            $('#clocktext-upper').text( "<session>" );*/
          }
       }
    }
@@ -233,7 +235,7 @@ function clockbody_button_click() {
    } else {
       console.log(workdata);
       $('#clocktext-upper').text( "Pomodoro timer" );
-      $('#clocktext-lower').text( "-" );
+      $('#clocktext-lower').text( "" );
    }
    works = !works;
 }
@@ -266,7 +268,6 @@ function clockbody_button_click() {
           Pomodoro timer
           </p>
           <p id="clocktext-lower" class="noselect clocktext">
-          -
           </p>
         </div>
       </button>
@@ -293,7 +294,7 @@ function clockbody_button_click() {
         </p>
         <button id="btndot" class="normal-button" onclick="decrease_session();">-</button>
         <span id="session-counter" class="noselect">
-        30 min
+        25 min
         </span>
         <button id="btndot" class="normal-button " onclick="increase_session();">+</button>
       </div>
