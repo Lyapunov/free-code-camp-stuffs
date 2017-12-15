@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- 
+  CSS 
+-->
+<style>
+
+.tic-tac-toe-row {
+  width:100%;
+  display: inline-block;
+}
+
+.tic-tac-toe-cell {
+  width:200px;
+  height:200px;
+}
+
+</style>
+
+<!-- 
+  JS 
+-->
+<script>
+
+function resize() {
+   var holder = "body";
+   var w = window.innerWidth;
+   var h = window.innerHeight;
+   var tsize = Math.min(w,h)/3;
+   console.log(tsize);
+
+   $('.tic-tac-toe-cell').css('width',tsize);
+   $('.tic-tac-toe-cell').css('height',tsize);
+}
+
+$(window).on('resize', resize);
+
+
+$(document).ready(function(){
+   resize();
+});
+
+</script>
+
+<!-- 
+  HTML  
+-->
+
+<body>
+  <div id="tic-tac-toe-main">
+    <div id="tic-tac-toe-row-0" class="tic-tac-toe-row">
+      <button id="tic-tac-toe-cell-0-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-0-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-0-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+    </div>
+    <div id="tic-tac-toe-row-1" class="tic-tac-toe-row">
+      <button id="tic-tac-toe-cell-1-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-1-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-1-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+    </div>
+    <div id="tic-tac-toe-row-2" class="tic-tac-toe-row">
+      <button id="tic-tac-toe-cell-2-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-2-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+      <button id="tic-tac-toe-cell-2-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+    </div>
+  </div>
+</body>
