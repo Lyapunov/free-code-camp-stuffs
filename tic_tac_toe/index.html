@@ -1,6 +1,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/themes/blitzer/jquery-ui.css"
+     rel="stylesheet" type="text/css" />
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!-- 
@@ -17,6 +19,13 @@ html, body {
 }
 
 .tic-tac-toe-cell {
+  border: 0;
+  background: none;
+  background-repeat:no-repeat;
+  box-shadow:none;
+  border-radius: 0px;
+  -webkit-appearance: none;
+  color:none;
 }
 
 #tic-tac-toe-cell-0-0 {
@@ -77,16 +86,6 @@ html, body {
   margin:7px;
 }
 
-button {
-  border: 0;
-  background: none;
-  background-repeat:no-repeat;
-  box-shadow:none;
-  border-radius: 0px;
-  -webkit-appearance: none;
-  color:none;
-}
-
 </style>
 
 <!-- 
@@ -112,6 +111,33 @@ $(window).on('resize', resize);
 
 $(document).ready(function(){
    resize();
+
+   $("#dialog").dialog({
+      closeOnEscape: false,
+      open: function(event, ui) {
+         $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+      },
+      modal: true,
+      title: "Select player",
+      width: 350,
+      height: 160,
+      buttons: [
+      {
+          id: "Noughts",
+          text: "O",
+          click: function () {
+              $(this).dialog('close');
+          }
+      },
+      {
+          id: "Crosses",
+          text: "X",
+          click: function () {
+              $(this).dialog('close');
+          }
+      }
+      ]
+   });
 });
 
 function button_click(event) {
@@ -161,5 +187,8 @@ function button_click(event) {
             </td>
          </tr>
       </table>
+   </div>
+   <div id="dialog" style="display: none" align="center">
+      Choose either noughts or crosses!
    </div>
 </body>
