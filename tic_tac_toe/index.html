@@ -19,17 +19,72 @@ html, body {
 .tic-tac-toe-cell {
 }
 
+#tic-tac-toe-cell-0-0 {
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+#tic-tac-toe-cell-0-1 {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+#tic-tac-toe-cell-0-2 {
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+#tic-tac-toe-cell-1-0 {
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}
+
+#tic-tac-toe-cell-1-1 {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}
+
+#tic-tac-toe-cell-1-2 {
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+}
+
+#tic-tac-toe-cell-2-0 {
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+}
+
+#tic-tac-toe-cell-2-1 {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+}
+
+#tic-tac-toe-cell-2-2 {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+}
+
 #tic-tac-toe-holder {
-  background:blue;
 }
 
 #tic-tac-toe-main {
-  background:red;
+  margin:7px;
 }
 
-.filled-to-cell {
-  width:100%;
-  height:100%;
+button {
+  border: 0;
+  background: none;
+  background-repeat:no-repeat;
+  box-shadow:none;
+  border-radius: 0px;
+  -webkit-appearance: none;
+  color:none;
 }
 
 </style>
@@ -74,13 +129,13 @@ function button_click(event) {
       <table id="tic-tac-toe-main">
          <tr id="tic-tac-toe-row-0">
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-0-0" class="filled-to-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-0-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
             </td>
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-0-1" class="filled-to-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-0-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
             </td>
             <td class="tic-tac-toe-cell">
-              <button id="tic-tac-toe-cell-0-2" class="filled-to-cell" onclick="button_click(event);"> </button>
+              <button id="tic-tac-toe-cell-0-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
             </td>
          </tr>
          <tr id="tic-tac-toe-row-1">
