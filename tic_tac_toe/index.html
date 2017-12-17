@@ -14,12 +14,6 @@ html, body {
   overflow-x: hidden;
   overflow-y: hidden;
   background: #E23D28;
-  color:yellow;
-}
-
-.tic-tac-toe-full {
-  text-align:center;
-  display: inline-block;
 }
 
 .tic-tac-toe-cell {
@@ -49,11 +43,13 @@ function resize() {
    var holder = "body";
    var w = window.innerWidth;
    var h = window.innerHeight;
-   var tsize = Math.min(w,h)/3-5;
+   var tsize = Math.min(w,h)/3;
    console.log(tsize);
 
-   $('.tic-tac-toe-cell').css('width',tsize);
-   $('.tic-tac-toe-cell').css('height',tsize);
+   $('.tic-tac-toe-cell').css('width',tsize-5);
+   $('.tic-tac-toe-cell').css('height',tsize-5);
+   $('#tic-tac-toe-holder').css('width',tsize*3-15);
+   $('#tic-tac-toe-holder').css('margin-left',(w-tsize*3+15)/2);
 }
 
 $(window).on('resize', resize);
@@ -75,7 +71,7 @@ function button_click(event) {
 
 <body>
    <div id="tic-tac-toe-holder">
-      <table id="tic-tac-toe-main" class="tic-tac-toe-full">
+      <table id="tic-tac-toe-main">
          <tr id="tic-tac-toe-row-0">
             <td class="tic-tac-toe-cell">
                <button id="tic-tac-toe-cell-0-0" class="filled-to-cell" onclick="button_click(event);"> </button>
