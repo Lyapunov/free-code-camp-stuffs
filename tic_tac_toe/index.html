@@ -166,8 +166,9 @@ function play_opponent() {
          for ( var x = 0; x < 3; ++x ) {
             if ( table[y][x] == "" ) {
                var whatif = table.map(x=>x.slice()); 
-               whatif[y][x] = my_player; 
-               if ( get_winner(whatif) == my_player ) {
+               var oplayer = (my_player == "x" ? "o" : "x");
+               whatif[y][x] = oplayer; 
+               if ( get_winner(whatif) == oplayer ) {
                   return move_opponent([y,x]);
                }
             }
@@ -178,9 +179,8 @@ function play_opponent() {
          for ( var x = 0; x < 3; ++x ) {
             if ( table[y][x] == "" ) {
                var whatif = table.map(x=>x.slice()); 
-               var oplayer = (my_player == "x" ? "o" : "x");
-               whatif[y][x] = oplayer; 
-               if ( get_winner(whatif) == oplayer ) {
+               whatif[y][x] = my_player; 
+               if ( get_winner(whatif) == my_player ) {
                   return move_opponent([y,x]);
                }
             }
