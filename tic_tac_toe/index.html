@@ -116,6 +116,9 @@ function switch_current_player() {
    current_player = (current_player == "o" ? "x" : "o");
    var winner = get_winner( get_table() );
    console.log("Winner:", winner);
+   if ( winner != "" ) {
+      won(winner);
+   }
 }
 
 function play_opponent() {
@@ -135,7 +138,28 @@ function play_opponent() {
 }
 
 function won(winner) {
-   
+   $("#windialog").text( my_player == winner ? "You won!" : "You lose!" );
+   $("#windialog").dialog({
+      closeOnEscape: false,
+      open: function(event, ui) {
+         $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+      },
+      modal: true,
+      title: "Game finished",
+      width: 350,
+      height: 160,
+      buttons: [
+      {
+          id: "Next game",
+          text: "Next game",
+          click: function () {
+             start_game();
+             $(this).dialog('close');
+          }
+      }
+      ]
+   });
+
 }
 
 function get_table() {
@@ -166,6 +190,19 @@ function get_winner(table) {
    return "";
 }
 
+function start_game() {
+   for ( var y = 0; y < 3; ++y ) {
+      var row = [];
+      for ( var x = 0; x < 3; ++x ) {
+         $("#tic-tac-toe-cell-"+y+"-"+x).text("");
+      }
+   }
+   current_player="x";
+   if ( current_player != my_player ) {
+      play_opponent();
+   }
+}
+
 $(document).ready(function(){
    resize();
 
@@ -184,9 +221,8 @@ $(document).ready(function(){
           text: "O",
           click: function () {
               my_player = "o";
-              current_player="x";
+              start_game();
               $(this).dialog('close');
-              play_opponent();
           }
       },
       {
@@ -194,7 +230,7 @@ $(document).ready(function(){
           text: "X",
           click: function () {
               my_player = "x";
-              current_player="x";
+              start_game();
               $(this).dialog('close');
           }
       }
@@ -261,5 +297,8 @@ function button_click(event) {
    </div>
    <div id="dialog" style="display: none" align="center">
       Choose either noughts or crosses!
+   </div>
+   <div id="windialog" style="display: none" align="center">
+      You won!
    </div>
 </body>
