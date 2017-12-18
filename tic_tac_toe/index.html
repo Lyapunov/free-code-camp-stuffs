@@ -311,19 +311,19 @@ $(document).ready(function(){
       height: 160,
       buttons: [
       {
-          id: "Noughts",
-          text: "O",
+          id: "Crosses",
+          text: "X",
           click: function () {
-              my_player = "o";
+              my_player = "x";
               start_game();
               $(this).dialog('close');
           }
       },
       {
-          id: "Crosses",
-          text: "X",
+          id: "Noughts",
+          text: "O",
           click: function () {
-              my_player = "x";
+              my_player = "o";
               start_game();
               $(this).dialog('close');
           }
@@ -389,7 +389,7 @@ function button_click(event) {
       </table>
    </div>
    <div id="dialog" style="display: none" align="center">
-      Choose either noughts or crosses!
+      Choose either crosses or noughts!
    </div>
    <div id="windialog" style="display: none" align="center">
       You won!
