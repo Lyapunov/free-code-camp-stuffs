@@ -119,6 +119,9 @@ function switch_current_player() {
       won(winner);
    } else {
       current_player = (current_player == "o" ? "x" : "o");
+      if ( current_player != my_player ) {
+         play_opponent();
+      }
    }
 }
 
@@ -254,10 +257,9 @@ function button_click(event) {
    if ( !!current_player && current_player == my_player ) {
       var bval = $("#"+event.target.id).text();
       if ( bval == "" ) {
-         switch_current_player();
          console.log(event.target, event.target.id);
          $("#"+event.target.id).text(my_player);
-         play_opponent();
+         switch_current_player();
       }
    }
 }
