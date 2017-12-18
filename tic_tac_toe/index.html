@@ -115,8 +115,11 @@ var winner_player = "";
 function switch_current_player() {
    var winner = get_winner( get_table() );
    console.log("Winner:", winner);
+   if ( unwinnable() ) {
+      finished("");
+   }
    if ( winner != "" ) {
-      won(winner);
+      finished(winner);
    } else {
       current_player = (current_player == "o" ? "x" : "o");
       if ( current_player != my_player ) {
@@ -143,8 +146,8 @@ function play_opponent() {
    }
 }
 
-function won(winner) {
-   $("#windialog").text( my_player == winner ? "You won!" : "You lose!" );
+function finished(winner) {
+   $("#windialog").text( !winner ? "Draw!" : (my_player == winner ? "You won!" : "You lose!") );
    $("#windialog").dialog({
       closeOnEscape: false,
       open: function(event, ui) {
@@ -166,6 +169,17 @@ function won(winner) {
       ]
    });
 
+}
+
+function unwinnable() {
+   for ( var y = 0; y < 3; ++y ) {
+      for ( var x = 0; x < 3; ++x ) {
+         if ( !$("#tic-tac-toe-cell-"+y+"-"+x).text() ) {
+            return false;
+         }
+      }
+   }
+   return true;
 }
 
 function get_table() {
