@@ -117,24 +117,27 @@ function switch_current_player() {
    console.log("Winner:", winner);
    if ( winner != "" ) {
       won(winner);
+   } else {
+      current_player = (current_player == "o" ? "x" : "o");
    }
-   current_player = (current_player == "o" ? "x" : "o");
 }
 
 function play_opponent() {
-   var pairs = [];
-   for ( var y = 0; y < 3; ++y ) {
-      for ( var x = 0; x < 3; ++x ) {
-         if ( $("#tic-tac-toe-cell-"+y+"-"+x).text() == "" ) {
-            pairs.push([y,x]);
+   if ( current_player != my_player ) {
+      var pairs = [];
+      for ( var y = 0; y < 3; ++y ) {
+         for ( var x = 0; x < 3; ++x ) {
+            if ( $("#tic-tac-toe-cell-"+y+"-"+x).text() == "" ) {
+               pairs.push([y,x]);
+            }
          }
       }
+      var move = pairs[Math.floor(Math.random()*pairs.length)];
+      $("#tic-tac-toe-cell-"+move[0]+"-"+move[1]).text(current_player);
+      console.log('--->', current_player, my_player);
+      switch_current_player();
+      console.log('--->', current_player, my_player);
    }
-   var move = pairs[Math.floor(Math.random()*pairs.length)];
-   $("#tic-tac-toe-cell-"+move[0]+"-"+move[1]).text(current_player);
-   console.log('--->', current_player, my_player);
-   switch_current_player();
-   console.log('--->', current_player, my_player);
 }
 
 function won(winner) {
