@@ -114,6 +114,8 @@ var my_player = "";
 var current_player = "";
 var winner_player = "";
 
+var master_ai = true;
+
 function switch_current_player() {
    var winner = get_winner( get_table() );
    console.log("Winner:", winner);
@@ -130,21 +132,79 @@ function switch_current_player() {
    }
 }
 
+function move_opponent(move) {
+   $("#tic-tac-toe-cell-"+move[0]+"-"+move[1]).text(current_player);
+   switch_current_player();
+}
+
+function simple_ai() {
+   var pairs = [];
+   for ( var y = 0; y < 3; ++y ) {
+      for ( var x = 0; x < 3; ++x ) {
+         if ( $("#tic-tac-toe-cell-"+y+"-"+x).text() == "" ) {
+            pairs.push([y,x]);
+         }
+      }
+   }
+   return pairs[Math.floor(Math.random()*pairs.length)];
+}
+
 function play_opponent() {
    if ( current_player != my_player ) {
-      var pairs = [];
+      if ( !master_ai ) {
+         return move_opponent( simple_ai() );
+      }
+
+      // If the center is empty, place it to the center
+      var table = get_table();
+      if ( table[1][1] == "" ) {
+         return move_opponent([1,1]);
+      } 
+
+      console.log("~~~>", table);
+
       for ( var y = 0; y < 3; ++y ) {
          for ( var x = 0; x < 3; ++x ) {
-            if ( $("#tic-tac-toe-cell-"+y+"-"+x).text() == "" ) {
-               pairs.push([y,x]);
+            if ( table[y][x] == "" ) {
+               var whatif = table.map(x=>x.slice()); 
+               whatif[y][x] = my_player; 
+               if ( get_winner(whatif) == my_player ) {
+                  return move_opponent([y,x]);
+               }
             }
          }
       }
-      var move = pairs[Math.floor(Math.random()*pairs.length)];
-      $("#tic-tac-toe-cell-"+move[0]+"-"+move[1]).text(current_player);
-      console.log('--->', current_player, my_player);
-      switch_current_player();
-      console.log('--->', current_player, my_player);
+
+      for ( var y = 0; y < 3; ++y ) {
+         for ( var x = 0; x < 3; ++x ) {
+            if ( table[y][x] == "" ) {
+               var whatif = table.map(x=>x.slice()); 
+               var oplayer = (my_player == "x" ? "o" : "x");
+               whatif[y][x] = oplayer; 
+               if ( get_winner(whatif) == oplayer ) {
+                  return move_opponent([y,x]);
+               }
+            }
+         }
+      }
+
+      console.log("~~~>", table);
+
+      // else place to a corner
+      if ( table[0][0] == "" ) {
+         return move_opponent([0,0]);
+      }
+      if ( table[2][0] == "" ) {
+         return move_opponent([2,0]);
+      }
+      if ( table[0][2] == "" ) {
+         return move_opponent([0,2]);
+      }
+      if ( table[2][2] == "" ) {
+         return move_opponent([2,2]);
+      }
+
+      return move_opponent( simple_ai() );
    }
 }
 
