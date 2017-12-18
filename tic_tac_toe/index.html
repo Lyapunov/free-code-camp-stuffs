@@ -113,12 +113,12 @@ var current_player = "";
 var winner_player = "";
 
 function switch_current_player() {
-   current_player = (current_player == "o" ? "x" : "o");
    var winner = get_winner( get_table() );
    console.log("Winner:", winner);
    if ( winner != "" ) {
       won(winner);
    }
+   current_player = (current_player == "o" ? "x" : "o");
 }
 
 function play_opponent() {
@@ -185,6 +185,14 @@ function get_winner(table) {
       if ( table[0][x] != "" && table[0][x] == table[1][x] && table[0][x] == table[2][x] ) {
          return table[0][x];
       }
+   }
+
+   if ( table[0][0] != "" && table[0][0] == table[1][1] && table[0][0] == table[2][2] ) {
+      return table[0][0];
+   }
+
+   if ( table[2][0] != "" && table[2][0] == table[1][1] && table[2][0] == table[0][2] ) {
+      return table[2][0];
    }
 
    return "";
