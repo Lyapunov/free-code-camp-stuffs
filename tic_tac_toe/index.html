@@ -108,6 +108,63 @@ function resize() {
 
 $(window).on('resize', resize);
 
+var my_player = "";
+var current_player = "";
+var winner_player = "";
+
+function switch_current_player() {
+   current_player = (current_player == "o" ? "x" : "o");
+   var winner = get_winner( get_table() );
+   console.log("Winner:", winner);
+}
+
+function play_opponent() {
+   var pairs = [];
+   for ( var y = 0; y < 3; ++y ) {
+      for ( var x = 0; x < 3; ++x ) {
+         if ( $("#tic-tac-toe-cell-"+y+"-"+x).text() == "" ) {
+            pairs.push([y,x]);
+         }
+      }
+   }
+   var move = pairs[Math.floor(Math.random()*pairs.length)];
+   $("#tic-tac-toe-cell-"+move[0]+"-"+move[1]).text(current_player);
+   console.log('--->', current_player, my_player);
+   switch_current_player();
+   console.log('--->', current_player, my_player);
+}
+
+function won(winner) {
+   
+}
+
+function get_table() {
+   var table = [];
+   for ( var y = 0; y < 3; ++y ) {
+      var row = [];
+      for ( var x = 0; x < 3; ++x ) {
+         row.push( $("#tic-tac-toe-cell-"+y+"-"+x).text() );
+      }
+      table.push(row);
+   }
+   return table;
+}
+
+function get_winner(table) {
+   for ( var y = 0; y < 3; ++y ) {
+      if ( table[y][0] != "" && table[y][0] == table[y][1] && table[y][0] == table[y][2] ) {
+         return table[y][0];
+      }
+   }
+
+   for ( var x = 0; x < 3; ++x ) {
+      if ( table[0][x] != "" && table[0][x] == table[1][x] && table[0][x] == table[2][x] ) {
+         return table[0][x];
+      }
+   }
+
+   return "";
+}
 
 $(document).ready(function(){
    resize();
@@ -126,22 +183,36 @@ $(document).ready(function(){
           id: "Noughts",
           text: "O",
           click: function () {
+              my_player = "o";
+              current_player="x";
               $(this).dialog('close');
+              play_opponent();
           }
       },
       {
           id: "Crosses",
           text: "X",
           click: function () {
+              my_player = "x";
+              current_player="x";
               $(this).dialog('close');
           }
       }
       ]
    });
+
 });
 
 function button_click(event) {
-   console.log(event.target);
+   if ( !!current_player && current_player == my_player ) {
+      var bval = $("#"+event.target.id).text();
+      if ( bval == "" ) {
+         switch_current_player();
+         console.log(event.target, event.target.id);
+         $("#"+event.target.id).text(my_player);
+         play_opponent();
+      }
+   }
 }
 
 </script>
@@ -155,35 +226,35 @@ function button_click(event) {
       <table id="tic-tac-toe-main">
          <tr id="tic-tac-toe-row-0">
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-0-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-0-0" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-0-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-0-1" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
             <td class="tic-tac-toe-cell">
-              <button id="tic-tac-toe-cell-0-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
-            </td>
-         </tr>
-         <tr id="tic-tac-toe-row-1">
-            <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-1-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
-            </td>
-            <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-1-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
-            </td>
-            <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-1-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+              <button id="tic-tac-toe-cell-0-2" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
          </tr>
          <tr id="tic-tac-toe-row-1">
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-2-0" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-1-0" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-2-1" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-1-1" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
             <td class="tic-tac-toe-cell">
-               <button id="tic-tac-toe-cell-2-2" class="tic-tac-toe-cell" onclick="button_click(event);"> </button>
+               <button id="tic-tac-toe-cell-1-2" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
+            </td>
+         </tr>
+         <tr id="tic-tac-toe-row-1">
+            <td class="tic-tac-toe-cell">
+               <button id="tic-tac-toe-cell-2-0" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
+            </td>
+            <td class="tic-tac-toe-cell">
+               <button id="tic-tac-toe-cell-2-1" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
+            </td>
+            <td class="tic-tac-toe-cell">
+               <button id="tic-tac-toe-cell-2-2" class="tic-tac-toe-cell" onclick="button_click(event);"></button>
             </td>
          </tr>
       </table>
