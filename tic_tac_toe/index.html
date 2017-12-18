@@ -102,6 +102,8 @@ function resize() {
 
    $('.tic-tac-toe-cell').css('width',tsize-5);
    $('.tic-tac-toe-cell').css('height',tsize-5);
+   var fsize = Math.max(1,tsize/100);
+   $('.tic-tac-toe-cell').css('font-size',fsize+'em');
    $('#tic-tac-toe-holder').css('width',tsize*3-15);
    $('#tic-tac-toe-holder').css('margin-left',(w-tsize*3+15)/2);
 }
