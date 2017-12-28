@@ -8,19 +8,28 @@
 -->
 <style>
 
+html, body {
+  max-width: 100%;
+/*  overflow-x: hidden;
+  overflow-y: hidden;*/
+}
+
 .simon-button {
    height:200px;
    width:200px;
-   padding:0;
-   margin:0;
+   padding:0 0 0 0;
+   margin:0 0 0 0;
 }
 
 .simon-button-holder {
    vertical-align: middle;
    background:darkgray;
    display:inline-block;
-   padding:0;
-   margin:0;
+   padding:0 0 0 0;
+   margin:0 0 0 0;
+
+   /* https://css-tricks.com/fighting-the-space-between-inline-block-elements/ */
+   font-size:0;
 }
 
 </style>
@@ -67,7 +76,7 @@ $(document).ready(function(){
                   L 50 25
                   A 25 25 0 0 0 25 50
                   L 0 50
-                 " stroke="black" fill="green" stroke-width="1" fill-opacity="0.5"/> 
+                 " stroke="black" fill="green" stroke-width="1" fill-opacity="0.5"/>
          </a>
       </svg>
       <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg" style="background:lightgray;">
@@ -77,9 +86,10 @@ $(document).ready(function(){
                   L 25 50
                   A 25 25 0 0 0 0 25
                   L 0 0
-                 " stroke="black" fill="red" stroke-width="1" fill-opacity="0.5"/> 
+                 " stroke="black" fill="red" stroke-width="1" fill-opacity="0.5"/>
          </a>
       </svg>
+      </br>
       <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg" style="background:lightgray;">
          <a href="index.html">
          <path d="M 0 0
@@ -87,7 +97,7 @@ $(document).ready(function(){
                   L 50 25
                   A 25 25 0 0 1 25 0
                   L 0 0
-                 " stroke="black" fill="yellow" stroke-width="1" fill-opacity="0.5"/> 
+                 " stroke="black" fill="yellow" stroke-width="1" fill-opacity="0.5"/>
          </a>
       </svg>
       <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg" style="background:lightgray;">
@@ -97,7 +107,7 @@ $(document).ready(function(){
                   L 0 25
                   A 25 25 0 0 0 25 0
                   L 50 0
-                 " stroke="black" fill="blue" stroke-width="1" fill-opacity="0.5"/> 
+                 " stroke="black" fill="blue" stroke-width="1" fill-opacity="0.5"/>
          </a>
       </svg>
    </div>
