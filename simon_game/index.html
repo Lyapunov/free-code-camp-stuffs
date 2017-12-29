@@ -10,8 +10,8 @@
 
 html, body {
   max-width: 100%;
-/*  overflow-x: hidden;
-  overflow-y: hidden;*/
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .simon-button {
@@ -36,6 +36,14 @@ html, body {
 
    /* https://css-tricks.com/fighting-the-space-between-inline-block-elements/ */
    font-size:0;
+}
+
+.central-panel-holder {
+   position:absolute;
+   height:200px;
+   width:200px;
+   left:50%;
+   top:50%;
 }
 
 .centered {
@@ -65,7 +73,15 @@ function resize_stuffs() {
    $('.simon-button').css('width',bsize);
    $('.simon-button').css('height',bsize);
 
-   console.log(size);
+   var csize = (size - 10) / 2;
+
+   var offsets = $('#simon-button-holder-id').offset();
+   $('.central-panel-holder').css('left',offsets.left+csize/2);
+   $('.central-panel-holder').css('top',offsets.top+csize/2);
+   $('.central-panel-holder').css('width',csize);
+   $('.central-panel-holder').css('height',csize);
+
+   console.log(size, bsize,csize);
 }
 
 $(window).on('resize', resize_stuffs);
@@ -83,7 +99,7 @@ $(document).ready(function(){
 <html>
 <body>
    <div class="page-full">
-      <div class="simon-button-holder">
+      <div id="simon-button-holder-id" class="simon-button-holder">
          <!-- https://www.w3schools.com/graphics/svg_examples.asp -->
          <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg" style="background:lightgray;">
             <a href="index.html">
@@ -126,6 +142,16 @@ $(document).ready(function(){
                     " stroke="black" fill="blue" stroke-width="1" fill-opacity="0.5"/>
             </a>
          </svg>
+         <div class="central-panel-holder">
+            <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(110,110)">
+                <circle r="100" class="e-c-base"/>
+                <g transform="rotate(-90)">
+                  <circle id="e-c-progress" r="100"/>
+                </g>
+              </g>
+            </svg>
+         </div>
       </div>
    </div>
 </body>
