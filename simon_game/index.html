@@ -46,6 +46,21 @@ html, body {
    top:50%;
 }
 
+.central-panel-holder-content {
+   position:absolute;
+   height:200px;
+   width:200px;
+   left:50%;
+   top:50%;
+   color:black;
+}
+
+.central-panel-holder-third {
+   height:66px;
+   width:200px;
+   font-size:30;
+}
+
 .centered {
    white-space: normal;
    overflow-wrap:break-word;
@@ -53,6 +68,16 @@ html, body {
    display: table-cell;
    justify-content: center;
    vertical-align:middle;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
 
 </style>
@@ -80,6 +105,15 @@ function resize_stuffs() {
    $('.central-panel-holder').css('top',offsets.top+csize/2);
    $('.central-panel-holder').css('width',csize);
    $('.central-panel-holder').css('height',csize);
+
+   $('.central-panel-holder-content').css('left',offsets.left+csize/2);
+   $('.central-panel-holder-content').css('top',offsets.top+csize/2);
+   $('.central-panel-holder-content').css('width',csize);
+   $('.central-panel-holder-content').css('height',csize);
+
+   $('.central-panel-holder-third').css('width',csize);
+   $('.central-panel-holder-third').css('height',Math.floor(csize/3));
+   $('.central-panel-holder-third').css('font-size', Math.floor(size*0.035));
 
    console.log(size, bsize,csize);
 }
@@ -151,6 +185,11 @@ $(document).ready(function(){
                 </g>
               </g>
             </svg>
+         </div>
+         <div class="central-panel-holder-content">
+            <div class="central-panel-holder-third centered">
+               <p class="noselect">Simon &#x24c7;</p>
+            </div>
          </div>
       </div>
    </div>
