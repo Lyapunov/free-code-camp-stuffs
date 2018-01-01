@@ -55,7 +55,13 @@ html, body {
    color:black;
 }
 
-.central-panel-holder-third {
+.central-panel-holder-half {
+   height:66px;
+   width:200px;
+   font-size:30;
+}
+
+.central-panel-holder-quarter {
    height:66px;
    width:200px;
    font-size:30;
@@ -111,9 +117,12 @@ function resize_stuffs() {
    $('.central-panel-holder-content').css('width',csize);
    $('.central-panel-holder-content').css('height',csize);
 
-   $('.central-panel-holder-third').css('width',csize);
-   $('.central-panel-holder-third').css('height',Math.floor(csize/3));
-   $('.central-panel-holder-third').css('font-size', Math.floor(size*0.035));
+   $('.central-panel-holder-half').css('width',csize);
+   $('.central-panel-holder-half').css('height',Math.floor(csize/2));
+   $('.central-panel-holder-half').css('font-size', Math.floor(size*0.05));
+
+   $('.central-panel-holder-quarter').css('width',csize);
+   $('.central-panel-holder-quarter').css('height',Math.floor(csize/4));
 
    console.log(size, bsize,csize);
 }
@@ -187,8 +196,11 @@ $(document).ready(function(){
             </svg>
          </div>
          <div class="central-panel-holder-content">
-            <div class="central-panel-holder-third centered">
+            <div class="central-panel-holder-half centered">
                <p class="noselect">Simon &#x24c7;</p>
+            </div>
+            <br/>
+            <div class="central-panel-holder-quarter centered">
             </div>
          </div>
       </div>
