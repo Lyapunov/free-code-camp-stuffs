@@ -246,6 +246,7 @@ var isready = false;
 var buttonsenabled = true;
 var ison = false;
 var stack = [];
+var stackptr = 0;
 
 $(document).ready(function(){
    resize_stuffs();
@@ -290,22 +291,51 @@ function enable_machine() {
    $('#central-panel-counter').css({color:'red'});
 }
 
+function set_counter() {
+   $('#central-panel-counter').text(""+((stack.length-(stack.length%10))/10)+(stack.length%10));
+}
+
+function add_new_color_to_stack() {
+   var colors = ['red','green','blue','yellow'];
+
+   if ( stack.length ) {
+      var sind = colors.indexOf(stack[-1]);
+      stack.push( colors[(sind+1+Math.floor(Math.random()*3))%4] );
+   } else {
+      stack.push( colors[Math.floor(Math.random()*4)] );
+   }
+}
+
+var cols = {};
+cols['green-up']   = "#80e080";
+cols['green-down'] = "#40c040";
+cols['red-up']   = "#e08080";
+cols['red-down'] = "#c04040";
+cols['blue-up']   = "#8080e0";
+cols['blue-down'] = "#4040c0";
+cols['yellow-up']   = "#e0e080";
+cols['yellow-down'] = "#c0c040";
+
+function play_stack() {
+   var anim = [];
+   anim.push([_=>disable_buttons(),0]);
+   var first = true;
+   for ( var i = 0; i < stack.length; ++i ) {
+      var color = stack[i];
+      anim.push( [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),250] );
+      anim.push( [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),750] );
+   }
+   anim.push([_=>enable_buttons(),0]);
+   runEventChain(anim);
+}
+
 function big_button_click(color) {
-   if ( isready && buttonsenabled && ison && ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) ) {
+   if ( isready && buttonsenabled && ison && stack.length && ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) ) {
       console.log('clicked bigbuton: ',color);
-      var cols = {};
-      cols['green-up']   = "#80e080";
-      cols['green-down'] = "#40c040";
-      cols['red-up']   = "#e08080";
-      cols['red-down'] = "#c04040";
-      cols['blue-up']   = "#8080e0";
-      cols['blue-down'] = "#4040c0";
-      cols['yellow-up']   = "#e0e080";
-      cols['yellow-down'] = "#c0c040";
 
       runEventChain([[_=>disable_buttons(),0],
-                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),400],
-                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),800],
+                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),250],
+                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),750],
                      [_=>enable_buttons(),0]]);
       return ;
    } 
@@ -326,6 +356,13 @@ function big_button_click(color) {
          var tarleft = Math.round(offsets.left+csize*0.50+(csize*0.40));
          $('#central-panel-onoff-button').animate({'left':tarleft}, time);
       }
+   }
+
+   if ( isready && buttonsenabled && ison && color=="start" && !stack.length ) {
+      add_new_color_to_stack();
+      set_counter();
+      play_stack();
+      stackptr = 0;
    }
 }
 
