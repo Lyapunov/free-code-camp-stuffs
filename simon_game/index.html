@@ -48,10 +48,6 @@ html, body {
 
 .central-panel-holder-content {
    position:absolute;
-   height:200px;
-   width:200px;
-   left:50%;
-   top:50%;
    color:black;
 }
 
@@ -59,6 +55,8 @@ html, body {
    height:66px;
    width:200px;
    font-size:30;
+   display:inline-block;
+   position:relative;
 }
 
 .centered {
@@ -78,6 +76,25 @@ html, body {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+#central-panel-simontext {
+   position: absolute;
+   top:25%;
+   left:30%;
+   width:40%;
+   text-align: center;
+}
+
+#central-panel-rtext {
+   position: absolute;
+   top:25%;
+   left:70%;
+   text-align: center;
+}
+
+p {
+   display:inline-block;
 }
 
 </style>
@@ -113,7 +130,8 @@ function resize_stuffs() {
 
    $('.central-panel-holder-quarter').css('width',csize);
    $('.central-panel-holder-quarter').css('height',Math.floor(csize/4));
-   $('.central-panel-holder-quarter').css('font-size', Math.floor(size*0.05));
+   $('#central-panel-simontext').css('font-size', Math.floor(size*0.05));
+   $('#central-panel-rtext').css('font-size', Math.floor(size*0.02));
 
    console.log(size, bsize,csize);
 }
@@ -190,11 +208,11 @@ $(document).ready(function(){
             <div class="central-panel-holder-quarter centered">
             </div>
             <br/>
-            <div class="central-panel-holder-quarter centered">
-               <p class="noselect">Simon &#x24c7;</p>
+            <div class="central-panel-holder-quarter" style="background:magenta;">
+               <p id="central-panel-simontext" class="noselect" style="background:cyan">Simon</p>
+               <p id="central-panel-rtext" class="noselect" style="background:yellow">&#x24c7;</p>
             </div>
-            <br/>
-            <div class="central-panel-holder-quarter centered">
+            <div class="central-panel-holder-quarter centered" style="background:gray">
             </div>
          </div>
       </div>
