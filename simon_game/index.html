@@ -259,11 +259,11 @@ function runEventChain(eventChain) {
       var rest  = eventChain.slice(1);
       if ( first[1] > 0 ) {
          setTimeout(function() {
-            first[0]();
+            first[0](first[2]);
             runEventChain(rest);
          },first[1]);
       } else {
-         first[0]();
+         first[0](first[2]);
          runEventChain(rest);
       }
    }
@@ -298,12 +298,8 @@ function set_counter() {
 function add_new_color_to_stack() {
    var colors = ['red','green','blue','yellow'];
 
-   if ( stack.length ) {
-      var sind = colors.indexOf(stack[-1]);
-      stack.push( colors[(sind+1+Math.floor(Math.random()*3))%4] );
-   } else {
-      stack.push( colors[Math.floor(Math.random()*4)] );
-   }
+   stack.push( colors[Math.floor(Math.random()*4)] );
+   console.log('stack is:',stack);
 }
 
 var cols = {};
@@ -321,12 +317,28 @@ function play_stack() {
    anim.push([_=>disable_buttons(),0]);
    var first = true;
    for ( var i = 0; i < stack.length; ++i ) {
-      var color = stack[i];
-      anim.push( [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),250] );
-      anim.push( [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),750] );
+      anim.push( [i=>$('#big-'+stack[i]+'-button').css({fill:cols[stack[i]+'-up']}),250,i] );
+      anim.push( [i=>$('#big-'+stack[i]+'-button').css({fill:cols[stack[i]+'-down']}),750,i] );
    }
    anim.push([_=>enable_buttons(),0]);
+   console.log(anim);
    runEventChain(anim);
+}
+
+function guess(color) {
+   if ( color == stack[stackptr] ) {
+      ++stackptr;
+      if ( stackptr == stack.length ) {
+         add_new_color_to_stack();
+         set_counter();
+         play_stack();
+         stackptr = 0;
+      }
+   } else {
+      // falling out of grace
+      stackptr = 0;
+      play_stack();
+   }
 }
 
 function big_button_click(color) {
@@ -336,7 +348,8 @@ function big_button_click(color) {
       runEventChain([[_=>disable_buttons(),0],
                      [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),250],
                      [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),750],
-                     [_=>enable_buttons(),0]]);
+                     [_=>enable_buttons(),0],
+                     [_=>guess(color)]]);
       return ;
    } 
 
