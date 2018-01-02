@@ -102,6 +102,7 @@ html, body {
 #central-panel-strict-lamp-blocker {
    position: absolute;
    text-align: center;
+   visibility:visible;
 }
 
 #central-panel-count-text {
@@ -282,6 +283,7 @@ function enable_buttons() {
 function disable_machine() {
    ison = false;
    $('#central-panel-counter').css({color:'black'});
+   $('#central-panel-strict-lamp-blocker').css('visibility','visible');
 }
 
 function enable_machine() {
@@ -347,8 +349,16 @@ function guess(color) {
    } else {
       // falling out of grace
       stackptr = 0;
+      if ( is_in_strict() ) {
+         stack = [];
+         add_new_color_to_stack();
+      }
       play_stack(true);
    }
+}
+
+function is_in_strict() {
+   return $('#central-panel-strict-lamp-blocker').css('visibility') == "hidden";
 }
 
 function big_button_click(color) {
@@ -386,6 +396,15 @@ function big_button_click(color) {
       set_counter();
       play_stack();
       stackptr = 0;
+   }
+
+   if ( isready && buttonsenabled && ison && color=="strict" ) {
+      console.log('---', $('#central-panel-strict-lamp-blocker').css('visibility'));
+      if ( is_in_strict() ) {
+         $('#central-panel-strict-lamp-blocker').css('visibility','visible');
+      } else {
+         $('#central-panel-strict-lamp-blocker').css('visibility','hidden');
+      }
    }
 }
 
