@@ -278,11 +278,21 @@ function enable_buttons() {
 
 function big_button_click(color) {
    if ( isready && buttonsenabled ) {
-      console.log('clicked: ',color);
+      console.log('clicked: ',color,color+'-up');
       if ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) {
+         var cols = {};
+         cols['green-up']   = "#80e080";
+         cols['green-down'] = "#40c040";
+         cols['red-up']   = "#e08080";
+         cols['red-down'] = "#c04040";
+         cols['blue-up']   = "#8080e0";
+         cols['blue-down'] = "#4040c0";
+         cols['yellow-up']   = "#e0e080";
+         cols['yellow-down'] = "#c0c040";
+
          runEventChain([[_=>disable_buttons(),0],
-                        [_=>$('#big-'+color+'-button').css({fill:"#80e080"}),400],
-                        [_=>$('#big-'+color+'-button').css({fill:"#40c040"}),800],
+                        [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),400],
+                        [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),800],
                         [_=>enable_buttons(),0]]);
       }
    } else {
@@ -350,7 +360,7 @@ function big_button_click(color) {
                      L 0 25
                      A 25 25 0 0 0 25 0
                      L 50 0
-                    " stroke="black" fill="#4040C0" stroke-width="1" onclick="big_button_click('blue');" class="big-button" id="big-yellow-button"/>
+                    " stroke="black" fill="#4040C0" stroke-width="1" onclick="big_button_click('blue');" class="big-button" id="big-blue-button"/>
             <g transform="translate(0,0)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
