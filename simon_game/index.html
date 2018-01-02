@@ -150,7 +150,12 @@ p {
    display:inline-block;
 }
 
+.big-button {
+   cursor:pointer;
+}
+
 </style>
+
 
 <!-- 
   JS 
@@ -241,6 +246,10 @@ $(document).ready(function(){
    resize_stuffs();
 });
 
+function big_button_click(color) {
+   console.log('clicked: ',color);
+}
+
 </script>
 
 <!-- 
@@ -253,14 +262,12 @@ $(document).ready(function(){
       <div id="simon-button-holder-id" class="simon-button-holder">
          <!-- https://www.w3schools.com/graphics/svg_examples.asp -->
          <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg">
-            <a href="index.html">
             <path d="M 0 50
                      A 50 50 0 0 1 50 00
                      L 50 25
                      A 25 25 0 0 0 25 50
                      L 0 50
-                    " stroke="black" fill="#40C040" stroke-width="1"/>
-            </a>
+                    " stroke="black" fill="#40C040" stroke-width="1" onclick="big_button_click('green');" class="big-button"/>
             <g transform="translate(50,50)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -269,14 +276,12 @@ $(document).ready(function(){
             </g>
          </svg>
          <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg">
-            <a href="index.html">
             <path d="M 0 0
                      A 50 50 0 0 1 50 50
                      L 25 50
                      A 25 25 0 0 0 0 25
                      L 0 0
-                    " stroke="black" fill="#C04040" stroke-width="1"/>
-            </a>
+                    " stroke="black" fill="#C04040" stroke-width="1" onclick="big_button_click('red');" class="big-button"/>
             <g transform="translate(0,50)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -286,14 +291,12 @@ $(document).ready(function(){
          </svg>
          </br>
          <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg">
-            <a href="index.html">
             <path d="M 0 0
                      A 50 50 0 0 0 50 50
                      L 50 25
                      A 25 25 0 0 1 25 0
                      L 0 0
-                    " stroke="black" fill="#C0C040" stroke-width="1"/>
-            </a>
+                    " stroke="black" fill="#C0C040" stroke-width="1" onclick="big_button_click('yellow');" class="big-button"/>
             <g transform="translate(50,0)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -302,14 +305,12 @@ $(document).ready(function(){
             </g>
          </svg>
          <svg class="simon-button" viewBox="-1 -1 52 52" xmlns="http://www.w3.org/2000/svg">
-            <a href="index.html">
             <path d="M 50 0
                      A 50 50 0 0 1 0 50
                      L 0 25
                      A 25 25 0 0 0 25 0
                      L 50 0
-                    " stroke="black" fill="#4040C0" stroke-width="1"/>
-            </a>
+                    " stroke="black" fill="#4040C0" stroke-width="1" onclick="big_button_click('blue');" class="big-button"/>
             <g transform="translate(0,0)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
