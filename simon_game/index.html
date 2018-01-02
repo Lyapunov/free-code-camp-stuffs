@@ -105,7 +105,7 @@ html, body {
 
 #central-panel-start-button {
    position: absolute;
-   top:0%;
+   top:10%;
    left:45%;
    text-align: center;
    width:10%;
@@ -113,7 +113,7 @@ html, body {
 
 #central-panel-strict-button {
    position: absolute;
-   top:0%;
+   top:10%;
    left:70%;
    text-align: center;
    width:10%;
@@ -121,7 +121,7 @@ html, body {
 
 #central-panel-strict-lamp {
    position: absolute;
-   top:0%;
+   top:10%;
    left:65%;
    text-align: center;
    width:3%;
@@ -129,7 +129,7 @@ html, body {
 
 #central-panel-strict-lamp-blocker {
    position: absolute;
-   top:0%;
+   top:10%;
    left:65%;
    text-align: center;
    width:3%;
@@ -156,6 +156,44 @@ html, body {
    top:60%;
    left:65%;
    width:20%;
+   text-align: center;
+}
+
+#central-panel-onoff-body {
+   position: absolute;
+   top:20%;
+   left:40%;
+   width:20%;
+   height:20%;
+   background:black;
+   color:black;
+   font-size:0;
+}
+
+#central-panel-onoff-button {
+   position: absolute;
+   top:20%;
+   left:50%;
+   width:10%;
+   height:20%;
+   background:blue;
+   color:black;
+   font-size:0;
+}
+
+#central-panel-on-text {
+   position: absolute;
+   top:20%;
+   left:30%;
+   width:10%;
+   text-align: center;
+}
+
+#central-panel-off-text {
+   position: absolute;
+   top:20%;
+   left:60%;
+   width:10%;
    text-align: center;
 }
 
@@ -202,6 +240,8 @@ function resize_stuffs() {
    $('#central-panel-count-text').css('font-size', Math.floor(size*0.02));
    $('#central-panel-start-text').css('font-size', Math.floor(size*0.02));
    $('#central-panel-strict-text').css('font-size', Math.floor(size*0.02));
+   $('#central-panel-on-text').css('font-size', Math.floor(size*0.02));
+   $('#central-panel-off-text').css('font-size', Math.floor(size*0.02));
 
    console.log(size, bsize,csize);
 }
@@ -278,20 +318,21 @@ $(document).ready(function(){
             <div class="central-panel-holder-quarter centered">
             </div>
             <br/>
-            <div class="central-panel-holder-quarter" style="background:magenta;">
-               <p id="central-panel-simontext" class="noselect" style="background:cyan">Simon</p>
-               <p id="central-panel-rtext" class="noselect" style="background:yellow">&#x24c7;</p>
+            <div class="central-panel-holder-quarter">
+               <p id="central-panel-simontext" class="noselect">Simon</p>
+               <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
             </div>
-            <div class="central-panel-holder-quarter centered" style="background:gray">
+            <br/>
+            <div class="central-panel-holder-quarter centered">
                <p id="central-panel-counter" class="noselect">00</p>
                <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
                    <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="red" stroke-width="5"/>
+                   <circle r="100" stroke="black" fill="red" stroke-width="10"/>
                    </g>
                </svg>
                <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
                    <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="yellow" stroke-width="5"/>
+                   <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
                    </g>
                </svg>
                <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
@@ -307,6 +348,13 @@ $(document).ready(function(){
                <p id="central-panel-count-text" class="noselect">COUNT</p>
                <p id="central-panel-start-text" class="noselect">START</p>
                <p id="central-panel-strict-text" class="noselect">STRICT</p>
+            </div>
+            <br/>
+            <div class="central-panel-holder-quarter centered">
+               <p id="central-panel-onoff-body" class="noselect">-</p>
+               <p id="central-panel-on-text" class="noselect">ON</p>
+               <p id="central-panel-off-text" class="noselect">OFF</p>
+               <p id="central-panel-onoff-button" class="noselect">OFF</p>
             </div>
          </div>
       </div>
