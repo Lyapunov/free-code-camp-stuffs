@@ -323,6 +323,22 @@ cols['blue-down'] = "#4040c0";
 cols['yellow-up']   = "#e0e080";
 cols['yellow-down'] = "#c0c040";
 
+function play_color_audio(color) {
+   var audio;
+   console.log(color);
+   if ( color == "green" ) {
+      audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
+   } else if ( color == "red" ) {
+      audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3');
+   } else if ( color == "yellow" ) {
+      audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3');
+   } else if ( color == "blue" ) {
+      audio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3');
+   }
+
+   audio.play();
+}
+
 function play_stack(warn=false,fin=false) {
    var anim = [];
    anim.push([_=>disable_buttons(),0]);
@@ -335,6 +351,7 @@ function play_stack(warn=false,fin=false) {
    var first = true;
    for ( var i = 0; i < stack.length; ++i ) {
       anim.push( [i=>$('#big-'+stack[i]+'-button').css({fill:cols[stack[i]+'-up']}),250,i] );
+      anim.push( [i=>play_color_audio(stack[i]),0,i] );
       anim.push( [i=>$('#big-'+stack[i]+'-button').css({fill:cols[stack[i]+'-down']}),750,i] );
    }
    anim.push([_=>enable_buttons(),0]);
@@ -378,6 +395,7 @@ function big_button_click(color) {
 
       runEventChain([[_=>disable_buttons(),0],
                      [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),250],
+                     [_=>play_color_audio(color),0],
                      [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),750],
                      [_=>enable_buttons(),0],
                      [_=>guess(color)]]);
