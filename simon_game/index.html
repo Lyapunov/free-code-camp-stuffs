@@ -223,7 +223,7 @@ function resize_stuffs() {
    $('#central-panel-off-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
    $('#central-panel-off-text').css('width',Math.round(csize*0.10));
    $('#central-panel-off-text').css('height',Math.round(csize*0.05));
-   $('#central-panel-onoff-button').css('left',Math.round(offsets.left+csize*0.50+(csize*0.50)));
+   $('#central-panel-onoff-button').css('left',Math.round(offsets.left+csize*0.50+(csize*(ison?0.40:0.50))));
    $('#central-panel-onoff-button').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
    $('#central-panel-onoff-button').css('width',Math.round(csize*0.10));
    $('#central-panel-onoff-button').css('height',Math.round(csize*0.05));
@@ -244,6 +244,7 @@ $(window).on('resize', resize_stuffs);
 
 var isready = false;
 var buttonsenabled = true;
+var ison = false;
 
 $(document).ready(function(){
    resize_stuffs();
@@ -276,27 +277,53 @@ function enable_buttons() {
    $('.big-button').css({cursor:"pointer"})
 }
 
-function big_button_click(color) {
-   if ( isready && buttonsenabled ) {
-      console.log('clicked: ',color,color+'-up');
-      if ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) {
-         var cols = {};
-         cols['green-up']   = "#80e080";
-         cols['green-down'] = "#40c040";
-         cols['red-up']   = "#e08080";
-         cols['red-down'] = "#c04040";
-         cols['blue-up']   = "#8080e0";
-         cols['blue-down'] = "#4040c0";
-         cols['yellow-up']   = "#e0e080";
-         cols['yellow-down'] = "#c0c040";
+function disable_machine() {
+   ison = false;
+   $('#central-panel-counter').css({color:'black'});
+}
 
-         runEventChain([[_=>disable_buttons(),0],
-                        [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),400],
-                        [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),800],
-                        [_=>enable_buttons(),0]]);
+function enable_machine() {
+   ison = true;
+   $('#central-panel-counter').css({color:'red'});
+}
+
+
+function big_button_click(color) {
+   if ( isready && buttonsenabled && ison && ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) ) {
+      console.log('clicked bigbuton: ',color);
+      var cols = {};
+      cols['green-up']   = "#80e080";
+      cols['green-down'] = "#40c040";
+      cols['red-up']   = "#e08080";
+      cols['red-down'] = "#c04040";
+      cols['blue-up']   = "#8080e0";
+      cols['blue-down'] = "#4040c0";
+      cols['yellow-up']   = "#e0e080";
+      cols['yellow-down'] = "#c0c040";
+
+      runEventChain([[_=>disable_buttons(),0],
+                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-up']}),400],
+                     [_=>$('#big-'+color+'-button').css({fill:cols[color+'-down']}),800],
+                     [_=>enable_buttons(),0]]);
+      return ;
+   } 
+
+   if ( isready && buttonsenabled && color=="onoff" ) {
+      var time =250;
+      var offsets = $('#simon-button-holder-id').offset();
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var size = Math.floor(Math.min(w,h));
+      var csize = (size - 10) / 2;
+      if ( ison ) {
+         disable_machine();
+         var tarleft = Math.round(offsets.left+csize*0.50+(csize*0.50));
+         $('#central-panel-onoff-button').animate({'left':tarleft}, time);
+      } else {
+         enable_machine();
+         var tarleft = Math.round(offsets.left+csize*0.50+(csize*0.40));
+         $('#central-panel-onoff-button').animate({'left':tarleft}, time);
       }
-   } else {
-      console.log('disabled buttons!');
    }
 }
 
