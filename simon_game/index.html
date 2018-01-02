@@ -245,6 +245,7 @@ $(window).on('resize', resize_stuffs);
 var isready = false;
 var buttonsenabled = true;
 var ison = false;
+var stack = [];
 
 $(document).ready(function(){
    resize_stuffs();
@@ -284,10 +285,10 @@ function disable_machine() {
 
 function enable_machine() {
    ison = true;
+   stack = [];
    $('#central-panel-counter').text('--');
    $('#central-panel-counter').css({color:'red'});
 }
-
 
 function big_button_click(color) {
    if ( isready && buttonsenabled && ison && ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) ) {
