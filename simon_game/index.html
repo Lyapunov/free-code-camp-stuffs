@@ -284,6 +284,7 @@ function disable_machine() {
 
 function enable_machine() {
    ison = true;
+   $('#central-panel-counter').text('--');
    $('#central-panel-counter').css({color:'red'});
 }
 
@@ -397,7 +398,7 @@ function big_button_click(color) {
          </svg>
          <p id="central-panel-simontext" class="noselect">Simon</p>
          <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
-         <p id="central-panel-counter" class="noselect">--</p>
+         <p id="central-panel-counter" class="noselect">++</p>
          <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" onclick="big_button_click('start');" class="big-button">
              <g transform="translate(110,110)">
              <circle r="100" stroke="black" fill="red" stroke-width="10"/>
