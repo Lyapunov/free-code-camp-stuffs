@@ -295,6 +295,10 @@ function set_counter() {
    $('#central-panel-counter').text(""+((stack.length-(stack.length%10))/10)+(stack.length%10));
 }
 
+function set_warning() {
+   $('#central-panel-counter').text("!!");
+}
+
 function add_new_color_to_stack() {
    var colors = ['red','green','blue','yellow'];
 
@@ -312,9 +316,15 @@ cols['blue-down'] = "#4040c0";
 cols['yellow-up']   = "#e0e080";
 cols['yellow-down'] = "#c0c040";
 
-function play_stack() {
+function play_stack(warn=false) {
    var anim = [];
    anim.push([_=>disable_buttons(),0]);
+   if ( warn ) {
+      anim.push([_=>set_warning(),0]);
+      anim.push([_=>set_counter(),1000]);
+   } else {
+      anim.push([_=>_,1000]);
+   }
    var first = true;
    for ( var i = 0; i < stack.length; ++i ) {
       anim.push( [i=>$('#big-'+stack[i]+'-button').css({fill:cols[stack[i]+'-up']}),250,i] );
@@ -337,7 +347,7 @@ function guess(color) {
    } else {
       // falling out of grace
       stackptr = 0;
-      play_stack();
+      play_stack(true);
    }
 }
 
