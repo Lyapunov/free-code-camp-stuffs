@@ -51,14 +51,6 @@ html, body {
    color:black;
 }
 
-.central-panel-holder-quarter {
-   height:66px;
-   width:200px;
-   font-size:30;
-   display:inline-block;
-   position:relative;
-}
-
 .centered {
    white-space: normal;
    overflow-wrap:break-word;
@@ -80,7 +72,7 @@ html, body {
 
 #central-panel-simontext {
    position: absolute;
-   top:0%;
+   top:25%;
    left:24%;
    width:52%;
    text-align: center;
@@ -88,14 +80,14 @@ html, body {
 
 #central-panel-rtext {
    position: absolute;
-   top:0%;
+   top:25%;
    left:74%;
    text-align: center;
 }
 
 #central-panel-counter {
    position: absolute;
-   top:0%;
+   top:50%;
    left:15%;
    width:20%;
    text-align: center;
@@ -105,7 +97,7 @@ html, body {
 
 #central-panel-start-button {
    position: absolute;
-   top:10%;
+   top:52%;
    left:45%;
    text-align: center;
    width:10%;
@@ -113,7 +105,7 @@ html, body {
 
 #central-panel-strict-button {
    position: absolute;
-   top:10%;
+   top:52%;
    left:70%;
    text-align: center;
    width:10%;
@@ -121,7 +113,7 @@ html, body {
 
 #central-panel-strict-lamp {
    position: absolute;
-   top:10%;
+   top:52%;
    left:65%;
    text-align: center;
    width:3%;
@@ -129,7 +121,7 @@ html, body {
 
 #central-panel-strict-lamp-blocker {
    position: absolute;
-   top:10%;
+   top:52%;
    left:65%;
    text-align: center;
    width:3%;
@@ -137,7 +129,7 @@ html, body {
 
 #central-panel-count-text {
    position: absolute;
-   top:60%;
+   top:65%;
    left:15%;
    width:20%;
    text-align: center;
@@ -145,7 +137,7 @@ html, body {
 
 #central-panel-start-text {
    position: absolute;
-   top:60%;
+   top:65%;
    left:40%;
    width:20%;
    text-align: center;
@@ -153,7 +145,7 @@ html, body {
 
 #central-panel-strict-text {
    position: absolute;
-   top:60%;
+   top:65%;
    left:65%;
    width:20%;
    text-align: center;
@@ -161,10 +153,10 @@ html, body {
 
 #central-panel-onoff-body {
    position: absolute;
-   top:20%;
+   top:80%;
    left:40%;
    width:20%;
-   height:20%;
+   height:5%;
    background:black;
    color:black;
    font-size:0;
@@ -172,10 +164,10 @@ html, body {
 
 #central-panel-onoff-button {
    position: absolute;
-   top:20%;
+   top:80%;
    left:50%;
    width:10%;
-   height:20%;
+   height:5%;
    background:blue;
    color:black;
    font-size:0;
@@ -183,7 +175,7 @@ html, body {
 
 #central-panel-on-text {
    position: absolute;
-   top:20%;
+   top:80%;
    left:30%;
    width:10%;
    text-align: center;
@@ -191,7 +183,7 @@ html, body {
 
 #central-panel-off-text {
    position: absolute;
-   top:20%;
+   top:80%;
    left:60%;
    width:10%;
    text-align: center;
@@ -232,8 +224,6 @@ function resize_stuffs() {
    $('.central-panel-holder-content').css('width',csize);
    $('.central-panel-holder-content').css('height',csize);
 
-   $('.central-panel-holder-quarter').css('width',csize);
-   $('.central-panel-holder-quarter').css('height',Math.floor(csize/4));
    $('#central-panel-simontext').css('font-size', Math.floor(size*0.08));
    $('#central-panel-rtext').css('font-size', Math.floor(size*0.02));
    $('#central-panel-counter').css('font-size', Math.floor(size*0.05));
@@ -313,47 +303,37 @@ $(document).ready(function(){
            </g>
          </svg>
          <div class="central-panel-holder-content">
-            <div class="central-panel-holder-quarter centered">
-            </div>
-            <br/>
-            <div class="central-panel-holder-quarter">
-               <p id="central-panel-simontext" class="noselect">Simon</p>
-               <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
-            </div>
-            <br/>
-            <div class="central-panel-holder-quarter centered">
-               <p id="central-panel-counter" class="noselect">00</p>
-               <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                   <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="red" stroke-width="10"/>
-                   </g>
-               </svg>
-               <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                   <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
-                   </g>
-               </svg>
-               <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                   <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="lightgreen"/>
-                   </g>
-               </svg>
-               <svg id="central-panel-strict-lamp-blocker" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                   <g transform="translate(110,110)">
-                   <circle r="100" stroke="black" fill="black"/>
-                   </g>
-               </svg>
-               <p id="central-panel-count-text" class="noselect">COUNT</p>
-               <p id="central-panel-start-text" class="noselect">START</p>
-               <p id="central-panel-strict-text" class="noselect">STRICT</p>
-            </div>
-            <br/>
-            <div class="central-panel-holder-quarter centered">
-               <p id="central-panel-onoff-body" class="noselect">-</p>
-               <p id="central-panel-on-text" class="noselect">ON</p>
-               <p id="central-panel-off-text" class="noselect">OFF</p>
-               <p id="central-panel-onoff-button" class="noselect">OFF</p>
-            </div>
+            <p id="central-panel-simontext" class="noselect">Simon</p>
+            <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
+
+            <p id="central-panel-counter" class="noselect">00</p>
+            <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(110,110)">
+                <circle r="100" stroke="black" fill="red" stroke-width="10"/>
+                </g>
+            </svg>
+            <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(110,110)">
+                <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
+                </g>
+            </svg>
+            <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(110,110)">
+                <circle r="100" stroke="black" fill="lightgreen"/>
+                </g>
+            </svg>
+            <svg id="central-panel-strict-lamp-blocker" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(110,110)">
+                <circle r="100" stroke="black" fill="black"/>
+                </g>
+            </svg>
+            <p id="central-panel-count-text" class="noselect">COUNT</p>
+            <p id="central-panel-start-text" class="noselect">START</p>
+            <p id="central-panel-strict-text" class="noselect">STRICT</p>
+            <p id="central-panel-onoff-body" class="noselect">-</p>
+            <p id="central-panel-on-text" class="noselect">ON</p>
+            <p id="central-panel-off-text" class="noselect">OFF</p>
+            <p id="central-panel-onoff-button" class="noselect">OFF</p>
          </div>
       </div>
    </div>
