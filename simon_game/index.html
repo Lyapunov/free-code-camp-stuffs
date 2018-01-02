@@ -93,6 +93,72 @@ html, body {
    text-align: center;
 }
 
+#central-panel-counter {
+   position: absolute;
+   top:0%;
+   left:15%;
+   width:20%;
+   text-align: center;
+   background: black;
+   color: black;
+}
+
+#central-panel-start-button {
+   position: absolute;
+   top:0%;
+   left:45%;
+   text-align: center;
+   width:10%;
+}
+
+#central-panel-strict-button {
+   position: absolute;
+   top:0%;
+   left:70%;
+   text-align: center;
+   width:10%;
+}
+
+#central-panel-strict-lamp {
+   position: absolute;
+   top:0%;
+   left:65%;
+   text-align: center;
+   width:3%;
+}
+
+#central-panel-strict-lamp-blocker {
+   position: absolute;
+   top:0%;
+   left:65%;
+   text-align: center;
+   width:3%;
+}
+
+#central-panel-count-text {
+   position: absolute;
+   top:60%;
+   left:15%;
+   width:20%;
+   text-align: center;
+}
+
+#central-panel-start-text {
+   position: absolute;
+   top:60%;
+   left:40%;
+   width:20%;
+   text-align: center;
+}
+
+#central-panel-strict-text {
+   position: absolute;
+   top:60%;
+   left:65%;
+   width:20%;
+   text-align: center;
+}
+
 p {
    display:inline-block;
 }
@@ -132,6 +198,10 @@ function resize_stuffs() {
    $('.central-panel-holder-quarter').css('height',Math.floor(csize/4));
    $('#central-panel-simontext').css('font-size', Math.floor(size*0.05));
    $('#central-panel-rtext').css('font-size', Math.floor(size*0.02));
+   $('#central-panel-counter').css('font-size', Math.floor(size*0.05));
+   $('#central-panel-count-text').css('font-size', Math.floor(size*0.02));
+   $('#central-panel-start-text').css('font-size', Math.floor(size*0.02));
+   $('#central-panel-strict-text').css('font-size', Math.floor(size*0.02));
 
    console.log(size, bsize,csize);
 }
@@ -213,6 +283,30 @@ $(document).ready(function(){
                <p id="central-panel-rtext" class="noselect" style="background:yellow">&#x24c7;</p>
             </div>
             <div class="central-panel-holder-quarter centered" style="background:gray">
+               <p id="central-panel-counter" class="noselect">00</p>
+               <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                   <g transform="translate(110,110)">
+                   <circle r="100" stroke="black" fill="red" stroke-width="5"/>
+                   </g>
+               </svg>
+               <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                   <g transform="translate(110,110)">
+                   <circle r="100" stroke="black" fill="yellow" stroke-width="5"/>
+                   </g>
+               </svg>
+               <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                   <g transform="translate(110,110)">
+                   <circle r="100" stroke="black" fill="lightgreen"/>
+                   </g>
+               </svg>
+               <svg id="central-panel-strict-lamp-blocker" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                   <g transform="translate(110,110)">
+                   <circle r="100" stroke="black" fill="black"/>
+                   </g>
+               </svg>
+               <p id="central-panel-count-text" class="noselect">COUNT</p>
+               <p id="central-panel-start-text" class="noselect">START</p>
+               <p id="central-panel-strict-text" class="noselect">STRICT</p>
             </div>
          </div>
       </div>
