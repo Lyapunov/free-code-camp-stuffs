@@ -46,11 +46,6 @@ html, body {
    top:50%;
 }
 
-.central-panel-holder-content {
-   position:absolute;
-   color:black;
-}
-
 .centered {
    white-space: normal;
    overflow-wrap:break-word;
@@ -72,24 +67,16 @@ html, body {
 
 #central-panel-simontext {
    position: absolute;
-   top:25%;
-   left:24%;
-   width:52%;
    text-align: center;
 }
 
 #central-panel-rtext {
    position: absolute;
-   top:25%;
-   left:74%;
    text-align: center;
 }
 
 #central-panel-counter {
    position: absolute;
-   top:50%;
-   left:15%;
-   width:20%;
    text-align: center;
    background: black;
    color: black;
@@ -97,66 +84,41 @@ html, body {
 
 #central-panel-start-button {
    position: absolute;
-   top:52%;
-   left:45%;
    text-align: center;
-   width:10%;
 }
 
 #central-panel-strict-button {
    position: absolute;
-   top:52%;
-   left:70%;
    text-align: center;
-   width:10%;
 }
 
 #central-panel-strict-lamp {
    position: absolute;
-   top:52%;
-   left:65%;
    text-align: center;
-   width:3%;
 }
 
 #central-panel-strict-lamp-blocker {
    position: absolute;
-   top:52%;
-   left:65%;
    text-align: center;
-   width:3%;
 }
 
 #central-panel-count-text {
    position: absolute;
-   top:65%;
-   left:15%;
-   width:20%;
    text-align: center;
 }
 
 #central-panel-start-text {
    position: absolute;
-   top:65%;
-   left:40%;
-   width:20%;
    text-align: center;
 }
 
 #central-panel-strict-text {
    position: absolute;
-   top:65%;
-   left:65%;
-   width:20%;
    text-align: center;
 }
 
 #central-panel-onoff-body {
    position: absolute;
-   top:80%;
-   left:40%;
-   width:20%;
-   height:5%;
    background:black;
    color:black;
    font-size:0;
@@ -164,10 +126,6 @@ html, body {
 
 #central-panel-onoff-button {
    position: absolute;
-   top:80%;
-   left:50%;
-   width:10%;
-   height:5%;
    background:blue;
    color:black;
    font-size:0;
@@ -175,17 +133,11 @@ html, body {
 
 #central-panel-on-text {
    position: absolute;
-   top:80%;
-   left:30%;
-   width:10%;
    text-align: center;
 }
 
 #central-panel-off-text {
    position: absolute;
-   top:80%;
-   left:60%;
-   width:10%;
    text-align: center;
 }
 
@@ -219,10 +171,52 @@ function resize_stuffs() {
    $('.central-panel-holder').css('width',csize);
    $('.central-panel-holder').css('height',csize);
 
-   $('.central-panel-holder-content').css('left',offsets.left+csize/2);
-   $('.central-panel-holder-content').css('top',offsets.top+csize/2);
-   $('.central-panel-holder-content').css('width',csize);
-   $('.central-panel-holder-content').css('height',csize);
+   $('#central-panel-simontext').css('left',Math.round(offsets.left+csize*0.50+(csize*0.24)));
+   $('#central-panel-simontext').css('top',Math.round(offsets.top+csize*0.50+(csize*0.25)));
+   $('#central-panel-simontext').css('width',Math.round(csize*0.52));
+   $('#central-panel-rtext').css('left',Math.round(offsets.left+csize*0.50+(csize*0.74)));
+   $('#central-panel-rtext').css('top',Math.round(offsets.top+csize*0.50+(csize*0.25)));
+   $('#central-panel-counter').css('left',Math.round(offsets.left+csize*0.50+(csize*0.15)));
+   $('#central-panel-counter').css('top',Math.round(offsets.top+csize*0.50+(csize*0.50)));
+   $('#central-panel-counter').css('width',Math.round(csize*0.20));
+   $('#central-panel-start-button').css('left',Math.round(offsets.left+csize*0.50+(csize*0.45)));
+   $('#central-panel-start-button').css('top',Math.round(offsets.top+csize*0.50+(csize*0.52)));
+   $('#central-panel-start-button').css('width',Math.round(csize*0.10));
+   $('#central-panel-strict-button').css('left',Math.round(offsets.left+csize*0.50+(csize*0.70)));
+   $('#central-panel-strict-button').css('top',Math.round(offsets.top+csize*0.50+(csize*0.52)));
+   $('#central-panel-strict-button').css('width',Math.round(csize*0.10));
+   $('#central-panel-strict-lamp').css('left',Math.round(offsets.left+csize*0.50+(csize*0.65)));
+   $('#central-panel-strict-lamp').css('top',Math.round(offsets.top+csize*0.50+(csize*0.52)));
+   $('#central-panel-strict-lamp').css('width',Math.round(csize*0.03));
+   $('#central-panel-strict-lamp-blocker').css('left',Math.round(offsets.left+csize*0.50+(csize*0.65)));
+   $('#central-panel-strict-lamp-blocker').css('top',Math.round(offsets.top+csize*0.50+(csize*0.52)));
+   $('#central-panel-strict-lamp-blocker').css('width',Math.round(csize*0.03));
+   $('#central-panel-count-text').css('left',Math.round(offsets.left+csize*0.50+(csize*0.15)));
+   $('#central-panel-count-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.65)));
+   $('#central-panel-count-text').css('width',Math.round(csize*0.20));
+   $('#central-panel-start-text').css('left',Math.round(offsets.left+csize*0.50+(csize*0.40)));
+   $('#central-panel-start-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.65)));
+   $('#central-panel-start-text').css('width',Math.round(csize*0.20));
+   $('#central-panel-strict-text').css('left',Math.round(offsets.left+csize*0.50+(csize*0.65)));
+   $('#central-panel-strict-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.65)));
+   $('#central-panel-strict-text').css('width',Math.round(csize*0.20));
+
+   $('#central-panel-onoff-body').css('left',Math.round(offsets.left+csize*0.50+(csize*0.40)));
+   $('#central-panel-onoff-body').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
+   $('#central-panel-onoff-body').css('width',Math.round(csize*0.20));
+   $('#central-panel-onoff-body').css('height',Math.round(csize*0.05));
+   $('#central-panel-on-text').css('left',Math.round(offsets.left+csize*0.50+(csize*0.30)));
+   $('#central-panel-on-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
+   $('#central-panel-on-text').css('width',Math.round(csize*0.10));
+   $('#central-panel-on-text').css('height',Math.round(csize*0.05));
+   $('#central-panel-off-text').css('left',Math.round(offsets.left+csize*0.50+(csize*0.60)));
+   $('#central-panel-off-text').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
+   $('#central-panel-off-text').css('width',Math.round(csize*0.10));
+   $('#central-panel-off-text').css('height',Math.round(csize*0.05));
+   $('#central-panel-onoff-button').css('left',Math.round(offsets.left+csize*0.50+(csize*0.50)));
+   $('#central-panel-onoff-button').css('top',Math.round(offsets.top+csize*0.50+(csize*0.80)));
+   $('#central-panel-onoff-button').css('width',Math.round(csize*0.10));
+   $('#central-panel-onoff-button').css('height',Math.round(csize*0.05));
 
    $('#central-panel-simontext').css('font-size', Math.floor(size*0.08));
    $('#central-panel-rtext').css('font-size', Math.floor(size*0.02));
@@ -318,39 +312,37 @@ $(document).ready(function(){
               </g>
             </g>
          </svg>
-         <div class="central-panel-holder-content">
-            <p id="central-panel-simontext" class="noselect">Simon</p>
-            <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
+         <p id="central-panel-simontext" class="noselect">Simon</p>
+         <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
+         <p id="central-panel-counter" class="noselect">00</p>
+         <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+             <g transform="translate(110,110)">
+             <circle r="100" stroke="black" fill="red" stroke-width="10"/>
+             </g>
+         </svg>
+         <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+             <g transform="translate(110,110)">
+             <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
+             </g>
+         </svg>
+         <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+             <g transform="translate(110,110)">
+             <circle r="100" stroke="black" fill="lightgreen"/>
+             </g>
+         </svg>
+         <svg id="central-panel-strict-lamp-blocker" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+             <g transform="translate(110,110)">
+             <circle r="100" stroke="black" fill="black"/>
+             </g>
+         </svg>
+         <p id="central-panel-count-text" class="noselect">COUNT</p>
+         <p id="central-panel-start-text" class="noselect">START</p>
+         <p id="central-panel-strict-text" class="noselect">STRICT</p>
+         <p id="central-panel-onoff-body" class="noselect">-</p>
+         <p id="central-panel-on-text" class="noselect">ON</p>
+         <p id="central-panel-off-text" class="noselect">OFF</p>
+         <p id="central-panel-onoff-button" class="noselect">OFF</p>
 
-            <p id="central-panel-counter" class="noselect">00</p>
-            <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                <g transform="translate(110,110)">
-                <circle r="100" stroke="black" fill="red" stroke-width="10"/>
-                </g>
-            </svg>
-            <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                <g transform="translate(110,110)">
-                <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
-                </g>
-            </svg>
-            <svg id="central-panel-strict-lamp" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                <g transform="translate(110,110)">
-                <circle r="100" stroke="black" fill="lightgreen"/>
-                </g>
-            </svg>
-            <svg id="central-panel-strict-lamp-blocker" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                <g transform="translate(110,110)">
-                <circle r="100" stroke="black" fill="black"/>
-                </g>
-            </svg>
-            <p id="central-panel-count-text" class="noselect">COUNT</p>
-            <p id="central-panel-start-text" class="noselect">START</p>
-            <p id="central-panel-strict-text" class="noselect">STRICT</p>
-            <p id="central-panel-onoff-body" class="noselect">-</p>
-            <p id="central-panel-on-text" class="noselect">ON</p>
-            <p id="central-panel-off-text" class="noselect">OFF</p>
-            <p id="central-panel-onoff-button" class="noselect">OFF</p>
-         </div>
       </div>
    </div>
 </body>
