@@ -321,12 +321,12 @@ function big_button_click(color) {
          <p id="central-panel-simontext" class="noselect">Simon</p>
          <p id="central-panel-rtext" class="noselect">&#x24c7;</p>
          <p id="central-panel-counter" class="noselect">00</p>
-         <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+         <svg id="central-panel-start-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" onclick="big_button_click('start');" class="big-button">
              <g transform="translate(110,110)">
              <circle r="100" stroke="black" fill="red" stroke-width="10"/>
              </g>
          </svg>
-         <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+         <svg id="central-panel-strict-button" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" onclick="big_button_click('strict');" class="big-button">
              <g transform="translate(110,110)">
              <circle r="100" stroke="black" fill="yellow" stroke-width="10"/>
              </g>
@@ -344,10 +344,10 @@ function big_button_click(color) {
          <p id="central-panel-count-text" class="noselect">COUNT</p>
          <p id="central-panel-start-text" class="noselect">START</p>
          <p id="central-panel-strict-text" class="noselect">STRICT</p>
-         <p id="central-panel-onoff-body" class="noselect">-</p>
+         <p id="central-panel-onoff-body" onclick="big_button_click('onoff');" class="big-button">-</p>
          <p id="central-panel-on-text" class="noselect">ON</p>
          <p id="central-panel-off-text" class="noselect">OFF</p>
-         <p id="central-panel-onoff-button" class="noselect">OFF</p>
+         <p id="central-panel-onoff-button" onclick="big_button_click('onoff');" class="big-button">OFF</p>
 
       </div>
    </div>
