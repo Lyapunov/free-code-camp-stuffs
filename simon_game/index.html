@@ -242,12 +242,52 @@ function resize_stuffs() {
 
 $(window).on('resize', resize_stuffs);
 
+var isready = false;
+var buttonsenabled = true;
+
 $(document).ready(function(){
    resize_stuffs();
+   isready = true;
 });
 
+function runEventChain(eventChain) {
+   if ( eventChain.length ) {
+      var first = eventChain[0];
+      var rest  = eventChain.slice(1);
+      if ( first[1] > 0 ) {
+         setTimeout(function() {
+            first[0]();
+            runEventChain(rest);
+         },first[1]);
+      } else {
+         first[0]();
+         runEventChain(rest);
+      }
+   }
+}
+
+function disable_buttons() {
+   buttonsenabled = false;
+   $('.big-button').css({cursor:"default"})
+}
+
+function enable_buttons() {
+   buttonsenabled = true;
+   $('.big-button').css({cursor:"pointer"})
+}
+
 function big_button_click(color) {
-   console.log('clicked: ',color);
+   if ( isready && buttonsenabled ) {
+      console.log('clicked: ',color);
+      if ( color == "green" || color == "red" || color == "blue" || color == "yellow" ) {
+         runEventChain([[_=>disable_buttons(),0],
+                        [_=>$('#big-'+color+'-button').css({fill:"#80e080"}),400],
+                        [_=>$('#big-'+color+'-button').css({fill:"#40c040"}),800],
+                        [_=>enable_buttons(),0]]);
+      }
+   } else {
+      console.log('disabled buttons!');
+   }
 }
 
 </script>
@@ -267,7 +307,7 @@ function big_button_click(color) {
                      L 50 25
                      A 25 25 0 0 0 25 50
                      L 0 50
-                    " stroke="black" fill="#40C040" stroke-width="1" onclick="big_button_click('green');" class="big-button"/>
+                    " stroke="black" fill="#40C040" stroke-width="1" onclick="big_button_click('green');" class="big-button" id="big-green-button"/>
             <g transform="translate(50,50)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -281,7 +321,7 @@ function big_button_click(color) {
                      L 25 50
                      A 25 25 0 0 0 0 25
                      L 0 0
-                    " stroke="black" fill="#C04040" stroke-width="1" onclick="big_button_click('red');" class="big-button"/>
+                    " stroke="black" fill="#C04040" stroke-width="1" onclick="big_button_click('red');" class="big-button" id="big-red-button"/>
             <g transform="translate(0,50)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -296,7 +336,7 @@ function big_button_click(color) {
                      L 50 25
                      A 25 25 0 0 1 25 0
                      L 0 0
-                    " stroke="black" fill="#C0C040" stroke-width="1" onclick="big_button_click('yellow');" class="big-button"/>
+                    " stroke="black" fill="#C0C040" stroke-width="1" onclick="big_button_click('yellow');" class="big-button" id="big-yellow-button"/>
             <g transform="translate(50,0)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
@@ -310,7 +350,7 @@ function big_button_click(color) {
                      L 0 25
                      A 25 25 0 0 0 25 0
                      L 50 0
-                    " stroke="black" fill="#4040C0" stroke-width="1" onclick="big_button_click('blue');" class="big-button"/>
+                    " stroke="black" fill="#4040C0" stroke-width="1" onclick="big_button_click('blue');" class="big-button" id="big-yellow-button"/>
             <g transform="translate(0,0)">
               <circle r="23" class="e-c-base"/>
               <g transform="rotate(-90)">
