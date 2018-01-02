@@ -248,6 +248,7 @@ var buttonsenabled = true;
 var ison = false;
 var stack = [];
 var stackptr = 0;
+var winlimit = 20;
 
 $(document).ready(function(){
    resize_stuffs();
@@ -301,6 +302,10 @@ function set_warning() {
    $('#central-panel-counter').text("!!");
 }
 
+function set_winning() {
+   $('#central-panel-counter').text("WIN");
+}
+
 function add_new_color_to_stack() {
    var colors = ['red','green','blue','yellow'];
 
@@ -318,12 +323,12 @@ cols['blue-down'] = "#4040c0";
 cols['yellow-up']   = "#e0e080";
 cols['yellow-down'] = "#c0c040";
 
-function play_stack(warn=false) {
+function play_stack(warn=false,fin=false) {
    var anim = [];
    anim.push([_=>disable_buttons(),0]);
    if ( warn ) {
-      anim.push([_=>set_warning(),0]);
-      anim.push([_=>set_counter(),1000]);
+      anim.push([_=>(fin?set_winning():set_warning()),0]);
+      anim.push([_=>set_counter(),(fin?5000:1000)]);
    } else {
       anim.push([_=>_,1000]);
    }
@@ -341,10 +346,16 @@ function guess(color) {
    if ( color == stack[stackptr] ) {
       ++stackptr;
       if ( stackptr == stack.length ) {
-         add_new_color_to_stack();
-         set_counter();
-         play_stack();
-         stackptr = 0;
+         if ( stackptr == winlimit ) {
+            stack = [];
+            add_new_color_to_stack();
+            play_stack(true, true);
+         } else {
+            add_new_color_to_stack();
+            set_counter();
+            play_stack();
+            stackptr = 0;
+         }
       }
    } else {
       // falling out of grace
