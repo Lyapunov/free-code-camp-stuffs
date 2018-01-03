@@ -418,7 +418,8 @@ function big_button_click(color) {
       }
    }
 
-   if ( isready && buttonsenabled && ison && color=="start" && !stack.length ) {
+   if ( isready && buttonsenabled && ison && color=="start" ) {
+      stack = [];
       add_new_color_to_stack();
       set_counter();
       play_stack();
