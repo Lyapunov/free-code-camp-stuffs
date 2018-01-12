@@ -1,0 +1,9 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+$p_width: 85px
+$p_height: 20px
+#p_CSS 
+   width: $p_width
+   height: $p_height
+   background-color: #FFFF80
