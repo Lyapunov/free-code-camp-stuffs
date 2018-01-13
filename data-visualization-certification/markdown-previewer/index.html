@@ -9,18 +9,74 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
 
 <!-- 
+  The react code is directly taken from: https://reactjs.org/ !!!
+
+  And just to make my work crystal clear,
+     https://github.com/Lyapunov/free-code-camp-stuffs/blob/master/data-visualization-certification/markdown-previewer/index_exemplary.html
+  is a basic template one could easily extract from the existing example.
+  
+-->
+
+<!-- 
   CSS 
 -->
 <style>
+.content-row {
+}
 </style>
 
 <!-- 
   JS 
 -->
-<script>
+<script type="text/babel">
+var mountNode = document.getElementById('container');
+
+class MarkdownEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = { value: 'Type some *markdown* here!' };
+  }
+
+  handleChange(e) {
+    this.setState({ value: e.target.value });
+  }
+
+  getRawMarkup() {
+    const md = new Remarkable();
+    return { __html: md.render(this.state.value) };
+  }
+
+  render() {
+    return (
+      <div className="MarkdownEditor">
+        <h3>Input</h3>
+        <textarea
+          onChange={this.handleChange}
+          defaultValue={this.state.value}
+        />
+        <h3>Output</h3>
+        <div
+          className="content"
+          dangerouslySetInnerHTML={this.getRawMarkup()}
+        />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<MarkdownEditor />, mountNode);
+
+console.log("Bravo");
+
 </script>
 
 <!-- 
   HTML  
 -->
 
+<body>
+   <div id="header" class="content-row"></div>
+   <div id="container"></div>
+   <div id="footer" class="content-row"></div>
+</body>
