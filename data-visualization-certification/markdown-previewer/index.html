@@ -1,8 +1,5 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
@@ -21,6 +18,71 @@
   CSS 
 -->
 <link rel="stylesheet" type="text/css" href="basic.css">
+<style>
+
+html, body {
+  max-width: 100%;
+  height:100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.centered {
+   white-space: normal;
+   overflow-wrap:break-word;
+   text-align: center;
+   display: table-cell;
+   justify-content: center;
+   vertical-align:middle;
+}
+
+.previewer-horizontal-bar {
+   background:blue;
+   width:100%;
+   height:15%;
+   text-align:center;
+   vertical-align:middle;
+}
+
+.previewer-vertical-panel {
+   background:gray;
+   width:50vw;
+   display: block;
+   padding: 15px;
+}
+
+.previewer-block {
+   display: block;
+   width:100%;
+   height:80%;
+   border-style: solid;
+   border-width: 1px;
+   border-color: black;
+   background:cyan;
+}
+
+#previewer-container {
+   background:yellow;
+   width:100%;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.markdown-editor {
+   background:magenta;
+   display: flex;
+   height:75vh;
+}
+
+</style>
 
 <!-- 
   JS 
@@ -46,25 +108,26 @@ class MarkdownEditor extends React.Component {
 
   render() {
     return (
-      <div className="MarkdownEditor">
-        <h3>Input</h3>
-        <textarea
-          onChange={this.handleChange}
-          defaultValue={this.state.value}
-        />
-        <h3>Output</h3>
-        <div
-          className="content"
-          dangerouslySetInnerHTML={this.getRawMarkup()}
-        />
+      <div className="markdown-editor">
+        <div className="previewer-vertical-panel">
+          <p>Input</p>
+          <textarea className="previewer-block"
+            onChange={this.handleChange}
+            defaultValue={this.state.value}
+          />
+        </div>
+        <div className="previewer-vertical-panel">
+          <p>Output</p>
+          <div className="content previewer-block"
+            dangerouslySetInnerHTML={this.getRawMarkup()}
+          />
+        </div>
       </div>
     );
   }
 }
 
-ReactDOM.render(<MarkdownEditor />, mountNode);
-
-console.log("Bravo");
+ReactDOM.render(<MarkdownEditor/>, mountNode);
 
 </script>
 
@@ -73,7 +136,8 @@ console.log("Bravo");
 -->
 
 <body>
-   <div id="previewer-header" class="content-row"></div>
+   <div id="previewer-header" class="previewer-horizontal-bar">
+      <p class="noselect">Markdown previewer</p>
+   </div>
    <div id="previewer-container"></div>
-   <div id="previewer-footer" class="content-row"></div>
 </body>
