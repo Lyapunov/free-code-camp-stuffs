@@ -26,13 +26,23 @@ html, body {
   overflow-x: hidden;
 }
 
-.centered {
-   white-space: normal;
-   overflow-wrap:break-word;
-   text-align: center;
-   display: table-cell;
-   justify-content: center;
-   vertical-align:middle;
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.big-font {
+   font-size: 8vh;
+}
+
+.medium-font {
+   font-size: 5vh;
+   text-decoration: underline;
 }
 
 .previewer-horizontal-bar {
@@ -58,32 +68,9 @@ html, body {
    overflow-y:auto;
 }
 
-#previewer-container {
-   width:100%;
-}
-
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-}
-
-.markdown-editor {
+.previewer-markdown-editor {
    display: flex;
    height:75vh;
-}
-
-.big-font {
-   font-size: 8vh;
-}
-
-.medium-font {
-   font-size: 5vh;
-   text-decoration: underline;
 }
 
 </style>
@@ -112,7 +99,7 @@ class MarkdownEditor extends React.Component {
 
   render() {
     return (
-      <div className="markdown-editor">
+      <div className="previewer-markdown-editor">
         <div className="previewer-vertical-panel">
           <p className="medium-font noselect">Input:</p>
           <textarea className="previewer-block"
