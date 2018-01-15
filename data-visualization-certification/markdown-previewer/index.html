@@ -36,7 +36,6 @@ html, body {
 }
 
 .previewer-horizontal-bar {
-   background:blue;
    width:100%;
    height:15%;
    text-align:center;
@@ -44,7 +43,6 @@ html, body {
 }
 
 .previewer-vertical-panel {
-   background:gray;
    width:50vw;
    display: block;
    padding: 15px;
@@ -57,11 +55,9 @@ html, body {
    border-style: solid;
    border-width: 1px;
    border-color: black;
-   background:cyan;
 }
 
 #previewer-container {
-   background:yellow;
    width:100%;
 }
 
@@ -76,7 +72,6 @@ html, body {
 }
 
 .markdown-editor {
-   background:magenta;
    display: flex;
    height:75vh;
 }
@@ -118,15 +113,15 @@ class MarkdownEditor extends React.Component {
     return (
       <div className="markdown-editor">
         <div className="previewer-vertical-panel">
-          <p className="medium-font">Input:</p>
+          <p className="medium-font noselect">Input:</p>
           <textarea className="previewer-block"
             onChange={this.handleChange}
             defaultValue={this.state.value}
           />
         </div>
         <div className="previewer-vertical-panel">
-          <p className="medium-font">Output:</p>
-          <div className="content previewer-block"
+          <p className="medium-font noselect">Output:</p>
+          <div className="content noselect previewer-block"
             dangerouslySetInnerHTML={this.getRawMarkup()}
           />
         </div>
