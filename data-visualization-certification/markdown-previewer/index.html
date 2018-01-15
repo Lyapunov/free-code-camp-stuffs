@@ -24,7 +24,6 @@ html, body {
   max-width: 100%;
   height:100%;
   overflow-x: hidden;
-  overflow-y: hidden;
 }
 
 .centered {
@@ -82,6 +81,15 @@ html, body {
    height:75vh;
 }
 
+.big-font {
+   font-size: 8vh;
+}
+
+.medium-font {
+   font-size: 5vh;
+   text-decoration: underline;
+}
+
 </style>
 
 <!-- 
@@ -110,14 +118,14 @@ class MarkdownEditor extends React.Component {
     return (
       <div className="markdown-editor">
         <div className="previewer-vertical-panel">
-          <p>Input</p>
+          <p className="medium-font">Input:</p>
           <textarea className="previewer-block"
             onChange={this.handleChange}
             defaultValue={this.state.value}
           />
         </div>
         <div className="previewer-vertical-panel">
-          <p>Output</p>
+          <p className="medium-font">Output:</p>
           <div className="content previewer-block"
             dangerouslySetInnerHTML={this.getRawMarkup()}
           />
@@ -137,7 +145,7 @@ ReactDOM.render(<MarkdownEditor/>, mountNode);
 
 <body>
    <div id="previewer-header" class="previewer-horizontal-bar">
-      <p class="noselect">Markdown previewer</p>
+      <p class="noselect big-font">Markdown previewer</p>
    </div>
    <div id="previewer-container"></div>
 </body>
