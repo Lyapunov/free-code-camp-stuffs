@@ -1,5 +1,5 @@
 
-basic.css:
+basic.css: basic.sccs
 	sass basic.sccs >basic.css
 
 all: basic.css
