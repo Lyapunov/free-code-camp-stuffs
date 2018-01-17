@@ -26,6 +26,7 @@ class CamperLeaderboard extends React.Component {
     super(props);
     this.state = {}
     this.state.size = 5;
+    this.state.renderstate = 0;
     var self = this;
 
     $.ajax({
@@ -33,24 +34,40 @@ class CamperLeaderboard extends React.Component {
       url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
       success: function(data) {
          console.log("success:",data);
-         self.state.recenttops = data;
+         self.state.recenttop = data;
          self.state.size = 7;
+         self.state.renderstate += 1;
          self.setState( self.state );
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
       }
     });
 
+    $.ajax({
+      type: "GET",
+      url: "https://fcctop100.herokuapp.com/api/fccusers/top/alltime",
+      success: function(data) {
+         console.log("success:",data);
+         self.state.alltimetop = data;
+         self.state.size = 9;
+         self.state.renderstate += 2;
+         self.setState( self.state );
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+      }
+    });
   }
   render(){
     var rows = [];
-    var mockid = 0;
-    for (var i = 0; i < this.state.size; i++){
-      var cell = []
-      for (var idx = 0; idx < this.state.size; idx++){
-        cell.push(<td key={mockid++}>Item</td>)
+    if ( this.state.renderstate == 3 ) {
+      var mockid = 0;
+      for (var i = 0; i < this.state.size; i++){
+        var cell = []
+        for (var idx = 0; idx < this.state.size; idx++){
+          cell.push(<td key={mockid++}>Item</td>)
+        }
+        rows.push(<tr key={mockid++}>{cell}</tr>)
       }
-      rows.push(<tr key={mockid++}>{cell}</tr>)
     }
     return(
       <div className="container">
