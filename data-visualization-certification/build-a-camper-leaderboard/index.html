@@ -26,15 +26,31 @@ class CamperLeaderboard extends React.Component {
     super(props);
     this.state = {}
     this.state.size = 5;
+    var self = this;
+
+    $.ajax({
+      type: "GET",
+      url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+      success: function(data) {
+         console.log("success:",data);
+         self.state.recenttops = data;
+         self.state.size = 7;
+         self.setState( self.state );
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+      }
+    });
+
   }
   render(){
     var rows = [];
+    var mockid = 0;
     for (var i = 0; i < this.state.size; i++){
       var cell = []
       for (var idx = 0; idx < this.state.size; idx++){
-        cell.push(<td>Item</td>)
+        cell.push(<td key={mockid++}>Item</td>)
       }
-      rows.push(<tr>{cell}</tr>)
+      rows.push(<tr key={mockid++}>{cell}</tr>)
     }
     return(
       <div className="container">
@@ -52,16 +68,7 @@ class CamperLeaderboard extends React.Component {
   }
 }
 
-$.ajax({
-  type: "GET",
-  url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
-  success: function(data) {
-     console.log("success:",data);
-     ReactDOM.render(<CamperLeaderboard/>, mountNode);
-  },
-  error: function(XMLHttpRequest, textStatus, errorThrown) {
-  }
-});
+ReactDOM.render(<CamperLeaderboard/>, mountNode);
 
 </script>
 
