@@ -22,67 +22,67 @@ var mountNode = document.getElementById('leaderboard-container');
 // See https://stackoverflow.com/questions/39462458/react-js-creating-simple-table, I used it as a source
 
 class CamperLeaderboard extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {}
-    this.state.size = 5;
-    this.state.renderstate = 0;
-    var self = this;
+   constructor(props){
+      super(props);
+      this.state = {}
+      this.state.size = 5;
+      this.state.renderstate = 0;
+      var self = this;
 
-    $.ajax({
-      type: "GET",
-      url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
-      success: function(data) {
-         console.log("success:",data);
-         self.state.recenttop = data;
-         self.state.size = 7;
-         self.state.renderstate += 1;
-         self.setState( self.state );
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-      }
-    });
+      $.ajax({
+         type: "GET",
+         url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+         success: function(data) {
+            console.log("success:",data);
+            self.state.recenttop = data;
+            self.state.size = 7;
+            self.state.renderstate += 1;
+            self.setState( self.state );
+         },
+         error: function(XMLHttpRequest, textStatus, errorThrown) {
+         }
+      });
 
-    $.ajax({
-      type: "GET",
-      url: "https://fcctop100.herokuapp.com/api/fccusers/top/alltime",
-      success: function(data) {
-         console.log("success:",data);
-         self.state.alltimetop = data;
-         self.state.size = 9;
-         self.state.renderstate += 2;
-         self.setState( self.state );
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
+      $.ajax({
+         type: "GET",
+         url: "https://fcctop100.herokuapp.com/api/fccusers/top/alltime",
+         success: function(data) {
+            console.log("success:",data);
+            self.state.alltimetop = data;
+            self.state.size = 9;
+            self.state.renderstate += 2;
+            self.setState( self.state );
+         },
+         error: function(XMLHttpRequest, textStatus, errorThrown) {
+         }
+      });
+   }
+   render(){
+      var rows = [];
+      if ( this.state.renderstate == 3 ) {
+         var mockid = 0;
+         for (var i = 0; i < this.state.size; i++){
+            var cell = []
+            for (var idx = 0; idx < this.state.size; idx++){
+               cell.push(<td key={mockid++}>Item</td>)
+            }
+            rows.push(<tr key={mockid++}>{cell}</tr>)
+         }
       }
-    });
-  }
-  render(){
-    var rows = [];
-    if ( this.state.renderstate == 3 ) {
-      var mockid = 0;
-      for (var i = 0; i < this.state.size; i++){
-        var cell = []
-        for (var idx = 0; idx < this.state.size; idx++){
-          cell.push(<td key={mockid++}>Item</td>)
-        }
-        rows.push(<tr key={mockid++}>{cell}</tr>)
-      }
-    }
-    return(
-      <div className="container">
-        <div className="row">
-          <div className="col s12 board">
-            <table id="simple-board">
-               <tbody>
-                 {rows}
-               </tbody>
-             </table>
-          </div>
-        </div>
-      </div>
-    )
-  }
+      return(
+         <div className="container">
+            <div className="row">
+               <div className="col s12 board">
+                  <table id="simple-board">
+                     <tbody>
+                        {rows}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      )
+   }
 }
 
 ReactDOM.render(<CamperLeaderboard/>, mountNode);
