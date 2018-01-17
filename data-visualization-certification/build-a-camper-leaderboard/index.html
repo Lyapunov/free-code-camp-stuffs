@@ -5,6 +5,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 <!-- 
   CSS 
 -->
@@ -50,7 +52,16 @@ class CamperLeaderboard extends React.Component {
   }
 }
 
-ReactDOM.render(<CamperLeaderboard/>, mountNode);
+$.ajax({
+  type: "GET",
+  url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+  success: function(data) {
+     console.log("success:",data);
+     ReactDOM.render(<CamperLeaderboard/>, mountNode);
+  },
+  error: function(XMLHttpRequest, textStatus, errorThrown) {
+  }
+});
 
 </script>
 
