@@ -38,6 +38,7 @@ class CamperLeaderboard extends React.Component {
       this.state = {}
       this.state.size = 5;
       this.state.renderstate = 0;
+      this.state.selection = 0;
       var self = this;
 
       $.ajax({
@@ -67,11 +68,31 @@ class CamperLeaderboard extends React.Component {
       });
    }
 
-   switchToRecent() {
-      console.log('recent');
+   switchToRecent(self) {
+      console.log('recent', self);
+      if ( !this.state.selection ) {
+         this.state.selection = 1;
+         this.setState( this.state );
+      }
    }
-   switchToAlltime() {
-      console.log('alltime');
+   switchToAlltime(self) {
+      console.log('alltime', self);
+      if ( this.state.selection ) {
+         this.state.selection = 0;
+         this.setState( this.state );
+      }
+   }
+
+   createSwitchToRecentFunction(self) {
+      return function() {
+         self.switchToRecent(self);
+      };
+   }
+
+   createSwitchToAlltimeFunction(self) {
+      return function() {
+         self.switchToAlltime(self);
+      };
    }
 
    render(){
@@ -93,14 +114,14 @@ class CamperLeaderboard extends React.Component {
       }
 
       var mockid = 0;
-      var selected = this.state.alltimetop;
+      var selected = ( this.state.selection ? this.state.recenttop : this.state.alltimetop );
       {
          var cell = []
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Rank</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Username</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Image</td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.switchToRecent}>Recent points</button></td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.switchToAlltime}>Alltime points</button></td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.createSwitchToRecentFunction(this)}>Recent points</button></td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.createSwitchToAlltimeFunction(this)}>Alltime points</button></td>);
          rows.push(<tr key={mockid++} className='leaderboard-row leaderboard-headline'>{cell}</tr>)
       }
 
