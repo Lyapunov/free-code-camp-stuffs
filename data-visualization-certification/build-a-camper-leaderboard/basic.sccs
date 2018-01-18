@@ -29,6 +29,9 @@ html, body,
    border-width: 1px
    border-color: black
 
+.leaderboard-headline
+   font-weight: bold
+
 .leaderboard-table
    @extend %bordered-table
 

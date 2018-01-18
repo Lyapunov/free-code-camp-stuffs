@@ -20,6 +20,19 @@ var mountNode = document.getElementById('leaderboard-container');
 
 // See https://stackoverflow.com/questions/39462458/react-js-creating-simple-table, I used it as a basis
 
+function withPostfix(num) {
+   if ( num == 1 ) {
+      return "1st";
+   }
+   if ( num == 2 ) {
+      return "2nd";
+   }
+   if ( num == 3 ) {
+      return "3rd";
+   }
+   return ""+num+"th";
+}
+
 class CamperLeaderboard extends React.Component {
    constructor(props){
       super(props);
@@ -63,17 +76,17 @@ class CamperLeaderboard extends React.Component {
          var selected = this.state.alltimetop;
          {
             var cell = []
-            cell.push(<td key={mockid++} className='leaderboard-cell-half'>Rank</td>);
-            cell.push(<td key={mockid++} className='leaderboard-cell'>Username</td>);
-            cell.push(<td key={mockid++} className='leaderboard-cell-half'>Image</td>);
-            cell.push(<td key={mockid++} className='leaderboard-cell'>Recent points</td>);
-            cell.push(<td key={mockid++} className='leaderboard-cell'>Alltime points</td>);
-            rows.push(<tr key={mockid++} className='leaderboard-row'>{cell}</tr>)
+            cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Rank</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Username</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Image</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Recent points</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Alltime points</td>);
+            rows.push(<tr key={mockid++} className='leaderboard-row leaderboard-headline'>{cell}</tr>)
          }
 
          for (var i = 0; i < selected.length; i++){
             var cell = []
-            cell.push(<td key={mockid++} className='leaderboard-cell-half'>{i+1}</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell-half'>{withPostfix(i+1)}</td>);
             cell.push(<td key={mockid++} className='leaderboard-cell'>{selected[i].username}</td>);
             cell.push(<td key={mockid++} className='leaderboard-cell-half'><img src={selected[i].img} className='leaderboard-img'/></td>);
             cell.push(<td key={mockid++} className='leaderboard-cell'>{selected[i].recent}</td>);
