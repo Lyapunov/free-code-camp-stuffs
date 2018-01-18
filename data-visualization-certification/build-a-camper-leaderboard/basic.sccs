@@ -46,7 +46,6 @@ html, body,
 #leaderboard-container
    left: 0px
    width: 100vw
-   vertical-align: left
    background-color: blue
 
 .leaderboard-table

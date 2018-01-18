@@ -133,13 +133,11 @@ class CamperLeaderboard extends React.Component {
          rows.push(<tr key={mockid++} className='leaderboard-row'>{cell}</tr>)
       }
       return(
-         <div className="container">
-            <table className='leaderboard-table' id="simple-board">
-               <tbody>
-                  {rows}
-               </tbody>
-            </table>
-         </div>
+         <table className='leaderboard-table' id="simple-board">
+            <tbody>
+               {rows}
+            </tbody>
+         </table>
       )
    }
 }
