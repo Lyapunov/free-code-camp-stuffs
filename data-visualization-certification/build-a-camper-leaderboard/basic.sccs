@@ -35,7 +35,6 @@ html, body,
    border-style: solid
    border-width: 1px
    border-color: black
-   background-color: white
 
 .leaderboard-loading
    @extend %bordered-table
@@ -45,7 +44,6 @@ html, body,
 
 #leaderboard-container
    width: 100vw
-   background-color: blue
    display: table
 
 .leaderboard-table
@@ -61,8 +59,13 @@ html, body,
    @extend .noselect
    font-weight: bold
 
-.leaderboard-row
+.leaderboard-row-1
    @extend %bordered-table
+   background-color: white
+
+.leaderboard-row-2
+   @extend %bordered-table
+   background-color: lightgray
 
 .leaderboard-cell
    @extend %bordered-table
