@@ -97,17 +97,15 @@ class CamperLeaderboard extends React.Component {
       var rows = [];
       if ( this.state.renderstate < 3 ) {
          return(
-            <div className="container">
-               <table id="simple-board">
-                  <tbody className='leaderboard-name' >
-                     <tr className='leaderboard-row'>
-                        <td className='leaderboard-loading'>
-                           Loading...
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
+            <table className='leaderboard-table'  id="simple-board">
+               <tbody className='leaderboard-name' >
+                  <tr className='leaderboard-row'>
+                     <td className='leaderboard-loading'>
+                        Loading...
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
          );
       }
 
