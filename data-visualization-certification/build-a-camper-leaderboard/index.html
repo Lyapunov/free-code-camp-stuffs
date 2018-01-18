@@ -32,14 +32,6 @@ function withPostfix(num) {
    return ""+num+"th";
 }
 
-function switchToRecent() {
-   console.log('recent');
-}
-function switchToAlltime() {
-   console.log('alltime');
-}
-
-
 class CamperLeaderboard extends React.Component {
    constructor(props){
       super(props);
@@ -75,6 +67,13 @@ class CamperLeaderboard extends React.Component {
       });
    }
 
+   switchToRecent() {
+      console.log('recent');
+   }
+   switchToAlltime() {
+      console.log('alltime');
+   }
+
    render(){
       var rows = [];
       if ( this.state.renderstate < 3 ) {
@@ -100,8 +99,8 @@ class CamperLeaderboard extends React.Component {
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Rank</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Username</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Image</td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onclick='switchToRecent()'>Recent points</button></td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onclick='switchToAlltime)'>Alltime points</button></td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.switchToRecent}>Recent points</button></td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onClick={this.switchToAlltime}>Alltime points</button></td>);
          rows.push(<tr key={mockid++} className='leaderboard-row leaderboard-headline'>{cell}</tr>)
       }
 
