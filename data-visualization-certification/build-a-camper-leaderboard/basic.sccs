@@ -7,6 +7,16 @@ html, body,
    background-color: yellow
    display: block
 
+button
+   border: 0
+   background: none
+   background-repeat: no-repeat
+   box-shadow: none
+   border-radius: 0px
+   -webkit-appearance: none
+   color: none
+   text-decoration: underline
+
 .noselect
    -webkit-touch-callout: none
    -webkit-user-select: none
@@ -20,7 +30,6 @@ html, body,
 
 .medium-font
    font-size: 5vh
-   text-decoration: underline
 
 .fixed-big-font
    font-size: 40px
@@ -42,6 +51,7 @@ html, body,
    width: 80vw
    height: 40px
    text-align: center
+   background-color: white
 
 #leaderboard-container
    width: 100vw
