@@ -38,6 +38,7 @@ html, body,
 .leaderboard-cell
    @extend %bordered-table
    width: 20vw
+   height: 40px
    text-align: center
 
 .leaderboard-cell-half
