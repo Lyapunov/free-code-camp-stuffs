@@ -61,6 +61,16 @@ class CamperLeaderboard extends React.Component {
       if ( this.state.renderstate == 3 ) {
          var mockid = 0;
          var selected = this.state.alltimetop;
+         {
+            var cell = []
+            cell.push(<td key={mockid++} className='leaderboard-cell-half'>Rank</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'>Username</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell-half'>Image</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'>Recent points</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'>Alltime points</td>);
+            rows.push(<tr key={mockid++} className='leaderboard-row'>{cell}</tr>)
+         }
+
          for (var i = 0; i < selected.length; i++){
             var cell = []
             cell.push(<td key={mockid++} className='leaderboard-cell-half'>{i+1}</td>);
