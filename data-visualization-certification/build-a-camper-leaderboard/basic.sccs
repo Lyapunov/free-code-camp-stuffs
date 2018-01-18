@@ -21,8 +21,8 @@ html, body,
    text-decoration: underline
 
 .leaderboard-img
-   width : 30px
-   height: 30px
+   width : 32px
+   height: 32px
 
 %bordered-table
    border-style: solid
