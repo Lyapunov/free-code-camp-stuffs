@@ -32,6 +32,12 @@ html, body,
 .leaderboard-headline
    font-weight: bold
 
+.leaderboard-loading
+   @extend %bordered-table
+   width: 80vw
+   height: 40px
+   text-align: center
+
 .leaderboard-table
    @extend %bordered-table
 
