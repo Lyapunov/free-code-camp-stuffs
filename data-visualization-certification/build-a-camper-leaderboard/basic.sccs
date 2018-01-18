@@ -58,6 +58,7 @@ html, body,
    vertical-align: middle
 
 .leaderboard-headline
+   @extend .noselect
    font-weight: bold
 
 .leaderboard-row
@@ -65,6 +66,7 @@ html, body,
 
 .leaderboard-cell
    @extend %bordered-table
+   @extend .noselect
    width: 20vw
    height: 40px
    text-align: center
@@ -76,6 +78,7 @@ html, body,
 
 .leaderboard-cell-half
    @extend %bordered-table
+   @extend .noselect
    width: 10vw
    text-align: center
 
