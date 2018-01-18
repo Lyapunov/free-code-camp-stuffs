@@ -44,12 +44,18 @@ html, body,
    text-align: center
 
 #leaderboard-container
-   left: 0px
    width: 100vw
    background-color: blue
+   display: table
 
 .leaderboard-table
    @extend %bordered-table
+   display: block
+   position: absolute
+   left: 10vw
+   margin: 0
+   padding: 0
+   vertical-align: middle
 
 .leaderboard-headline
    font-weight: bold
@@ -61,6 +67,11 @@ html, body,
    @extend %bordered-table
    width: 20vw
    height: 40px
+   text-align: center
+
+.leaderboard-cell-half-invisible
+   @extend %bordered-table
+   width: 10vw
    text-align: center
 
 .leaderboard-cell-half
