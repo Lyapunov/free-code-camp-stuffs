@@ -60,12 +60,14 @@ class CamperLeaderboard extends React.Component {
       var rows = [];
       if ( this.state.renderstate == 3 ) {
          var mockid = 0;
-         for (var i = 0; i < this.state.size; i++){
+         var selected = this.state.alltimetop;
+         for (var i = 0; i < selected.length; i++){
             var cell = []
-            for (var idx = 0; idx < this.state.size; idx++){
-               cell.push(<td key={mockid++}>Item</td>)
-            }
-            rows.push(<tr key={mockid++}>{cell}</tr>)
+            cell.push(<td key={mockid++} className='leaderboard-cell'>{selected[i].username}</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'><img src={selected[i].img} className='leaderboard-cell'/></td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'>{selected[i].recent}</td>);
+            cell.push(<td key={mockid++} className='leaderboard-cell'>{selected[i].alltime}</td>);
+            rows.push(<tr key={mockid++} className='leaderboard-row'>{cell}</tr>)
          }
       }
       return(
