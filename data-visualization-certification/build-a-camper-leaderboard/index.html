@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
@@ -33,6 +32,14 @@ function withPostfix(num) {
    return ""+num+"th";
 }
 
+function switchToRecent() {
+   console.log('recent');
+}
+function switchToAlltime() {
+   console.log('alltime');
+}
+
+
 class CamperLeaderboard extends React.Component {
    constructor(props){
       super(props);
@@ -45,7 +52,6 @@ class CamperLeaderboard extends React.Component {
          type: "GET",
          url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
          success: function(data) {
-            console.log("success:",data);
             self.state.recenttop = data;
             self.state.size = 7;
             self.state.renderstate += 1;
@@ -59,7 +65,6 @@ class CamperLeaderboard extends React.Component {
          type: "GET",
          url: "https://fcctop100.herokuapp.com/api/fccusers/top/alltime",
          success: function(data) {
-            console.log("success:",data);
             self.state.alltimetop = data;
             self.state.size = 9;
             self.state.renderstate += 2;
@@ -69,6 +74,7 @@ class CamperLeaderboard extends React.Component {
          }
       });
    }
+
    render(){
       var rows = [];
       if ( this.state.renderstate < 3 ) {
@@ -94,8 +100,8 @@ class CamperLeaderboard extends React.Component {
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Rank</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Username</td>);
          cell.push(<td key={mockid++} className='leaderboard-cell-half leaderboard-headline'>Image</td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Recent points</td>);
-         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'>Alltime points</td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onclick='switchToRecent()'>Recent points</button></td>);
+         cell.push(<td key={mockid++} className='leaderboard-cell leaderboard-headline'><button onclick='switchToAlltime)'>Alltime points</button></td>);
          rows.push(<tr key={mockid++} className='leaderboard-row leaderboard-headline'>{cell}</tr>)
       }
 
