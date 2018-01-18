@@ -24,6 +24,8 @@ html, body,
 
 .fixed-big-font
    font-size: 40px
+   overflow-wrap: break-word
+   white-space: nowrap
 
 .leaderboard-img
    width : 32px
@@ -35,20 +37,23 @@ html, body,
    border-color: black
    background-color: white
 
-.leaderboard-container
-   background-color: blue
-
-.leaderboard-headline
-   font-weight: bold
-
 .leaderboard-loading
    @extend %bordered-table
    width: 80vw
    height: 40px
    text-align: center
 
+#leaderboard-container
+   left: 0px
+   width: 100vw
+   vertical-align: left
+   background-color: blue
+
 .leaderboard-table
    @extend %bordered-table
+
+.leaderboard-headline
+   font-weight: bold
 
 .leaderboard-row
    @extend %bordered-table
@@ -69,22 +74,4 @@ html, body,
    height: 70px
    text-align: center
    vertical-align: middle
-
-.previewer-vertical-panel
-   width  : 50vw
-   display: block
-   padding: 15px
-
-.previewer-block
-   display     : block
-   width       : 100%
-   height      : 80%
-   border-style: solid
-   border-width: 1px
-   border-color: black
-   overflow-y  : auto
-
-.previewer-markdown-editor
-   display: flex
-   height: 75vh
 

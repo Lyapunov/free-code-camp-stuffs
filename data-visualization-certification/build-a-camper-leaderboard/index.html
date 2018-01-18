@@ -15,8 +15,6 @@
   JS 
 -->
 <script type="text/babel">
-var mountNode = document.getElementById('leaderboard-container');
-
 // See https://stackoverflow.com/questions/39462458/react-js-creating-simple-table, I used it as a basis
 
 function withPostfix(num) {
@@ -146,6 +144,7 @@ class CamperLeaderboard extends React.Component {
    }
 }
 
+var mountNode = document.getElementById('leaderboard-container');
 ReactDOM.render(<CamperLeaderboard/>, mountNode);
 </script>
 
