@@ -40,6 +40,11 @@ html, body,
    width: 20vw
    text-align: center
 
+.leaderboard-cell-half
+   @extend %bordered-table
+   width: 10vw
+   text-align: center
+
 .previewer-horizontal-bar
    width: 100%
    height: 15%
