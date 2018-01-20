@@ -1,0 +1,158 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<!-- 
+  CSS 
+-->
+<link rel="stylesheet" type="text/css" href="basic.css">
+
+<!-- 
+  JS 
+-->
+<script type="text/babel">
+// See https://stackoverflow.com/questions/39462458/react-js-creating-simple-table, I used it as a basis
+
+function withPostfix(num) {
+   if ( num == 1 ) {
+      return "1st";
+   }
+   if ( num == 2 ) {
+      return "2nd";
+   }
+   if ( num == 3 ) {
+      return "3rd";
+   }
+   return ""+num+"th";
+}
+
+class RecipeBox extends React.Component {
+   constructor(props){
+      super(props);
+      this.state = {}
+      this.state.size = 5;
+      this.state.renderstate = 0;
+      this.state.selection = 0;
+      var self = this;
+
+      $.ajax({
+         type: "GET",
+         url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+         success: function(data) {
+            self.state.recenttop = data;
+            self.state.size = 7;
+            self.state.renderstate += 1;
+            self.setState( self.state );
+         },
+         error: function(XMLHttpRequest, textStatus, errorThrown) {
+         }
+      });
+
+      $.ajax({
+         type: "GET",
+         url: "https://fcctop100.herokuapp.com/api/fccusers/top/alltime",
+         success: function(data) {
+            self.state.alltimetop = data;
+            self.state.size = 9;
+            self.state.renderstate += 2;
+            self.setState( self.state );
+         },
+         error: function(XMLHttpRequest, textStatus, errorThrown) {
+         }
+      });
+   }
+
+   switchToRecent(self) {
+      console.log('recent', self);
+      if ( !this.state.selection ) {
+         this.state.selection = 1;
+         this.setState( this.state );
+      }
+   }
+   switchToAlltime(self) {
+      console.log('alltime', self);
+      if ( this.state.selection ) {
+         this.state.selection = 0;
+         this.setState( this.state );
+      }
+   }
+
+   createSwitchToRecentFunction(self) {
+      return function() {
+         self.switchToRecent(self);
+      };
+   }
+
+   createSwitchToAlltimeFunction(self) {
+      return function() {
+         self.switchToAlltime(self);
+      };
+   }
+
+   render(){
+      var rows = [];
+      if ( this.state.renderstate < 3 ) {
+         return(
+            <table className='recipebox-table'  id="simple-board">
+               <tbody className='recipebox-name' >
+                  <tr className='recipebox-row'>
+                     <td className='recipebox-loading'>
+                        Loading...
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         );
+      }
+
+      var mockid = 0;
+      var selected = ( this.state.selection ? this.state.recenttop : this.state.alltimetop );
+      {
+         var cell = []
+         cell.push(<td key={mockid++} className='recipebox-cell-half recipebox-headline'>Rank</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell recipebox-headline'>Username</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell-half recipebox-headline'>Image</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell recipebox-headline'><button onClick={this.createSwitchToRecentFunction(this)}>Recent points</button></td>);
+         cell.push(<td key={mockid++} className='recipebox-cell recipebox-headline'><button onClick={this.createSwitchToAlltimeFunction(this)}>Alltime points</button></td>);
+         rows.push(<tr key={mockid++} className='recipebox-row-1 recipebox-headline'>{cell}</tr>)
+      }
+
+      for (var i = 0; i < selected.length; i++){
+         var cell = []
+         cell.push(<td key={mockid++} className='recipebox-cell-half'>{withPostfix(i+1)}</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell'>{selected[i].username}</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell-half'><img src={selected[i].img} className='recipebox-img'/></td>);
+         cell.push(<td key={mockid++} className='recipebox-cell'>{selected[i].recent}</td>);
+         cell.push(<td key={mockid++} className='recipebox-cell'>{selected[i].alltime}</td>);
+         if ( i % 2 == 0 ) {
+            rows.push(<tr key={mockid++} className='recipebox-row-2'>{cell}</tr>)
+         } else {
+            rows.push(<tr key={mockid++} className='recipebox-row-1'>{cell}</tr>)
+         }
+      }
+      return(
+         <table className='recipebox-table' id="simple-board">
+            <tbody>
+               {rows}
+            </tbody>
+         </table>
+      )
+   }
+}
+
+var mountNode = document.getElementById('recipebox-container');
+ReactDOM.render(<RecipeBox/>, mountNode);
+</script>
+
+<!-- 
+  HTML  
+-->
+<body>
+   <div id="recipebox-header" class="recipebox-horizontal-bar">
+      <p class="noselect fixed-big-font">Recipe Box</p>
+   </div>
+   <div id="recipebox-container"></div>
+</body>
