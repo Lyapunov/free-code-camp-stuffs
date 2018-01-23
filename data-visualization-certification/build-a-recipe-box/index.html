@@ -40,20 +40,26 @@ class RecipeBox extends React.Component {
          recipeBox = [{title:'chocolate bar',ingredients:'chocolate, bar'},{title:'apple pie',ingredients:'apple, pie, chocolate, bar'}];
       }
       localStorage.setItem('recipeBox', JSON.stringify(recipeBox));
+      this.state.recipeBox = recipeBox;
    }
 
    render() {
       var rows = [];
+      var mockid = 0;
+
+      for (var i = 0; i < this.state.recipeBox.length; i++) {
+         var content = [];
+         var ingredients = this.state.recipeBox[i].ingredients.split(',');
+         for (var j = 0; j < ingredients.length; ++j) {
+            content.push(<p className='recipebox-ingredient'>{ingredients[j]}</p>);
+         }
+         rows.push(<div key={mockid++} className='recipebox-recipe'><p className='recipebox-headline'>{this.state.recipeBox[i].title}</p><div className='recipebox-body'>{content}</div></div>);
+      }
+
       return(
-         <table className='recipebox-table'  id="simple-board">
-            <tbody className='recipebox-name' >
-               <tr className='recipebox-row'>
-                  <td className='recipebox-loading'>
-                     Loading...
-                  </td>
-               </tr>
-            </tbody>
-         </table>
+         <div className='recipebox-main'>
+            {rows}
+         </div>
       );
    }
 }
