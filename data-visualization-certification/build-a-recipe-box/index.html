@@ -29,9 +29,10 @@ function withPostfix(num) {
    return ""+num+"th";
 }
 
-function getToggleFunction(name) {
+function getToggleFunction(iname) {
    return function() {
-      console.log("Toggle!");
+      var name = iname;
+      console.log("Toggle! "+ name);
       var x = document.getElementById(name);
       if (x.style.display === "none") {
          x.style.display = "block";
@@ -69,10 +70,9 @@ class RecipeBox extends React.Component {
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
-         //  onClick={getToggleFunction(bodykey)}
          rows.push(<div key={mainkey} className='recipebox-recipe'>
-                      <p key={headkey} className='recipebox-headline'>{this.state.recipeBox[i].title}</p>
-                      <div key={bodykey} className='recipebox-body'>{content}</div>
+                      <p key={headkey} className='recipebox-headline' onClick={getToggleFunction(bodykey)}>{this.state.recipeBox[i].title}</p>
+                      <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
                    </div>);
       }
 
