@@ -10,6 +10,25 @@
 -->
 <link rel="stylesheet" type="text/css" href="basic.css">
 
+
+<style>
+
+/* https://stackoverflow.com/questions/3331353/transitions-on-the-display-property */
+
+.recipebox-body-off {
+   transition: max-height 1.0s ease;
+   max-height: 0;
+   overflow: hidden;
+}
+
+.recipebox-body-on {
+   transition: max-height 1.0s ease;
+   max-height: 300;
+   overflow: hidden;
+}
+
+</style>
+
 <!-- 
   JS 
 -->
@@ -70,13 +89,10 @@ class RecipeBox extends React.Component {
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
-         var contenti = "";
-         if ( this.state.enabled[i] ) {
-            contenti = <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>;
-         }
+         var contenti = this.state.enabled[i] ? "recipebox-body-on" : "recipebox-body-off";
          rows.push(<div key={mainkey} className='recipebox-recipe'>
                       <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
-                      {contenti} 
+                      <div key={bodykey} id={bodykey} className={contenti}>{content}</div>
                    </div>);
       }
 
