@@ -25,7 +25,7 @@
 
 .recipebox-ingredient-on {
    transition: height 1.0s ease;
-   height: 20;
+   height: 30;
    margin: 0;
    padding:0;
    overflow: hidden;
@@ -94,7 +94,7 @@ class RecipeBox extends React.Component {
          for (var j = 0; j < ingredients.length; ++j) {
             content.push(<p className={classi}>{ingredients[j]}</p>);
          }
-         content.push(<div className={classi}><button>Edit</button><button>Delete</button></div>);
+         content.push(<div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>);
          ++mockid;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
@@ -107,7 +107,12 @@ class RecipeBox extends React.Component {
 
       return(
          <div className='recipebox-main'>
+            <div className='recipebox-main-under'>
             {rows}
+            </div>
+            <div>
+            <button className='btn-primary'>Add New Recipe</button>
+            </div>
          </div>
       );
    }
