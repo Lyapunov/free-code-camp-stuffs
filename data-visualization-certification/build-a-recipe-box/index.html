@@ -35,6 +35,22 @@
    max-height:auto;
 }
 
+.recipebox-recipe {
+}
+
+.recipebox-main {
+   display:block;
+   height:500px;
+}
+
+.recipebox-main-under {
+   width:80%;
+   left:10%;
+   position:absolute;
+   display:table;
+   vertical-align: center;
+}
+
 </style>
 
 <!-- 
@@ -108,11 +124,15 @@ class RecipeBox extends React.Component {
       return(
          <div className='recipebox-main'>
             <div className='recipebox-main-under'>
-            {rows}
+            <div id="recipebox-header">
+               <p className="noselect fixed-big-font">Recipe Box</p>
             </div>
-            <div>
+
+            {rows}
+            <div className='recipebox-recipe'>
             <button className='btn-primary'>Add new recipe</button>
             <button className='btn-primary'>Reset to default content</button>
+            </div>
             </div>
          </div>
       );
@@ -127,8 +147,5 @@ ReactDOM.render(<RecipeBox/>, mountNode);
   HTML  
 -->
 <body>
-   <div id="recipebox-header" class="recipebox-horizontal-bar">
-      <p class="noselect fixed-big-font">Recipe Box</p>
-   </div>
    <div id="recipebox-container"></div>
 </body>
