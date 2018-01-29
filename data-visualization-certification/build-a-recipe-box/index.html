@@ -94,6 +94,7 @@ class RecipeBox extends React.Component {
          for (var j = 0; j < ingredients.length; ++j) {
             content.push(<p className={classi}>{ingredients[j]}</p>);
          }
+         content.push(<div className={classi}><button>Edit</button><button>Delete</button></div>);
          ++mockid;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
