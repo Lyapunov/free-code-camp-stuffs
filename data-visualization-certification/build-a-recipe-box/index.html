@@ -29,19 +29,6 @@ function withPostfix(num) {
    return ""+num+"th";
 }
 
-function getToggleFunction(iname) {
-   return function() {
-      var name = iname;
-      console.log("Toggle! "+ name);
-      var x = document.getElementById(name);
-      if (x.style.display === "none") {
-         x.style.display = "block";
-      } else {
-         x.style.display = "none";
-      }
-   }
- }
-
 class RecipeBox extends React.Component {
    constructor(props){
       super(props);
@@ -54,11 +41,24 @@ class RecipeBox extends React.Component {
       }
       localStorage.setItem('recipeBox', JSON.stringify(recipeBox));
       this.state.recipeBox = recipeBox;
+      this.state.enabled = [];
+      this.toggle = this.toggle.bind(this);
+   }
+
+   toggle(i) {
+      console.log(i);
+      console.log(i.currentTarget.id);
+      var id_field = i.currentTarget.id;
+      var fields = id_field.split('-');
+      this.state.enabled[ parseInt(fields[fields.length-1])-1 ] = 1 - (this.state.enabled[ parseInt(fields[fields.length-1])-1 ] ? 1: 0);
+      console.log(this.state.enabled);
+      this.setState( this.state );
    }
 
    render() {
       var rows = [];
       var mockid = 0;
+      console.log('===>', this.state.recipeBox);
 
       for (var i = 0; i < this.state.recipeBox.length; i++) {
          var content = [];
@@ -70,9 +70,13 @@ class RecipeBox extends React.Component {
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
+         var contenti = "";
+         if ( this.state.enabled[i] ) {
+            contenti = <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>;
+         }
          rows.push(<div key={mainkey} className='recipebox-recipe'>
-                      <p key={headkey} className='recipebox-headline' onClick={getToggleFunction(bodykey)}>{this.state.recipeBox[i].title}</p>
-                      <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
+                      <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
+                      {contenti} 
                    </div>);
       }
 
