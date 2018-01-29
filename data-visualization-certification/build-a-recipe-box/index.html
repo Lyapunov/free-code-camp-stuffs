@@ -15,16 +15,24 @@
 
 /* https://stackoverflow.com/questions/3331353/transitions-on-the-display-property */
 
-.recipebox-body-off {
-   transition: max-height 1.0s ease;
-   max-height: 0;
+.recipebox-ingredient-off {
+   transition: height 1.0s ease;
+   height: 0;
+   margin: 0;
+   padding:0;
    overflow: hidden;
 }
 
-.recipebox-body-on {
-   transition: max-height 1.0s ease;
-   max-height: 300;
+.recipebox-ingredient-on {
+   transition: height 1.0s ease;
+   height: 20;
+   margin: 0;
+   padding:0;
    overflow: hidden;
+}
+
+.recipebox-body {
+   max-height:auto;
 }
 
 </style>
@@ -82,17 +90,17 @@ class RecipeBox extends React.Component {
       for (var i = 0; i < this.state.recipeBox.length; i++) {
          var content = [];
          var ingredients = this.state.recipeBox[i].ingredients.split(',');
+         var classi = this.state.enabled[i] ? "recipebox-ingredient-on" : "recipebox-ingredient-off";
          for (var j = 0; j < ingredients.length; ++j) {
-            content.push(<p className='recipebox-ingredient'>{ingredients[j]}</p>);
+            content.push(<p className={classi}>{ingredients[j]}</p>);
          }
          ++mockid;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
-         var contenti = this.state.enabled[i] ? "recipebox-body-on" : "recipebox-body-off";
          rows.push(<div key={mainkey} className='recipebox-recipe'>
                       <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
-                      <div key={bodykey} id={bodykey} className={contenti}>{content}</div>
+                      <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
                    </div>);
       }
 
