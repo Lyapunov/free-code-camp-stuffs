@@ -94,14 +94,14 @@ class RecipeBox extends React.Component {
          for (var j = 0; j < ingredients.length; ++j) {
             content.push(<p className={classi}>{ingredients[j]}</p>);
          }
-         content.push(<div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>);
          ++mockid;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
-         rows.push(<div key={mainkey} className='recipebox-recipe'>
+         rows.push(<div key={mainkey} className='recipebox-recipe panel panel-default'>
                       <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
                       <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
+                      <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
                    </div>);
       }
 
