@@ -95,16 +95,19 @@ class RecipeBox extends React.Component {
          var ingredients = this.state.recipeBox[i].ingredients.split(',');
          var classi = this.state.enabled[i] ? "recipebox-ingredient-on" : "recipebox-ingredient-off";
          for (var j = 0; j < ingredients.length; ++j) {
-            content.push(<p className={classi}>{ingredients[j]}</p>);
+            content.push(<li className={classi}>{ingredients[j]}</li>);
          }
          ++mockid;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
+         var ingrkey = "recipebox-recipe-ingredient-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
          rows.push(<li key={mainkey} className='recipebox-recipe list-group-item'>
-                      <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
-                      <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
-                      <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
+                      <div className="container">
+                         <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
+                         <ul key={bodykey} id={bodykey} className='recipebox-body'>{content}</ul>
+                         <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
+                      </div>
                    </li>);
       }
 
