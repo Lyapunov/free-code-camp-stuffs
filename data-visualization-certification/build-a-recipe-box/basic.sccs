@@ -57,3 +57,18 @@ html, body,
    height: 40px
    text-align: center
 
+// https://stackoverflow.com/questions/3331353/transitions-on-the-display-property
+
+.recipebox-ingredient-off
+   transition: height 1.0s ease
+   height: 0
+   margin: 0
+   padding: 0
+   overflow: hidden
+
+.recipebox-ingredient-on
+   transition: height 1.0s ease
+   height: 30
+   margin: 0
+   padding: 0
+   overflow: hidden
