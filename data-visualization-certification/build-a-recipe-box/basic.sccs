@@ -27,21 +27,10 @@ html, body,
    overflow-wrap: break-word
    white-space: nowrap
 
-.recipebox-img
-   width : 32px
-   height: 32px
-
 %bordered-table
    border-style: solid
    border-width: 1px
    border-color: black
-
-.recipebox-loading
-   @extend %bordered-table
-   width: 80vw
-   height: 40px
-   text-align: center
-   background-color: white
 
 #recipebox-container
    width: 100vw
@@ -61,35 +50,10 @@ html, body,
    font-weight: bold
    cursor: pointer
 
-.recipebox-row-1
-   @extend %bordered-table
-   background-color: white
-
-.recipebox-row-2
-   @extend %bordered-table
-   background-color: lightgray
-
 .recipebox-cell
    @extend %bordered-table
    @extend .noselect
    width: 20vw
    height: 40px
    text-align: center
-
-.recipebox-cell-half-invisible
-   @extend %bordered-table
-   width: 10vw
-   text-align: center
-
-.recipebox-cell-half
-   @extend %bordered-table
-   @extend .noselect
-   width: 10vw
-   text-align: center
-
-.recipebox-horizontal-bar
-   width: 100%
-   height: 60px
-   text-align: center
-   vertical-align: middle
 
