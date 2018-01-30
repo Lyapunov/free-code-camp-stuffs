@@ -114,11 +114,11 @@ class RecipeBox extends React.Component {
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var bodykey = "recipebox-recipe-body-"+mockid;
-         rows.push(<div key={mainkey} className='recipebox-recipe panel panel-default'>
+         rows.push(<li key={mainkey} className='recipebox-recipe list-group-item'>
                       <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
                       <div key={bodykey} id={bodykey} className='recipebox-body'>{content}</div>
                       <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
-                   </div>);
+                   </li>);
       }
 
       return(
@@ -127,11 +127,12 @@ class RecipeBox extends React.Component {
             <div id="recipebox-header">
                <p className="noselect fixed-big-font">Recipe Box</p>
             </div>
-
-            {rows}
+            <ul className="list-group">
+               {rows}
+            </ul>
             <div className='recipebox-recipe'>
-            <button className='btn-primary'>Add new recipe</button>
-            <button className='btn-primary'>Reset to default content</button>
+               <button className='btn-primary'>Add new recipe</button>
+               <button className='btn-primary'>Reset to default content</button>
             </div>
             </div>
          </div>
