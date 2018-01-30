@@ -59,6 +59,7 @@ html, body,
 .recipebox-headline
    @extend .noselect
    font-weight: bold
+   cursor: pointer
 
 .recipebox-row-1
    @extend %bordered-table
