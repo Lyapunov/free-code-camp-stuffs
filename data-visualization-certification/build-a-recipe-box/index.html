@@ -105,6 +105,7 @@ class RecipeBox extends React.Component {
          rows.push(<li key={mainkey} className='recipebox-recipe list-group-item'>
                       <div className="container">
                          <p key={headkey} className='recipebox-headline' id={headkey} onClick={this.toggle}>{this.state.recipeBox[i].title}</p>
+                         <p key={ingrkey} className={classi} id={ingrkey}>Ingredients:</p>
                          <ul key={bodykey} id={bodykey} className='recipebox-body'>{content}</ul>
                          <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
                       </div>
