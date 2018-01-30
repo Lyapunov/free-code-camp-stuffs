@@ -38,19 +38,6 @@
 .recipebox-recipe {
 }
 
-.recipebox-main {
-   display:block;
-   height:500px;
-}
-
-.recipebox-main-under {
-   width:80%;
-   left:10%;
-   position:absolute;
-   display:table;
-   vertical-align: center;
-}
-
 </style>
 
 <!-- 
@@ -122,18 +109,19 @@ class RecipeBox extends React.Component {
       }
 
       return(
-         <div className='recipebox-main'>
-            <div className='recipebox-main-under'>
-            <div id="recipebox-header">
-               <p className="noselect fixed-big-font">Recipe Box</p>
-            </div>
-            <ul className="list-group">
-               {rows}
-            </ul>
-            <div className='recipebox-recipe'>
-               <button className='btn-primary'>Add new recipe</button>
-               <button className='btn-primary'>Reset to default content</button>
-            </div>
+         <div className='row'>
+            <div className="col-sm-1 col-md-1 col-xs-1"></div>
+            <div className='col-sm-10 col-md-10 col-xs-10'>
+               <div id="recipebox-header">
+                  <p className="noselect fixed-big-font">Recipe Box</p>
+               </div>
+               <ul className="list-group">
+                  {rows}
+               </ul>
+               <div className='recipebox-recipe'>
+                  <button className='btn-primary'>Add new recipe</button>
+                  <button className='btn-primary'>Reset to default content</button>
+               </div>
             </div>
          </div>
       );
