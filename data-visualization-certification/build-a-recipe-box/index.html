@@ -62,12 +62,13 @@ class RecipeBox extends React.Component {
 
    change_item( ref, newtitle, newingredients ) {
       this.state.recipeBox[ref].title = newtitle;
-      this.state.recipeBox[ref].ingredients = newingredients;
+      this.state.recipeBox[ref].ingredients = newingredients.split(",").filter(x=>x).map(x=>x.trim()).filter(x=>x!=="").join(",");
       this.setState( this.state );
    }
 
    add_item( newtitle, newingredients ) {
-      this.state.recipeBox.push({title: newtitle, ingredients: newingredients});
+      var fnewingredients = newingredients.split(",").filter(x=>x).map(x=>x.trim()).filter(x=>x!=="").join(",");
+      this.state.recipeBox.push({title: newtitle, ingredients: fnewingredients});
       this.setState( this.state );
    }
 
