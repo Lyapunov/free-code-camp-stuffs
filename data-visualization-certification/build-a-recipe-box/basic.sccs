@@ -38,9 +38,9 @@ html, body,
 
 .recipebox-body
    display: block
-   list-style-type: disc
-   margin-top: 1em
-   margin-bottom: 1em
+   list-style: initial
+   margin-top: 0
+   margin-bottom: 0
    margin-left: 0
    margin-right: 0
    padding-left: 0
@@ -73,6 +73,7 @@ html, body,
 // https://stackoverflow.com/questions/3331353/transitions-on-the-display-property
 
 .recipebox-ingredient-off
+   @extend .noselect
    transition: height 1.0s ease
    height: 0
    margin: 0
@@ -80,6 +81,7 @@ html, body,
    overflow: hidden
 
 .recipebox-ingredient-on
+   @extend .noselect
    transition: height 1.0s ease
    height: 30
    margin: 0
