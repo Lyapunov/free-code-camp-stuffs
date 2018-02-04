@@ -46,9 +46,11 @@ class RecipeBox extends React.Component {
       this.state.enabled = [];
       this.toggle = this.toggle.bind(this);
       this.get_edit_dialog_for_item = this.get_edit_dialog_for_item.bind(this);
+      this.add_item        = this.add_item.bind(this);
       this.change_item     = this.change_item.bind(this);
       this.delete_item     = this.delete_item.bind(this);
       this.get_delete_item = this.get_delete_item.bind(this);
+      this.get_new_dialog  = this.get_new_dialog.bind(this);
    }
 
    toggle(i) {
@@ -64,6 +66,11 @@ class RecipeBox extends React.Component {
       this.setState( this.state );
    }
 
+   add_item( newtitle, newingredients ) {
+      this.state.recipeBox.push({title: newtitle, ingredients: newingredients});
+      this.setState( this.state );
+   }
+
    get_edit_dialog_for_item(ref) {
       var stati  = this.state;
       var changi = this.change_item;
@@ -72,8 +79,16 @@ class RecipeBox extends React.Component {
       }
    }
 
+   get_new_dialog() {
+      var addi = this.add_item;
+      return function() {
+         show_new_dialog(addi);
+      }
+   }
+
    delete_item( ref ) {
-      delete this.state.recipeBox[ref];
+      this.state.recipeBox[ref] = "<deleted>";
+      console.log("--->",this.state.recipeBox);
       this.setState( this.state );
    }
 
@@ -90,6 +105,9 @@ class RecipeBox extends React.Component {
 
       for (var i = 0; i < this.state.recipeBox.length; i++) {
          if ( this.state.recipeBox[i] === undefined ) {
+            continue;
+         }
+         if ( this.state.recipeBox[i] === "<deleted>" ) {
             continue;
          }
          var content = [];
@@ -131,7 +149,7 @@ class RecipeBox extends React.Component {
                   {rows}
                </ul>
                <div className='recipebox-recipe'>
-                  <button className='btn-primary'>Add new recipe</button>
+                  <button className='btn-primary' onClick={this.get_new_dialog()}>Add new recipe</button>
                   <button className='btn-primary'>Reset to default content</button>
                </div>
             </div>
@@ -158,6 +176,38 @@ function show_edit_dialog(ref,state,callback) {
           text: "OK",
           click: function () {
               callback(ref,$("#recipebox-edit-title").val(),$("#recipebox-edit-content").val());
+              $(this).dialog('close');
+          }
+      },
+      {
+          id: "ButtonCancel",
+          text: "Cancel",
+          click: function () {
+              $(this).dialog('close');
+          }
+      }
+      ]
+   });
+}
+
+function show_new_dialog(callback) {
+   $("#recipebox-edit-dialog").dialog({
+      closeOnEscape: false,
+      open: function(event, ui) {
+         $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+         $("#recipebox-edit-title").val("");
+         $("#recipebox-edit-content").val("");
+      },
+      modal: true,
+      resizable: false,
+      draggable: false,
+      title: "New recipe",
+      buttons: [
+      {
+          id: "ButtonOK",
+          text: "OK",
+          click: function () {
+              callback($("#recipebox-edit-title").val(),$("#recipebox-edit-content").val());
               $(this).dialog('close');
           }
       },
