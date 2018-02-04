@@ -101,7 +101,6 @@ class RecipeBox extends React.Component {
 
    render() {
       var rows = [];
-      var mockid = 0;
 
       for (var i = 0; i < this.state.recipeBox.length; i++) {
          if ( this.state.recipeBox[i] === undefined ) {
@@ -118,7 +117,7 @@ class RecipeBox extends React.Component {
                content.push(<li className={`list-group-item-success ${classi}`}>{ingredients[j]}</li>);
             }
          }
-         ++mockid;
+         var mockid = i+1;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var ingrkey = "recipebox-recipe-ingredient-"+mockid;
