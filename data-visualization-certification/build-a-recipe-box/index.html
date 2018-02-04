@@ -53,7 +53,6 @@ class RecipeBox extends React.Component {
    }
 
    reset_recipe_box(recipeBox) {
-      console.log('--->reset');
       this.state.recipeBox = recipeBox
                              ? recipeBox
                              : [{title:'Sicilian Roasted Chicken',ingredients:'cooking spray, 1 whole chicken, cut into 8 pieces,1 teaspoon salt,1 teaspoon ground black pepper,1 teaspoon ground paprika,1 teaspoon garlic powder,1 teaspoon dried oregano'},
@@ -92,7 +91,6 @@ class RecipeBox extends React.Component {
 
    delete_item( ref ) {
       this.state.recipeBox[ref] = "<deleted>";
-      console.log("--->",this.state.recipeBox);
       localStorage.setItem('recipeBox', JSON.stringify(this.state.recipeBox));
       this.setState( this.state );
    }
