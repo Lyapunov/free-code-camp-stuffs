@@ -125,15 +125,15 @@ class RecipeBox extends React.Component {
          if ( this.state.recipeBox[i] === "<deleted>" ) {
             continue;
          }
+         var mockid = i+1;
          var content = [];
          var ingredients = this.state.recipeBox[i].ingredients.split(',');
          var classi = this.state.enabled[i] ? "recipebox-ingredient-on" : "recipebox-ingredient-off";
          for (var j = 0; j < ingredients.length; ++j) {
             if ( ingredients[j].trim() != "" ) {
-               content.push(<li className={`list-group-item-success ${classi}`}>{ingredients[j]}</li>);
+               content.push(<li key={"recipebox-recipe-"+i+"-ingredient-"+j} className={`list-group-item-success ${classi}`}>{ingredients[j]}</li>);
             }
          }
-         var mockid = i+1;
          var mainkey = "recipebox-recipe-"+mockid;
          var headkey = "recipebox-recipe-headline-"+mockid;
          var ingrkey = "recipebox-recipe-ingredient-"+mockid;
