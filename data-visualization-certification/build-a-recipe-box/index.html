@@ -4,6 +4,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<link href="http://code.jquery.com/ui/1.9.2/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css" />
 
 <!-- 
   CSS 
@@ -43,6 +45,8 @@ class RecipeBox extends React.Component {
       this.state.recipeBox = recipeBox;
       this.state.enabled = [];
       this.toggle = this.toggle.bind(this);
+      this.get_edit_dialog_for_item = this.get_edit_dialog_for_item.bind(this);
+      this.change_item = this.change_item.bind(this);
    }
 
    toggle(i) {
@@ -53,6 +57,20 @@ class RecipeBox extends React.Component {
       this.state.enabled[ parseInt(fields[fields.length-1])-1 ] = 1 - (this.state.enabled[ parseInt(fields[fields.length-1])-1 ] ? 1: 0);
       console.log(this.state.enabled);
       this.setState( this.state );
+   }
+
+   change_item( ref, newtitle, newingredients ) {
+      this.state.recipeBox[ref].title = newtitle;
+      this.state.recipeBox[ref].ingredients = newingredients;
+      this.setState( this.state );
+   }
+
+   get_edit_dialog_for_item(ref) {
+      var stati  = this.state;
+      var changi = this.change_item;
+      return function() {
+         show_edit_dialog(ref,stati,changi);
+      }
    }
 
    render() {
@@ -79,7 +97,10 @@ class RecipeBox extends React.Component {
                          <p key={ingrkey} className={classi} id={ingrkey}>Ingredients</p>
                          <ul key={bodykey} id={bodykey} className='recipebox-body'>{content}</ul>
                          <p key={brkey} className={classi} id={brkey}/>
-                         <div className={classi}><button className='btn-primary'>Edit</button><button className='btn-danger'>Delete</button></div>
+                         <div className={classi}>
+                            <button className='btn-primary' onClick={this.get_edit_dialog_for_item(i)}>Edit</button>
+                            <button className='btn-danger'>Delete</button>
+                         </div>
                       </div>
                    </li>);
       }
@@ -104,6 +125,39 @@ class RecipeBox extends React.Component {
    }
 }
 
+function show_edit_dialog(ref,state,callback) {
+   console.log("!!" + ref);
+   $("#recipebox-edit-dialog").dialog({
+      closeOnEscape: false,
+      open: function(event, ui) {
+         $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+         $("#recipebox-edit-title").val(state.recipeBox[ref].title);
+         $("#recipebox-edit-content").val(state.recipeBox[ref].ingredients);
+      },
+      modal: true,
+      resizable: false,
+      draggable: false,
+      title: "Edit recipe",
+      buttons: [
+      {
+          id: "ButtonOK",
+          text: "OK",
+          click: function () {
+              callback(ref,$("#recipebox-edit-title").val(),$("#recipebox-edit-content").val());
+              $(this).dialog('close');
+          }
+      },
+      {
+          id: "ButtonCancel",
+          text: "Cancel",
+          click: function () {
+              $(this).dialog('close');
+          }
+      }
+      ]
+   });
+}
+
 var mountNode = document.getElementById('recipebox-container');
 ReactDOM.render(<RecipeBox/>, mountNode);
 </script>
@@ -113,4 +167,10 @@ ReactDOM.render(<RecipeBox/>, mountNode);
 -->
 <body>
    <div id="recipebox-container"></div>
+   <form id="recipebox-edit-dialog" style="display: none" align="center">
+      <p>Name:</p>
+      <input type="text" id="recipebox-edit-title" class="name"/>
+      <p>Ingredients:</p>
+      <input type="text" id="recipebox-edit-content" class="name"/>
+   </form>
 </body>
