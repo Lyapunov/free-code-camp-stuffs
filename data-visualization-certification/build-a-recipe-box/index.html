@@ -52,12 +52,9 @@ class RecipeBox extends React.Component {
    }
 
    toggle(i) {
-      console.log(i);
-      console.log(i.currentTarget.id);
       var id_field = i.currentTarget.id;
       var fields = id_field.split('-');
       this.state.enabled[ parseInt(fields[fields.length-1])-1 ] = 1 - (this.state.enabled[ parseInt(fields[fields.length-1])-1 ] ? 1: 0);
-      console.log(this.state.enabled);
       this.setState( this.state );
    }
 
@@ -144,7 +141,6 @@ class RecipeBox extends React.Component {
 }
 
 function show_edit_dialog(ref,state,callback) {
-   console.log("!!" + ref);
    $("#recipebox-edit-dialog").dialog({
       closeOnEscape: false,
       open: function(event, ui) {
