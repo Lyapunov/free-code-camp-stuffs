@@ -65,6 +65,7 @@ class RecipeBox extends React.Component {
 
    reset_recipe_box_and_refresh() {
       this.reset_recipe_box();
+      localStorage.setItem('recipeBox', JSON.stringify(this.state.recipeBox));
       this.setState( this.state );
    }
 
@@ -78,12 +79,21 @@ class RecipeBox extends React.Component {
    change_item( ref, newtitle, newingredients ) {
       this.state.recipeBox[ref].title = newtitle;
       this.state.recipeBox[ref].ingredients = newingredients.split(",").filter(x=>x).map(x=>x.trim()).filter(x=>x!=="").join(",");
+      localStorage.setItem('recipeBox', JSON.stringify(this.state.recipeBox));
       this.setState( this.state );
    }
 
    add_item( newtitle, newingredients ) {
       var fnewingredients = newingredients.split(",").filter(x=>x).map(x=>x.trim()).filter(x=>x!=="").join(",");
       this.state.recipeBox.push({title: newtitle, ingredients: fnewingredients});
+      localStorage.setItem('recipeBox', JSON.stringify(this.state.recipeBox));
+      this.setState( this.state );
+   }
+
+   delete_item( ref ) {
+      this.state.recipeBox[ref] = "<deleted>";
+      console.log("--->",this.state.recipeBox);
+      localStorage.setItem('recipeBox', JSON.stringify(this.state.recipeBox));
       this.setState( this.state );
    }
 
@@ -100,12 +110,6 @@ class RecipeBox extends React.Component {
       return function() {
          show_new_dialog(addi);
       }
-   }
-
-   delete_item( ref ) {
-      this.state.recipeBox[ref] = "<deleted>";
-      console.log("--->",this.state.recipeBox);
-      this.setState( this.state );
    }
 
    get_delete_item( ref ) {
