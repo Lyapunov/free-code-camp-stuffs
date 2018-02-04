@@ -75,7 +75,7 @@ html, body,
 .recipebox-ingredient-off
    @extend .noselect
    transition: height 1.0s ease
-   height: 0
+   height: 0px
    margin: 0
    padding: 0
    overflow: hidden
@@ -83,7 +83,7 @@ html, body,
 .recipebox-ingredient-on
    @extend .noselect
    transition: height 1.0s ease
-   height: 30
+   height: 30px
    margin: 0
    padding: 0
    overflow: hidden
