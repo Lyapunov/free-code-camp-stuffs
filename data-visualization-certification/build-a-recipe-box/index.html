@@ -37,12 +37,11 @@ class RecipeBox extends React.Component {
       this.state = {}
 
       // See for some recerence: https://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage
+      this.reset_recipe_box = this.reset_recipe_box.bind(this);
+      this.reset_recipe_box_and_refresh = this.reset_recipe_box_and_refresh.bind(this);
       var recipeBox = JSON.parse(localStorage.getItem('recipeBox'));
-      if ( !recipeBox ) {
-         recipeBox = [{title:'chocolate bar',ingredients:'chocolate, bar'},{title:'apple pie',ingredients:'apple, pie, chocolate, bar'}];
-      }
+      this.reset_recipe_box( recipeBox );
       localStorage.setItem('recipeBox', JSON.stringify(recipeBox));
-      this.state.recipeBox = recipeBox;
       this.state.enabled = [];
       this.toggle = this.toggle.bind(this);
       this.get_edit_dialog_for_item = this.get_edit_dialog_for_item.bind(this);
@@ -51,6 +50,22 @@ class RecipeBox extends React.Component {
       this.delete_item     = this.delete_item.bind(this);
       this.get_delete_item = this.get_delete_item.bind(this);
       this.get_new_dialog  = this.get_new_dialog.bind(this);
+   }
+
+   reset_recipe_box(recipeBox) {
+      console.log('--->reset');
+      this.state.recipeBox = recipeBox
+                             ? recipeBox
+                             : [{title:'Sicilian Roasted Chicken',ingredients:'cooking spray, 1 whole chicken, cut into 8 pieces,1 teaspoon salt,1 teaspoon ground black pepper,1 teaspoon ground paprika,1 teaspoon garlic powder,1 teaspoon dried oregano'},
+                                {title:'Cookie Balls',ingredients:'1 pound chocolate sandwich cookies, 1 pound vanilla-flavored candy coating, 1 package cream cheese'},
+                                {title:'Bacon Cheese Frittata',ingredients:'5 slices bacon,6 eggs,1 cup milk,2 tablespoons butter,1/2 teaspoon salt,1/4 teaspoon ground black pepper,1/4 cup chopped green onion,1 cup shredded Cheddar cheese'}
+                                ];
+      this.state.enabled = [];
+   }
+
+   reset_recipe_box_and_refresh() {
+      this.reset_recipe_box();
+      this.setState( this.state );
    }
 
    toggle(i) {
@@ -150,7 +165,7 @@ class RecipeBox extends React.Component {
                </ul>
                <div className='recipebox-recipe'>
                   <button className='btn-primary' onClick={this.get_new_dialog()}>Add new recipe</button>
-                  <button className='btn-primary'>Reset to default content</button>
+                  <button className='btn-primary' onClick={this.reset_recipe_box_and_refresh}>Reset to default content</button>
                </div>
             </div>
          </div>
