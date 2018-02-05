@@ -41,6 +41,7 @@ class GameOfLife extends React.Component {
       this.get_neighbours = this.get_neighbours.bind(this);
       this.get_next_state = this.get_next_state.bind(this);
       this.tick           = this.tick.bind(this);
+      this.click_on_cell  = this.click_on_cell.bind(this);
    }
 
    next_generation() {
@@ -113,6 +114,17 @@ class GameOfLife extends React.Component {
       }
    }
 
+   click_on_cell(evnt) {
+      if ( !this.state.running ) {
+         var fields = evnt.target.id.split('-');
+         var row = parseInt(fields[fields.length-2]);
+         var column = parseInt(fields[fields.length-1]);
+         console.log("?",row,column);
+         this.state.board[row][column] = 0+!this.state.board[row][column];
+         this.setState( this.state );
+      }
+   }
+
    tick() {
       var next_board = [];
       this.set_board_with_function(next_board, this.state, this.get_next_state);
@@ -144,7 +156,7 @@ class GameOfLife extends React.Component {
             var columnKey="game-of-life-table-cell-"+row+"-"+column;
             var color = this.state.board[row][column];
             var cdescs = ["-none","-half","-full"];
-            content2.push(<td key={columnKey} className={"game-of-life-cell"+cdescs[color]}></td>);
+            content2.push(<td key={columnKey} id={columnKey} className={"game-of-life-cell"+cdescs[color]} onClick={this.click_on_cell}></td>);
          }
          content.push(<tr key={rowKey}>{content2}</tr>);
       }
