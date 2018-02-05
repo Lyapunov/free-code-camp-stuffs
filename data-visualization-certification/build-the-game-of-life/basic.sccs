@@ -19,9 +19,13 @@ html, body,
    font-size: 5vh
    text-decoration: underline
 
+// Gem of centering: https://stackoverflow.com/questions/7455362/how-to-center-a-table-of-the-screen-vertically-and-horizontally
+
 .game-of-life-bar
    width: 100vw
    height: 10vh
+   display: table-cell
+   vertical-align: middle
 
 .game-of-life-outer
    width: 100vw
@@ -30,6 +34,17 @@ html, body,
    display: table
    margin-left: auto
    margin-right: auto
+
+.game-of-life-upperbuttons
+   display: table
+   margin-left: auto
+   margin-right: auto
+
+.game-of-life-upper-button
+   max-height: 6vh
+   font-size: 3vh
+   margin-left: 5px
+   margin-right: 5px
 
 %game-of-life-cell
    display: table-cell
