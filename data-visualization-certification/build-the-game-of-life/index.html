@@ -49,9 +49,7 @@ class GameOfLife extends React.Component {
          this.state.runcount++;
          if ( this.state.runcount >= this.state.runspeed ) {
             this.state.runcount = 0;
-            this.state.generation++;
-            this.tick();
-            this.setState( this.state ); 
+            this.state.running = this.tick();
          }
       }
 
@@ -125,10 +123,27 @@ class GameOfLife extends React.Component {
       }
    }
 
+   boards_equal(state, first, second) {
+      for (var row = 0; row < state.boardy; ++row) {
+         for ( var column = 0; column < state.boardx; ++column ) {
+            if ( first[row][column] != second[row][column] ) {
+               return 0;
+            }
+         }
+      }
+      return 1;
+   }
+
    tick() {
       var next_board = [];
       this.set_board_with_function(next_board, this.state, this.get_next_state);
-      this.state.board = next_board;
+      if ( !this.boards_equal(this.state, this.state.board, next_board) ) {
+         this.state.board = next_board;
+         this.state.generation++;
+         this.setState( this.state ); 
+         return true;
+      }
+      return false;
    }
 
    set_random_board_and_refresh() {
