@@ -29,7 +29,7 @@ class GameOfLife extends React.Component {
       this.state.generation = 0;
       this.state.running = false;
       this.state.runcount = 0;
-      this.state.runspeed = 1;
+      this.state.runperiod = 1;
       this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
       this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
       this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
@@ -42,12 +42,13 @@ class GameOfLife extends React.Component {
       this.get_next_state = this.get_next_state.bind(this);
       this.tick           = this.tick.bind(this);
       this.click_on_cell  = this.click_on_cell.bind(this);
+      this.change_speed   = this.change_speed.bind(this);
    }
 
    next_generation() {
       if ( this.state.running ) {
          this.state.runcount++;
-         if ( this.state.runcount >= this.state.runspeed ) {
+         if ( this.state.runcount >= this.state.runperiod ) {
             this.state.runcount = 0;
             this.state.running = this.tick();
          }
@@ -161,6 +162,19 @@ class GameOfLife extends React.Component {
       this.set_board_with_function(this.state.board,this.state,x=>0);
       this.setState( this.state );
    }
+
+   change_speed() {
+      if ( this.state.runperiod == 1 ) {
+         this.state.runperiod = 4;
+         this.setState( this.state );
+      } else if ( this.state.runperiod == 4 ) {
+         this.state.runperiod = 8;
+         this.setState( this.state );
+      } else if ( this.state.runperiod == 8 ) {
+         this.state.runperiod = 1;
+         this.setState( this.state );
+      }
+   }
  
    render() {
       var content = [];
@@ -184,6 +198,10 @@ class GameOfLife extends React.Component {
                   <button className="btn-success game-of-life-upper-button" onClick={this.running_off}>Pause</button>
                   <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
                   <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
+                  <button className="btn-success game-of-life-upper-button" onClick={this.change_speed}>{"Speed: "+(this.state.runperiod==1
+                                                                                                                    ?"Fast"
+                                                                                                                    :(this.state.runperiod==4?"Mid"
+                                                                                                                                             :"Slow"))}</button>
                </div>
             </div>
             <div className="game-of-life-outer">
