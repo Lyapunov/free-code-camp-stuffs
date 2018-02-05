@@ -35,7 +35,7 @@ html, body,
    margin-left: auto
    margin-right: auto
 
-.game-of-life-upperbuttons
+.game-of-life-holder
    display: table
    margin-left: auto
    margin-right: auto

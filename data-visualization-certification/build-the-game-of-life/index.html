@@ -178,20 +178,24 @@ class GameOfLife extends React.Component {
 
       return (
          <div>
-         <div className="game-of-life-bar">
-            <div className="game-of-life-upperbuttons">
-               <button className="btn-success game-of-life-upper-button" onClick={this.running_on}>Run</button>
-               <button className="btn-success game-of-life-upper-button" onClick={this.running_off}>Pause</button>
-               <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
-               <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
-               <div className="game-of-life-upper-text">{"Generation: "+(this.state.generation)}</div>
+            <div className="game-of-life-bar">
+               <div className="game-of-life-holder">
+                  <button className="btn-success game-of-life-upper-button" onClick={this.running_on}>Run</button>
+                  <button className="btn-success game-of-life-upper-button" onClick={this.running_off}>Pause</button>
+                  <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
+                  <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
+               </div>
             </div>
-         </div>
-         <div className="game-of-life-outer">
-            <table className="game-of-life-table">
-               {content} 
-            </table>
-         </div>
+            <div className="game-of-life-outer">
+               <table className="game-of-life-table">
+                  {content} 
+               </table>
+            </div>
+            <div className="game-of-life-bar">
+               <div className="game-of-life-holder">
+                  <div className="game-of-life-upper-text">{"Generation: "+(this.state.generation)}</div>
+               </div>
+            </div>
          </div>
       );
    }
