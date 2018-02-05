@@ -22,17 +22,44 @@ var mountNode = document.getElementById('game-of-life-container');
 class GameOfLife extends React.Component {
    constructor(props) {
       super(props);
-      this.state = { value: "My mini example" };
+      this.state = {};
+      this.state.board = 0;
+      this.state.boardy = 40;
+      this.state.boardx = 40;
+      this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
+      this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
+      this.set_board_with_function(x=>Math.floor(Math.random()*8<=2));
+   }
+
+   set_board_with_function(funct) {
+      this.state.board = [];
+      for ( var row = 0; row < this.state.boardy; ++row ) {
+         var rowc = [];
+         for ( var column = 0; column < this.state.boardx; ++column ) {
+            rowc.push(funct());
+         }
+         this.state.board.push(rowc);
+      }
+   }
+
+   set_random_board_and_refresh() {
+      this.set_board_with_function(x=>Math.floor(Math.random()*8<=2));
+      this.setState( this.state );
    }
    
+   set_clear_board_and_refresh() {
+      this.set_board_with_function(x=>0);
+      this.setState( this.state );
+   }
+ 
    render() {
       var content = [];
-      for (var row = 0; row < 40; ++row) {
+      for (var row = 0; row < this.state.boardy; ++row) {
          var rowKey="game-of-life-table-row-"+row;
          var content2 = [];
-         for ( var column = 0; column < 40; ++column ) {
+         for ( var column = 0; column < this.state.boardx; ++column ) {
             var columnKey="game-of-life-table-cell-"+row+"-"+column;
-            var color = (row+column) % 3;
+            var color = this.state.board[row][column];
             var cdescs = ["-none","-half","-full"];
             content2.push(<td key={columnKey} className={"game-of-life-cell"+cdescs[color]}></td>);
          }
@@ -45,8 +72,8 @@ class GameOfLife extends React.Component {
             <div className="game-of-life-upperbuttons">
                <button className="btn-success game-of-life-upper-button">Run</button>
                <button className="btn-success game-of-life-upper-button">Pause</button>
-               <button className="btn-success game-of-life-upper-button">Clear</button>
-               <button className="btn-success game-of-life-upper-button">Random</button>
+               <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
+               <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
             </div>
          </div>
          <div className="game-of-life-outer">
