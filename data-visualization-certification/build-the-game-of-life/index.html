@@ -32,9 +32,7 @@ class GameOfLife extends React.Component {
       this.state.runspeed = 1;
       this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
       this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
-      console.log('--->',this.state.board);
       this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
-      console.log('===>',this.state.board);
       this.next_generation = this.next_generation.bind(this);
       this.next_generation();
       this.running_on     = this.running_on.bind(this);
@@ -42,6 +40,7 @@ class GameOfLife extends React.Component {
       this.get_cell       = this.get_cell.bind(this);
       this.get_neighbours = this.get_neighbours.bind(this);
       this.get_next_state = this.get_next_state.bind(this);
+      this.tick           = this.tick.bind(this);
    }
 
    next_generation() {
@@ -50,6 +49,7 @@ class GameOfLife extends React.Component {
          if ( this.state.runcount >= this.state.runspeed ) {
             this.state.runcount = 0;
             this.state.generation++;
+            this.tick();
             this.setState( this.state ); 
          }
       }
@@ -80,8 +80,8 @@ class GameOfLife extends React.Component {
 
    get_cell(y,x) {
       if ( this.state.board ) {
-         if ( y < 0 || y >= this.state.board.length ) {
-            if ( x < 0 || x >= this.state.board[y].length ) {
+         if ( y >= 0 && y < this.state.board.length ) {
+            if ( x >= 0 || x < this.state.board[y].length ) {
                return !!this.state.board[y][x];
             }
          }
@@ -114,7 +114,9 @@ class GameOfLife extends React.Component {
    }
 
    tick() {
-      var next_state = [];
+      var next_board = [];
+      this.set_board_with_function(next_board, this.state, this.get_next_state);
+      this.state.board = next_board;
    }
 
    set_random_board_and_refresh() {
@@ -122,7 +124,6 @@ class GameOfLife extends React.Component {
       this.state.generation = 0;
       this.state.board = [];
       this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
-      console.log(this.state.board);
       this.setState( this.state );
    }
    
