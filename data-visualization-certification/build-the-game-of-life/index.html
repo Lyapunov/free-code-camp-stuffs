@@ -17,24 +17,39 @@
   JS 
 -->
 <script type="text/babel">
-var mountNode = document.getElementById('example-container');
+var mountNode = document.getElementById('game-of-life-container');
 
-class MyExample extends React.Component {
+class GameOfLife extends React.Component {
    constructor(props) {
       super(props);
       this.state = { value: "My mini example" };
    }
    
    render() {
+      var content = [];
+      for (var row = 0; row < 40; ++row) {
+         var rowKey="game-of-life-table-row-"+row;
+         var content2 = [];
+         for ( var column = 0; column < 40; ++column ) {
+            var columnKey="game-of-life-table-cell-"+row+"-"+column;
+            var color = (row+column) % 3;
+            var cdescs = ["-none","-half","-full"];
+            content2.push(<td key={columnKey} className={"game-of-life-cell"+cdescs[color]}></td>);
+         }
+         content.push(<tr key={rowKey}>{content2}</tr>);
+      }
+
       return (
-         <textarea className="example-textarea"
-            defaultValue={this.state.value}
-         />
+         <div className="game-of-life-panel">
+            <table className="game-of-life-table">
+               {content} 
+            </table>
+         </div>
       );
    }
 }
 
-ReactDOM.render(<MyExample/>, mountNode);
+ReactDOM.render(<GameOfLife/>, mountNode);
 
 </script>
 
@@ -42,5 +57,5 @@ ReactDOM.render(<MyExample/>, mountNode);
   HTML  
 -->
 <body>
-   <div id="example-container"></div>
+   <div id="game-of-life-container"></div>
 </body>

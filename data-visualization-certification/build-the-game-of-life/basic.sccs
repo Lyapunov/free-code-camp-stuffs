@@ -18,3 +18,22 @@ html, body,
    font-size: 5vh
    text-decoration: underline
 
+.game-of-life-table
+   display: table
+
+%game-of-life-cell
+   display: table-cell
+   width: 2vmin
+   height: 2vmin
+
+.game-of-life-cell-full
+   @extend %game-of-life-cell
+   background-color: #00FF00
+
+.game-of-life-cell-half
+   @extend %game-of-life-cell
+   background-color: #008000
+
+.game-of-life-cell-none
+   @extend %game-of-life-cell
+   background-color: #000000
