@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-with-addons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+
+<!-- 
+  CSS 
+-->
+<link rel="stylesheet" type="text/css" href="basic.css">
+
+<!-- 
+  JS 
+-->
+<script type="text/babel">
+var mountNode = document.getElementById('example-container');
+
+class MyExample extends React.Component {
+   constructor(props) {
+      super(props);
+      this.state = { value: "My mini example" };
+   }
+   
+   render() {
+      return (
+         <textarea className="example-textarea"
+            defaultValue={this.state.value}
+         />
+      );
+   }
+}
+
+ReactDOM.render(<MyExample/>, mountNode);
+
+</script>
+
+<!-- 
+  HTML  
+-->
+<body>
+   <div id="example-container"></div>
+</body>
