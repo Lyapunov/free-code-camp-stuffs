@@ -37,8 +37,11 @@ class GameOfLife extends React.Component {
       console.log('===>',this.state.board);
       this.next_generation = this.next_generation.bind(this);
       this.next_generation();
-      this.running_on  = this.running_on.bind(this);
-      this.running_off = this.running_off.bind(this);
+      this.running_on     = this.running_on.bind(this);
+      this.running_off    = this.running_off.bind(this);
+      this.get_cell       = this.get_cell.bind(this);
+      this.get_neighbours = this.get_neighbours.bind(this);
+      this.get_next_state = this.get_next_state.bind(this);
    }
 
    next_generation() {
@@ -69,10 +72,49 @@ class GameOfLife extends React.Component {
       for ( var row = 0; row < state.boardy; ++row ) {
          var rowc = [];
          for ( var column = 0; column < state.boardx; ++column ) {
-            rowc.push(funct());
+            rowc.push(funct(row,column));
          }
          target.push(rowc);
       }
+   }
+
+   get_cell(y,x) {
+      if ( this.state.board ) {
+         if ( y < 0 || y >= this.state.board.length ) {
+            if ( x < 0 || x >= this.state.board[y].length ) {
+               return !!this.state.board[y][x];
+            }
+         }
+      }
+      return 0;
+   }
+
+   get_neighbours(y,x) {
+      var retval = 0;
+      for ( var dy = -1; dy <= 1; ++dy ) {
+         for ( var dx = -1; dx <= 1; ++dx ) {
+            if ( dy == 0 && dx == 0 ) {
+               continue;
+            }
+            retval += this.get_cell(y+dy,x+dx);
+         }
+      }
+      return retval;
+   }
+
+   get_next_state(y,x) {
+      var val = this.get_cell(y,x);
+      var nes = this.get_neighbours(y,x);
+
+      if ( !!val ) {
+         return 0 +( ( nes >=2 ) && ( nes <=3 ) );
+      } else {
+         return 0 + ( nes == 3 );
+      }
+   }
+
+   tick() {
+      var next_state = [];
    }
 
    set_random_board_and_refresh() {
