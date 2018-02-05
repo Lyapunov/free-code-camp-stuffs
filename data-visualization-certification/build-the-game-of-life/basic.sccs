@@ -60,6 +60,7 @@ html, body,
    border-style: solid
    border-width: 1px
    border-color: gray
+   cursor: pointer
 
 .game-of-life-cell-full
    @extend %game-of-life-cell
