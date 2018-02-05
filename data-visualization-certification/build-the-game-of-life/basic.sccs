@@ -41,10 +41,17 @@ html, body,
    margin-right: auto
 
 .game-of-life-upper-button
+   display: inline
    max-height: 6vh
    font-size: 3vh
    margin-left: 5px
    margin-right: 5px
+
+.game-of-life-upper-text
+   @extend .noselect
+   display: inline
+   font-size: 3vh
+   color: white
 
 %game-of-life-cell
    display: table-cell
