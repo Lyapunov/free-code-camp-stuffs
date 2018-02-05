@@ -23,7 +23,7 @@ class GameOfLife extends React.Component {
    constructor(props) {
       super(props);
       this.state = {};
-      this.state.board = 0;
+      this.state.board = [];
       this.state.boardy = 40;
       this.state.boardx = 40;
       this.state.generation = 0;
@@ -32,7 +32,9 @@ class GameOfLife extends React.Component {
       this.state.runspeed = 1;
       this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
       this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
-      this.set_board_with_function(x=>Math.floor(Math.random()*8<=2));
+      console.log('--->',this.state.board);
+      this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
+      console.log('===>',this.state.board);
       this.next_generation = this.next_generation.bind(this);
       this.next_generation();
       this.running_on  = this.running_on.bind(this);
@@ -63,26 +65,30 @@ class GameOfLife extends React.Component {
       this.state.running = false;
    }
 
-   set_board_with_function(funct) {
-      this.state.running = false;
-      this.state.board = [];
-      for ( var row = 0; row < this.state.boardy; ++row ) {
+   set_board_with_function(target, state, funct) {
+      for ( var row = 0; row < state.boardy; ++row ) {
          var rowc = [];
-         for ( var column = 0; column < this.state.boardx; ++column ) {
+         for ( var column = 0; column < state.boardx; ++column ) {
             rowc.push(funct());
          }
-         this.state.board.push(rowc);
+         target.push(rowc);
       }
-      this.state.generation = 0;
    }
 
    set_random_board_and_refresh() {
-      this.set_board_with_function(x=>Math.floor(Math.random()*8<=2));
+      this.state.running = false;
+      this.state.generation = 0;
+      this.state.board = [];
+      this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
+      console.log(this.state.board);
       this.setState( this.state );
    }
    
    set_clear_board_and_refresh() {
-      this.set_board_with_function(x=>0);
+      this.state.running = false;
+      this.state.generation = 0;
+      this.state.board = [];
+      this.set_board_with_function(this.state.board,this.state,x=>0);
       this.setState( this.state );
    }
  
