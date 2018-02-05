@@ -15,209 +15,254 @@
   JS 
 -->
 <script type="text/babel">
-var mountNode = document.getElementById('game-of-life-container');
+// https://blog.codepen.io/2016/06/08/can-adjust-infinite-loop-protection-timing/
+//window.CP.PenTimer.MAX_TIME_IN_LOOP_WO_EXIT = 20000;
+
+var mountNode = document.getElementById("game-of-life-container");
 
 class GameOfLife extends React.Component {
-   constructor(props) {
-      super(props);
-      this.state = {};
-      this.state.board = [];
-      this.state.boardy = 40;
-      this.state.boardx = 40;
-      this.state.generation = 0;
-      this.state.running = false;
-      this.state.runcount = 0;
-      this.state.runperiod = 1;
-      this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
-      this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
-      this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
-      this.next_generation = this.next_generation.bind(this);
-      this.next_generation();
-      this.running_on     = this.running_on.bind(this);
-      this.running_off    = this.running_off.bind(this);
-      this.get_cell       = this.get_cell.bind(this);
-      this.get_neighbours = this.get_neighbours.bind(this);
-      this.get_next_state = this.get_next_state.bind(this);
-      this.tick           = this.tick.bind(this);
-      this.click_on_cell  = this.click_on_cell.bind(this);
-      this.change_speed   = this.change_speed.bind(this);
-   }
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.state.board = [];
+    this.state.boardy = 40;
+    this.state.boardx = 40;
+    this.state.generation = 0;
+    this.state.running = false;
+    this.state.runcount = 0;
+    this.state.atomperiod = 1;
+    this.state.runperiod = this.state.atomperiod;
+    this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(
+      this
+    );
+    this.set_clear_board_and_refresh = this.set_clear_board_and_refresh.bind(
+      this
+    );
+    this.set_board_with_function(this.state.board, this.state, x =>
+      Math.floor(Math.random() * 8 <= 2)
+    );
+    this.next_generation = this.next_generation.bind(this);
+    this.next_generation();
+    this.running_on = this.running_on.bind(this);
+    this.running_off = this.running_off.bind(this);
+    this.get_cell = this.get_cell.bind(this);
+    this.get_neighbours = this.get_neighbours.bind(this);
+    this.get_next_state = this.get_next_state.bind(this);
+    this.tick = this.tick.bind(this);
+    this.click_on_cell = this.click_on_cell.bind(this);
+    this.change_speed = this.change_speed.bind(this);
+  }
 
-   next_generation() {
-      if ( this.state.running ) {
-         this.state.runcount++;
-         if ( this.state.runcount >= this.state.runperiod ) {
-            this.state.runcount = 0;
-            this.state.running = this.tick();
-         }
+  next_generation() {
+    if (this.state.running) {
+      this.state.runcount++;
+      if (this.state.runcount >= this.state.runperiod) {
+        this.state.runcount = 0;
+        this.state.running = this.tick();
       }
+    }
 
-      var self = this;
-      setTimeout( function() {
-         self.next_generation();
-      }, 50 );
-   }
+    var self = this;
+    setTimeout(function() {
+      self.next_generation();
+    }, 50);
+  }
 
-   running_on() {
-      this.state.running = true;
-   }
+  running_on() {
+    this.state.running = true;
+  }
 
-   running_off() {
-      this.state.running = false;
-   }
+  running_off() {
+    this.state.running = false;
+  }
 
-   set_board_with_function(target, state, funct) {
-      for ( var row = 0; row < state.boardy; ++row ) {
-         var rowc = [];
-         for ( var column = 0; column < state.boardx; ++column ) {
-            rowc.push(funct(row,column));
-         }
-         target.push(rowc);
+  set_board_with_function(target, state, funct) {
+    for (var row = 0; row < state.boardy; ++row) {
+      var rowc = [];
+      for (var column = 0; column < state.boardx; ++column) {
+        rowc.push(funct(row, column));
       }
-   }
+      target.push(rowc);
+    }
+  }
 
-   get_cell(y,x) {
-      if ( this.state.board ) {
-         if ( y >= 0 && y < this.state.board.length ) {
-            if ( x >= 0 || x < this.state.board[y].length ) {
-               return !!this.state.board[y][x];
-            }
-         }
+  get_cell(y, x) {
+    if (this.state.board) {
+      if (y >= 0 && y < this.state.board.length) {
+        if (x >= 0 || x < this.state.board[y].length) {
+          return !!this.state.board[y][x];
+        }
       }
-      return 0;
-   }
+    }
+    return 0;
+  }
 
-   get_neighbours(y,x) {
-      var retval = 0;
-      for ( var dy = -1; dy <= 1; ++dy ) {
-         for ( var dx = -1; dx <= 1; ++dx ) {
-            if ( dy == 0 && dx == 0 ) {
-               continue;
-            }
-            retval += this.get_cell(y+dy,x+dx);
-         }
+  get_neighbours(y, x) {
+    var retval = 0;
+    for (var dy = -1; dy <= 1; ++dy) {
+      for (var dx = -1; dx <= 1; ++dx) {
+        if (dy == 0 && dx == 0) {
+          continue;
+        }
+        retval += this.get_cell(y + dy, x + dx);
       }
-      return retval;
-   }
+    }
+    return retval;
+  }
 
-   get_next_state(y,x) {
-      var val = this.get_cell(y,x);
-      var nes = this.get_neighbours(y,x);
+  get_next_state(y, x) {
+    var val = this.get_cell(y, x);
+    var nes = this.get_neighbours(y, x);
 
-      if ( !!val ) {
-         return 0 +( ( nes >=2 ) && ( nes <=3 ) );
-      } else {
-         return 0 + ( nes == 3 )*2;
+    if (!!val) {
+      return 0 + (nes >= 2 && nes <= 3);
+    } else {
+      return 0 + (nes == 3) * 2;
+    }
+  }
+
+  click_on_cell(evnt) {
+    if (!this.state.running) {
+      var fields = evnt.target.id.split("-");
+      var row = parseInt(fields[fields.length - 2]);
+      var column = parseInt(fields[fields.length - 1]);
+      console.log("?", row, column);
+      this.state.board[row][column] = 0 + !this.state.board[row][column];
+      this.setState(this.state);
+    }
+  }
+
+  boards_equal(state, first, second) {
+    for (var row = 0; row < state.boardy; ++row) {
+      for (var column = 0; column < state.boardx; ++column) {
+        if (first[row][column] != second[row][column]) {
+          return 0;
+        }
       }
-   }
+    }
+    return 1;
+  }
 
-   click_on_cell(evnt) {
-      if ( !this.state.running ) {
-         var fields = evnt.target.id.split('-');
-         var row = parseInt(fields[fields.length-2]);
-         var column = parseInt(fields[fields.length-1]);
-         console.log("?",row,column);
-         this.state.board[row][column] = 0+!this.state.board[row][column];
-         this.setState( this.state );
+  tick() {
+    var next_board = [];
+    this.set_board_with_function(next_board, this.state, this.get_next_state);
+    if (!this.boards_equal(this.state, this.state.board, next_board)) {
+      this.state.board = next_board;
+      this.state.generation++;
+      this.setState(this.state);
+      return true;
+    }
+    return false;
+  }
+
+  set_random_board_and_refresh() {
+    this.state.running = false;
+    this.state.generation = 0;
+    this.state.board = [];
+    this.set_board_with_function(this.state.board, this.state, x =>
+      Math.floor(Math.random() * 8 <= 2)
+    );
+    this.setState(this.state);
+  }
+
+  set_clear_board_and_refresh() {
+    this.state.running = false;
+    this.state.generation = 0;
+    this.state.board = [];
+    this.set_board_with_function(this.state.board, this.state, x => 0);
+    this.setState(this.state);
+  }
+
+  change_speed() {
+    if (this.state.runperiod == this.state.atomperiod) {
+      this.state.runperiod = 2*this.state.atomperiod;
+      this.setState(this.state);
+    } else if (this.state.runperiod == 2*this.state.atomperiod) {
+      this.state.runperiod = 4*this.state.atomperiod;
+      this.setState(this.state);
+    } else if (this.state.runperiod == 4*this.state.atomperiod) {
+      this.state.runperiod = this.state.atomperiod;
+      this.setState(this.state);
+    }
+  }
+
+  render() {
+    var content = [];
+    for (var row = 0; row < this.state.boardy; ++row) {
+      var rowKey = "game-of-life-table-row-" + row;
+      var content2 = [];
+      for (var column = 0; column < this.state.boardx; ++column) {
+        var columnKey = "game-of-life-table-cell-" + row + "-" + column;
+        var color = this.state.board[row][column];
+        var cdescs = ["-none", "-half", "-full"];
+        content2.push(
+          <td
+            key={columnKey}
+            id={columnKey}
+            className={"game-of-life-cell" + cdescs[color]}
+            onClick={this.click_on_cell}
+          />
+        );
       }
-   }
+      content.push(<tr key={rowKey}>{content2}</tr>);
+    }
 
-   boards_equal(state, first, second) {
-      for (var row = 0; row < state.boardy; ++row) {
-         for ( var column = 0; column < state.boardx; ++column ) {
-            if ( first[row][column] != second[row][column] ) {
-               return 0;
-            }
-         }
-      }
-      return 1;
-   }
-
-   tick() {
-      var next_board = [];
-      this.set_board_with_function(next_board, this.state, this.get_next_state);
-      if ( !this.boards_equal(this.state, this.state.board, next_board) ) {
-         this.state.board = next_board;
-         this.state.generation++;
-         this.setState( this.state ); 
-         return true;
-      }
-      return false;
-   }
-
-   set_random_board_and_refresh() {
-      this.state.running = false;
-      this.state.generation = 0;
-      this.state.board = [];
-      this.set_board_with_function(this.state.board,this.state,x=>Math.floor(Math.random()*8<=2));
-      this.setState( this.state );
-   }
-   
-   set_clear_board_and_refresh() {
-      this.state.running = false;
-      this.state.generation = 0;
-      this.state.board = [];
-      this.set_board_with_function(this.state.board,this.state,x=>0);
-      this.setState( this.state );
-   }
-
-   change_speed() {
-      if ( this.state.runperiod == 1 ) {
-         this.state.runperiod = 4;
-         this.setState( this.state );
-      } else if ( this.state.runperiod == 4 ) {
-         this.state.runperiod = 8;
-         this.setState( this.state );
-      } else if ( this.state.runperiod == 8 ) {
-         this.state.runperiod = 1;
-         this.setState( this.state );
-      }
-   }
- 
-   render() {
-      var content = [];
-      for (var row = 0; row < this.state.boardy; ++row) {
-         var rowKey="game-of-life-table-row-"+row;
-         var content2 = [];
-         for ( var column = 0; column < this.state.boardx; ++column ) {
-            var columnKey="game-of-life-table-cell-"+row+"-"+column;
-            var color = this.state.board[row][column];
-            var cdescs = ["-none","-half","-full"];
-            content2.push(<td key={columnKey} id={columnKey} className={"game-of-life-cell"+cdescs[color]} onClick={this.click_on_cell}></td>);
-         }
-         content.push(<tr key={rowKey}>{content2}</tr>);
-      }
-
-      return (
-         <div>
-            <div className="game-of-life-bar">
-               <div className="game-of-life-holder">
-                  <button className="btn-success game-of-life-upper-button" onClick={this.running_on}>Run</button>
-                  <button className="btn-success game-of-life-upper-button" onClick={this.running_off}>Pause</button>
-                  <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
-                  <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
-                  <button className="btn-success game-of-life-upper-button" onClick={this.change_speed}>{"Speed: "+(this.state.runperiod==1
-                                                                                                                    ?"Fast"
-                                                                                                                    :(this.state.runperiod==4?"Mid"
-                                                                                                                                             :"Slow"))}</button>
-               </div>
+    return (
+      <div>
+        <div className="game-of-life-bar">
+          <div className="game-of-life-holder">
+            <button
+              className="btn-success game-of-life-upper-button"
+              onClick={this.running_on}
+            >
+              Run
+            </button>
+            <button
+              className="btn-success game-of-life-upper-button"
+              onClick={this.running_off}
+            >
+              Pause
+            </button>
+            <button
+              className="btn-success game-of-life-upper-button"
+              onClick={this.set_clear_board_and_refresh}
+            >
+              Clear
+            </button>
+            <button
+              className="btn-success game-of-life-upper-button"
+              onClick={this.set_random_board_and_refresh}
+            >
+              Random
+            </button>
+            <button
+              className="btn-success game-of-life-upper-button"
+              onClick={this.change_speed}
+            >
+              {"Speed: " +
+                (this.state.runperiod == this.state.atomperiod
+                  ? "Fast"
+                  : this.state.runperiod == 2*this.state.atomperiod ? "Mid" : "Slow")}
+            </button>
+          </div>
+        </div>
+        <div className="game-of-life-outer">
+          <table className="game-of-life-table">{content}</table>
+        </div>
+        <div className="game-of-life-bar">
+          <div className="game-of-life-holder">
+            <div className="game-of-life-upper-text">
+              {"Generation: " + this.state.generation}
             </div>
-            <div className="game-of-life-outer">
-               <table className="game-of-life-table">
-                  {content} 
-               </table>
-            </div>
-            <div className="game-of-life-bar">
-               <div className="game-of-life-holder">
-                  <div className="game-of-life-upper-text">{"Generation: "+(this.state.generation)}</div>
-               </div>
-            </div>
-         </div>
-      );
-   }
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
-ReactDOM.render(<GameOfLife/>, mountNode);
+ReactDOM.render(<GameOfLife />, mountNode);
+
 
 </script>
 
