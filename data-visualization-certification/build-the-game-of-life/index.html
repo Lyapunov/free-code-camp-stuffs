@@ -28,9 +28,39 @@ class GameOfLife extends React.Component {
       this.state.boardx = 40;
       this.state.generation = 0;
       this.state.running = false;
+      this.state.runcount = 0;
+      this.state.runspeed = 1;
       this.set_random_board_and_refresh = this.set_random_board_and_refresh.bind(this);
       this.set_clear_board_and_refresh  = this.set_clear_board_and_refresh.bind(this);
       this.set_board_with_function(x=>Math.floor(Math.random()*8<=2));
+      this.next_generation = this.next_generation.bind(this);
+      this.next_generation();
+      this.running_on  = this.running_on.bind(this);
+      this.running_off = this.running_off.bind(this);
+   }
+
+   next_generation() {
+      if ( this.state.running ) {
+         this.state.runcount++;
+         if ( this.state.runcount >= this.state.runspeed ) {
+            this.state.runcount = 0;
+            this.state.generation++;
+            this.setState( this.state ); 
+         }
+      }
+
+      var self = this;
+      setTimeout( function() {
+         self.next_generation();
+      }, 50 );
+   }
+
+   running_on() {
+      this.state.running = true;
+   }
+
+   running_off() {
+      this.state.running = false;
    }
 
    set_board_with_function(funct) {
@@ -73,8 +103,8 @@ class GameOfLife extends React.Component {
          <div>
          <div className="game-of-life-bar">
             <div className="game-of-life-upperbuttons">
-               <button className="btn-success game-of-life-upper-button">Run</button>
-               <button className="btn-success game-of-life-upper-button">Pause</button>
+               <button className="btn-success game-of-life-upper-button" onClick={this.running_on}>Run</button>
+               <button className="btn-success game-of-life-upper-button" onClick={this.running_off}>Pause</button>
                <button className="btn-success game-of-life-upper-button" onClick={this.set_clear_board_and_refresh}>Clear</button>
                <button className="btn-success game-of-life-upper-button" onClick={this.set_random_board_and_refresh}>Random</button>
                <div className="game-of-life-upper-text">{"Generation: "+(this.state.generation)}</div>
