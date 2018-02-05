@@ -2,6 +2,7 @@ html, body,
    max-width : 100%
    height    : 100%
    overflow-x: hidden
+   background-color: black
 
 .noselect
    -webkit-touch-callout: none
@@ -18,8 +19,17 @@ html, body,
    font-size: 5vh
    text-decoration: underline
 
+.game-of-life-bar
+   width: 100vw
+   height: 10vh
+
+.game-of-life-outer
+   width: 100vw
+
 .game-of-life-table
    display: table
+   margin-left: auto
+   margin-right: auto
 
 %game-of-life-cell
    display: table-cell

@@ -40,10 +40,14 @@ class GameOfLife extends React.Component {
       }
 
       return (
-         <div className="game-of-life-panel">
+         <div>
+         <div className="game-of-life-bar">
+         </div>
+         <div className="game-of-life-outer">
             <table className="game-of-life-table">
                {content} 
             </table>
+         </div>
          </div>
       );
    }
