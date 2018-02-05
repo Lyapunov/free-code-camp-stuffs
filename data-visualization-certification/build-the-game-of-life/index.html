@@ -64,6 +64,7 @@ class GameOfLife extends React.Component {
    }
 
    set_board_with_function(funct) {
+      this.state.running = false;
       this.state.board = [];
       for ( var row = 0; row < this.state.boardy; ++row ) {
          var rowc = [];
