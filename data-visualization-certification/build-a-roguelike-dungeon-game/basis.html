@@ -535,7 +535,7 @@
 
          function drawCellFloor(y,x,z,cy,cx,oy,ox,tiles) {
             if ( getMapCell(cy+y,cx+x,z) != 5 ) {
-               drawFloor(-y+oy,x-ox, "gray");
+               drawFloor(-y+oy,x-ox, "#AAAAAA");
                var obi = {x:x+cx,y:y+cy,z:z};
                tiles.push(getFloorTile(-y+oy,x-ox,obi));
             }
@@ -543,10 +543,10 @@
 
          function drawCellWall(figurePos,y,x,z,cy,cx,oy,ox,deltaY=0,deltaX=0) {
             if ( !getMapCell(cy+y,cx+x-1,z) ) {
-               drawWall(-y+oy+deltaY,x-ox-deltaX,0, "blue");
+               drawWall(-y+oy+deltaY,x-ox-deltaX,0, "gray");
             }
             if ( !getMapCell(cy+y-1,cx+x,z) ) {
-               drawWall(-y+oy+deltaY,x-ox-deltaX,1, "blue");
+               drawWall(-y+oy+deltaY,x-ox-deltaX,1, "gray");
             }
 
             var isStairs = getMapCell(cy+y,cx+x,z) == 6;
