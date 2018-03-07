@@ -642,11 +642,9 @@
                   for ( var mag = 0; mag <= 1*(getMapCell(findings[i][0],findings[i][1]) == 6); ++mag ) {
                      for ( var j = 0; j < dirs.length; ++j ) {
                         var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-                        if ( getMapCell(nextp[0],nextp[1]) ) {
-                           if ( hops[nextp] === undefined ) {
-                              nfindings.push(nextp);
-                              hops[nextp] = findings[i];
-                           }
+                        if ( getMapCell(nextp[0],nextp[1]) && hops[nextp] === undefined ) {
+                           nfindings.push(nextp);
+                           hops[nextp] = findings[i];
                         }
                      }
                   }
@@ -658,10 +656,9 @@
             if ( hops[tara] !== undefined ) {
                way.push(tara);
                var maxi = 100;
-               while(hops[tara] && maxi ) {
+               while(hops[tara] && maxi-- ) {
                   way.push(hops[tara]);
                   tara = hops[tara];
-                  --maxi;
                }
             }
             way.reverse();
