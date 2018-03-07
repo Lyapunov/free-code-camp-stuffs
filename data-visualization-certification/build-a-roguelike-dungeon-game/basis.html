@@ -271,11 +271,10 @@
             var ylimitratio = 1.0;
             var percentage = tileSize / 50;
             var ds = 1;
-            var ymax = 100 * percentage*scale;
+            var ymax = 100 * percentage * scale;
             var xmax = 54  * percentage;
             var ux = Math.floor(cx - xmax/2);
-            var uy = Math.floor(cy - ymax * Math.max(1- (1-ylimitratio)/percentage,0) + ymax * percentage * 0.1); // without ylimitratio: uy = cy - ymax;
-            var ylim = ymax * Math.max(1-(1-ylimitratio)/percentage,0);
+            var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax*ds;
             additionalCharacterBodyData.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,...box));
          }
