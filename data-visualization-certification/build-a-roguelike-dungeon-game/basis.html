@@ -574,12 +574,9 @@
          }
 
          function getPointSide(p1,p2,p3) {
-            var vx = p2.x - p1.x;
-            var vy = p2.y - p1.y;
-            var sx = -vy;
-            var sy = vx;
-            var retval = Math.sign(sx * (p3.x-p1.x) + sy * (p3.y-p1.y));
-            return retval;
+            var sx = p1.y - p2.y;
+            var sy = p2.x - p1.x;
+            return Math.sign(sx * (p3.x-p1.x) + sy * (p3.y-p1.y));
          }
 
          function isPointInTriangle(p1,p2,p3,pt) {
