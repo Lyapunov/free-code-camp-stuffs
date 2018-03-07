@@ -302,7 +302,7 @@
                         [0,0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
 
          var figurePosition  = [15.5,15.5];
          var figureFaceDir   = 0; // 0 is south, 1 is east, 2 is north, 3 is west
@@ -507,7 +507,6 @@
             var err = 1e-6;
 
             while ( limit && getMapCell( celly, cellx ) != 0 && !( celly == cy + y && cellx == cx + x ) ) {
-            
                --limit;
                var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
                                      Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
@@ -588,8 +587,7 @@
                        || isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
                        || isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
                   {
-                     var mapval = getMapCell(cy+y,cx+x);
-                     if ( mapval ) {
+                     if ( getMapCell(cy+y,cx+x) ) {
                         cellsy.push(y);
                         cellsx.push(x);
                      }
@@ -597,24 +595,18 @@
                }
             }
 
-            {
-               for ( var i = 0; i < cellsx.length; ++i ) {
-                  drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy+deltaY,ox+deltaX,tiles);
-               }
+            for ( var i = 0; i < cellsx.length; ++i ) {
+               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy+deltaY,ox+deltaX,tiles);
             }
 
-            {
-               for ( var i = 0; i < cellsx.length; ++i ) {
-                  drawCellWall(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox,deltaY,deltaX);
-               }
+            for ( var i = 0; i < cellsx.length; ++i ) {
+               drawCellWall(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox,deltaY,deltaX);
             }
 
-            {
-               for ( var i = 0; i < nextly.length; ++i ) {
-                  var y = nextly[i];
-                  var x = nextlx[i];
-                  drawForeground([cy+y+0.5,cx+x+0.5],figurePos,tiles,-y+1+oy+deltaY,-x+ox+1+deltaX);
-               }
+            for ( var i = 0; i < nextly.length; ++i ) {
+               var y = nextly[i];
+               var x = nextlx[i];
+               drawForeground([cy+y+0.5,cx+x+0.5],figurePos,tiles,-y+1+oy+deltaY,-x+ox+1+deltaX);
             }
          }
 
@@ -650,8 +642,7 @@
                   for ( var mag = 0; mag <= 1*(getMapCell(findings[i][0],findings[i][1]) == 6); ++mag ) {
                      for ( var j = 0; j < dirs.length; ++j ) {
                         var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-                        var mapval = getMapCell(nextp[0],nextp[1]);
-                        if ( mapval ) {
+                        if ( getMapCell(nextp[0],nextp[1]) ) {
                            if ( hops[nextp] === undefined ) {
                               nfindings.push(nextp);
                               hops[nextp] = findings[i];
