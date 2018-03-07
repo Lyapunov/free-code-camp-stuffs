@@ -525,8 +525,6 @@
 
             var cellsy = [];
             var cellsx = [];
-            var nextly = [];
-            var nextlx = [];
 
             for ( var y = -mapRadius; y < mapRadius; ++y ) {
                for ( var x = -mapRadius; x < mapRadius; ++x ) {
@@ -550,12 +548,6 @@
 
             for ( var i = 0; i < cellsx.length; ++i ) {
                drawCellWall(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox,deltaY,deltaX);
-            }
-
-            for ( var i = 0; i < nextly.length; ++i ) {
-               var y = nextly[i];
-               var x = nextlx[i];
-               drawForeground([cy+y+0.5,cx+x+0.5],figurePos,tiles,-y+1+oy+deltaY,-x+ox+1+deltaX);
             }
          }
 
