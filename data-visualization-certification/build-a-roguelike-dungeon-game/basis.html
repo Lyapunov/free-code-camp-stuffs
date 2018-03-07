@@ -501,10 +501,10 @@
             var celly = cy;
             var cellx = cx;
 
-            var dist  = 0;
+            var dist    = 0;
             var arrived = 0;
-            var limit = 50;
-            var err = 1e-6;
+            var limit   = 50;
+            var err     = 1e-6;
 
             while ( limit && getMapCell( celly, cellx ) != 0 && !( celly == cy + y && cellx == cx + x ) ) {
                --limit;
@@ -553,7 +553,6 @@
             }
 
             var isStairs = getMapCell(cy+y,cx+x) == 6;
-
             if ( Math.floor(figurePos[0]+y-cy) == 0 && Math.floor(figurePos[1]+x-cx) == 0 ) {
                drawItem(-y+deltaY,x-deltaX,"green");
             }
@@ -575,7 +574,6 @@
 
             var cellsy = [];
             var cellsx = [];
-
             var nextly = [];
             var nextlx = [];
 
@@ -715,7 +713,6 @@
          }
 
          function initCanvas() {
-
             screenWidth  = mainItem.width  = window.innerWidth  - 20;
             screenHeight = mainItem.height = window.innerHeight - 20;
             screenScale  = Math.min( screenWidth, screenHeight ) / 2;
@@ -728,37 +725,6 @@
                drawScene();
             }
          }
-
-         function keyHandlerDown(e) {
-           switch( e.keyCode ) {
-              case 37:
-                 // left
-                 break;
-              case 39:
-                 // right
-                 break;
-              case 38:
-                 // up
-                 break;
-              case 40:
-                 // up
-                 break;
-           }
-         }
-
-         function keyHandlerUp(e) {
-           switch( e.keyCode ) {
-              case 37:
-                 // left
-                 break;
-              case 39:
-                 // right
-                 break;
-              case 38:
-                 break;
-           }
-         }
-
 
          mainItem.onmousedown = function(event) {
             if ( curTarg === undefined ) {
@@ -773,16 +739,13 @@
          mainItem.onmouseup = function(event) {};
 
          mainItem.onmousemove = function(event) {
-            curX = event.clientX;
-            curY = event.clientY;
+            [curX,curY] = [event.clientX,event.clientY];
          };
 
          //init
          (function() {
             initCanvas();
             addEventListener('resize', initCanvas, false);
-            addEventListener('keydown',keyHandlerDown,false);
-            addEventListener('keyup'  ,keyHandlerUp,false);
          })();
       </script>
    </body>
