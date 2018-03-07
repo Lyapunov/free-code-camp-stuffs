@@ -117,13 +117,22 @@
                                          [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
                                          [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22]];
 
-         var drawDescriptorForWarriorWithWeapon = [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],[25],
+         var drawDescriptorForWarriorWithWeapon = [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],
                                                    [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
                                                    [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
                                                    [10],[11],[11,12],[12],
                                                    [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
                                                    [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
-                                                   [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28]];
+                                                   [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2]];
+
+         var drawDescriptorForWarriorWithShield =
+            [[25,25,0.5,0.5,10],
+             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+             [10],[11],[11,12],[12],
+             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+             [28,28,0.5,0.5,10]];
 
          var drawDescriptorForWarriorWithWeaponAndShield =
             [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],[25,25,0.5,0.5,10],
@@ -134,12 +143,12 @@
              [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
              [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28,28,0.5,0.5,10]];
 
-         var bcolors=[2,2,2,2,2,
-                      3,3,3,3,3,
-                      0,1,1,
-                      4,4,4,4,4,
-                      5,5,5,5,5,
-                      6,6,7,6,6,7];
+         var descriptorValueToColor=[2,2,2,2,2,
+                                     3,3,3,3,3,
+                                     0,1,1,
+                                     4,4,4,4,4,
+                                     5,5,5,5,5,
+                                     6,6,7,6,6,7];
 
          var weaponData = [
                            [[17.7,52.7,5],[1.7000000000000002,47.7,5],[20,0,5],[30,0,5],[40,0,5],[27.3,62.7,5]],
@@ -218,7 +227,7 @@
                            [[0,0,5],[10,0,5],[20,0,5],[30,0,5],[40,0,5],[50,0,5]],
                          ];
 
-         var rcolors=['orange','lightgreen','orange','green','orange','green','cyan','black'];
+         var heroColoring =['orange','lightgreen','orange','green','orange','green','cyan','black'];
 
          function drawBox(boxX,boxY,boxSize,boxColor) {
             context.beginPath();
@@ -227,7 +236,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -251,16 +260,16 @@
                drawBox(ux+simage[ind1][0]*percentage,
                        uy+simage[ind1][1]*percentage*scale,
                        simage[ind1][2]*percentage,
-                       rcolors[bcolors[cind]]);
+                       characterColors[descriptorValueToColor[cind]]);
             } else {
                drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
                        uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale,
                        (rad===undefined?simage[ind1][2]:rad*2)*percentage,
-                       rcolors[bcolors[cind]]);
+                       characterColors[descriptorValueToColor[cind]]);
             }
          }
 
-         function drawCharacterInternal(x, y, phaseKey, scale, drawDescriptor) {
+         function drawCharacterInternal(x, y, phaseKey, scale, drawDescriptor, characterColors) {
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
             var [rimage, wimage] = [characterBodyData[phaseKey], weaponData[phaseKey]];
@@ -271,7 +280,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,...box));
          }
 
          //================================== AVATAR ANIMATION ENDS =================================
@@ -353,9 +362,10 @@
          }
 
          function drawCharacter(y,x,color) {
-            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1,  drawDescriptorForWarriorWithWeaponAndShield);
-//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1,  drawDescriptorForWarrior);
-//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1,  drawDescriptorForWarriorWithWeapon);
+            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithWeaponAndShield, heroColoring );
+//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarrior, heroColoring );
+//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithWeapon, heroColoring );
+//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithShield, heroColoring );
          }
 
          function drawCursor(x,y) {
