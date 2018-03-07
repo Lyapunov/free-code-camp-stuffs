@@ -20,7 +20,7 @@
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
          var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
-         var tileSize = 25;
+         var tileSize = 50;
          var mapRadiusX = screenWidth/2/tileSize/Math.sqrt(3);
          var mapRadiusY = screenHeight/2/tileSize;
          var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
@@ -234,7 +234,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -255,25 +255,28 @@
             }
             var percentage = tileSize / 50;
             if ( ind2 === undefined ) {
-               drawBox(ux+simage[ind1][0]*percentage,uy+simage[ind1][1]*percentage,simage[ind1][2]*percentage,rcolors[bcolors[cind]]);
+               drawBox(ux+simage[ind1][0]*percentage,
+                       uy+simage[ind1][1]*percentage*scale,
+                       simage[ind1][2]*percentage,
+                       rcolors[bcolors[cind]]);
             } else {
                drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
-                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage,
+                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale,
                        (rad===undefined?simage[ind1][2]:rad*2)*percentage,
                        rcolors[bcolors[cind]]);
             }
          }
 
-         function drawRImage2(rimage, wimage, cx, cy, ylimitratio, tileSize, vmirror) {
+         function drawCharacterInternal(rimage, wimage, scale, cx, cy, ylimitratio, tileSize, vmirror) {
             var percentage = tileSize / 50;
             var ds = 1;
-            var ymax = 100 * percentage;
+            var ymax = 100 * percentage*scale;
             var xmax = 54 * percentage;
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax * Math.max(1- (1-ylimitratio)/percentage,0) + ymax * percentage * 0.1); // without ylimitratio: uy = cy - ymax;
             var ylim = ymax * Math.max(1-(1-ylimitratio)/percentage,0);
             var mx = ux+ux+xmax*ds;
-            additionalCharacterBodyData.map(box=>drawBoxExtended(ux,uy,rimage,wimage,...box));
+            additionalCharacterBodyData.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,...box));
          }
 
          //================================== AVATAR ANIMATION ENDS =================================
@@ -354,13 +357,13 @@
             return (1+diri*2)*9 + phi;
          }
 
-         function drawItem(y,x,color, shifts=1.0) {
+         function drawCharacter(y,x,color, shifts=1.0) {
             context.fillStyle = color;
             context.beginPath();
             var radius = tileSize / 2;
             var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var py = (x - y) * tileSize + screenHeight / 2;
-            drawRImage2( characterBodyData[getKey(figureFaceDir,figurePhase)], weaponData[getKey(figureFaceDir,figurePhase)], px, py, shifts, tileSize );
+            drawCharacterInternal( characterBodyData[getKey(figureFaceDir,figurePhase)], weaponData[getKey(figureFaceDir,figurePhase)], 1, px, py, shifts, tileSize );
          }
 
          function drawCursor(x,y) {
@@ -506,7 +509,7 @@
             }
 
             if ( Math.floor(figurePos[0]+y-cy) == 0 && Math.floor(figurePos[1]+x-cx) == 0 ) {
-               drawItem(-y+deltaY,x-deltaX,"green");
+               drawCharacter(-y+deltaY,x-deltaX,"green");
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
