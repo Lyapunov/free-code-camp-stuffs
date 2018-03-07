@@ -430,55 +430,23 @@
             var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var py = (x - y) * tileSize + screenHeight / 2;
 
-            switch (num) {
-               case 0:
-                  {
-                     context.fillStyle = color;
-                     context.beginPath();
-                     context.moveTo( px, py - tileSize );
-                     context.lineTo( px - Math.sqrt(3) * tileSize, py );
-                     context.lineTo( px - Math.sqrt(3) * tileSize, py - 2 * tileSize );
-                     context.lineTo( px, py - 3 * tileSize );
-                  }
-                  break;
-               case 1:
-                  {
-                     context.fillStyle = color;
-                     context.beginPath();
-                     context.moveTo( px, py - tileSize );
-                     context.lineTo( px + Math.sqrt(3) * tileSize, py );
-                     context.lineTo( px + Math.sqrt(3) * tileSize, py - 2 * tileSize );
-                     context.lineTo( px, py - 3 * tileSize );
-                  }
-                  break;
-               case 2:
-                  {
-                     context.globalAlpha = 0.75;
-                     context.fillStyle = "#000000";
-                     context.beginPath();
-                     context.moveTo( px, py + tileSize );
-                     context.lineTo( px - Math.sqrt(3) * tileSize, py );
-                     context.lineTo( px - Math.sqrt(3) * tileSize, py - 2 * tileSize );
-                     context.lineTo( px, py - tileSize );
-                  }
-                  break;
-               case 3:
-                  {
-                     context.globalAlpha = 0.75;
-                     context.fillStyle = "#000000";
-                     context.beginPath();
-                     context.moveTo( px, py + tileSize );
-                     context.lineTo( px + Math.sqrt(3) * tileSize, py );
-                     context.lineTo( px + Math.sqrt(3) * tileSize, py - 2 * tileSize );
-                     context.lineTo( px, py - tileSize );
-                  }
-                  break;
-               default:
-                  {
-                     throw "Ooops";
-                  }
-                  break;
+            var bit1 = (num % 2) * 2 - 1;
+            var bit2 = (num >= 2) * 2 - 1;
+
+            {
+               if ( num < 2 ) {
+                  context.fillStyle = color;
+               } else {
+                  context.globalAlpha = 0.75;
+                  context.fillStyle = "#000000";
+               }
+               context.beginPath();
+               context.moveTo( px, py + bit2 * tileSize );
+               context.lineTo( px + bit1 * Math.sqrt(3) * tileSize, py );
+               context.lineTo( px + bit1 * Math.sqrt(3) * tileSize, py - 2 * tileSize );
+               context.lineTo( px, py + (bit2-2) * tileSize );
             }
+
             context.closePath();
             context.fill();
             context.globalAlpha = 1.0;
