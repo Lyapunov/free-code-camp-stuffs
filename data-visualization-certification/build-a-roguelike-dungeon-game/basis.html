@@ -20,7 +20,7 @@
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
          var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
-         var tileSize = 50;
+         var tileSize = 25;
          var mapRadiusX = screenWidth/2/tileSize/Math.sqrt(3);
          var mapRadiusY = screenHeight/2/tileSize;
          var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
@@ -253,12 +253,13 @@
                   return;
                }
             }
+            var percentage = tileSize / 50;
             if ( ind2 === undefined ) {
-               drawBox(ux+simage[ind1][0],uy+simage[ind1][1],simage[ind1][2],rcolors[bcolors[cind]]);
+               drawBox(ux+simage[ind1][0]*percentage,uy+simage[ind1][1]*percentage,simage[ind1][2]*percentage,rcolors[bcolors[cind]]);
             } else {
-               drawBox(ux+Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad),
-                       uy+Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad),
-                       (rad===undefined?simage[ind1][2]:rad*2),
+               drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
+                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage,
+                       (rad===undefined?simage[ind1][2]:rad*2)*percentage,
                        rcolors[bcolors[cind]]);
             }
          }
@@ -267,10 +268,10 @@
             var percentage = tileSize / 50;
             var ds = 1;
             var ymax = 100 * percentage;
-            var xmax = 54  * percentage;
+            var xmax = 54 * percentage;
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax * Math.max(1- (1-ylimitratio)/percentage,0) + ymax * percentage * 0.1); // without ylimitratio: uy = cy - ymax;
-            var ylim = ymax * Math.max(1- (1-ylimitratio)/percentage,0);
+            var ylim = ymax * Math.max(1-(1-ylimitratio)/percentage,0);
             var mx = ux+ux+xmax*ds;
             additionalCharacterBodyData.map(box=>drawBoxExtended(ux,uy,rimage,wimage,...box));
          }
@@ -450,8 +451,8 @@
             dirY /= dirL;
             dirX /= dirL;
 
-            var celly = cy;
-            var cellx = cx;
+            var celly   = cy;
+            var cellx   = cx;
 
             var dist    = 0;
             var arrived = 0;
