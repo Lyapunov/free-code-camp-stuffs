@@ -267,7 +267,7 @@
             }
          }
 
-         function drawCharacterInternal(rimage, wimage, scale, cx, cy, ylimitratio, tileSize) {
+         function drawCharacterInternal(rimage, wimage, scale, cx, cy, ylimitratio) {
             var percentage = tileSize / 50;
             var ds = 1;
             var ymax = 100 * percentage*scale;
@@ -363,7 +363,7 @@
             var radius = tileSize / 2;
             var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var py = (x - y) * tileSize + screenHeight / 2;
-            drawCharacterInternal( characterBodyData[getKey(figureFaceDir,figurePhase)], weaponData[getKey(figureFaceDir,figurePhase)], 1, px, py, 1.0, tileSize );
+            drawCharacterInternal( characterBodyData[getKey(figureFaceDir,figurePhase)], weaponData[getKey(figureFaceDir,figurePhase)], 1, px, py, 1.0 );
          }
 
          function drawCursor(x,y) {
