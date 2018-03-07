@@ -440,10 +440,7 @@
          }
 
          function getMapCell(y,x) {
-            if ( y < levelMap.length && y >= 0 && x < levelMap[y].length && x >= 0 ) {
-               return levelMap[y][x];
-            }
-            return 0;
+            return ( y < levelMap.length && y >= 0 && x < levelMap[y].length && x >= 0 ? levelMap[y][x] : 0 );
          }
 
          function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy,debug=0) {
