@@ -317,7 +317,9 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}]]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
+                           [[10.5,10.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
+                          ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
 
          function drawBackground() {
             context.fillStyle = "black";
@@ -364,8 +366,9 @@
             return (1+diri*2)*9 + phi;
          }
 
-         function drawCharacter(y,x,character) {
-            drawCharacterInternal( x, y, getKey(characters[0][1],characters[0][2]), character.scale, drawDescriptors[character.weapon + character.shield*2], character.coloring );
+         function drawCharacter(y,x,i) {
+            drawCharacterInternal( x, y, getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
+                                   drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring );
          }
 
          function drawCursor(x,y) {
@@ -510,8 +513,10 @@
                drawWall(-y+oy,x-ox,1, "gray");
             }
 
-            if ( Math.floor( characters[0][0][0]+y-cy) == 0 && Math.floor( characters[0][0][1]+x-cx) == 0 ) {
-               drawCharacter(-y,x,characters[0][4]);
+            for ( var i = 0; i < characters.length; ++i ) {
+               if ( Math.floor( characters[i][0][0]+y-cy) == 0 && Math.floor( characters[i][0][1]+x-cx) == 0 ) {
+                  drawCharacter(y,-x,i);
+               }
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
