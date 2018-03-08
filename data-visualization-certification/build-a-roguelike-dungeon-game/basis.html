@@ -143,6 +143,8 @@
              [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
              [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28,28,0.5,0.5,10]];
 
+         var drawDescriptors = [drawDescriptorForWarrior,drawDescriptorForWarriorWithWeapon,drawDescriptorForWarriorWithShield, drawDescriptorForWarriorWithWeaponAndShield];
+
          var descriptorValueToColor=[2,2,2,2,2,
                                      3,3,3,3,3,
                                      0,1,1,
@@ -362,11 +364,8 @@
             return (1+diri*2)*9 + phi;
          }
 
-         function drawCharacter(y,x,color) {
-            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithWeaponAndShield, heroColoring );
-//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarrior, heroColoring );
-//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithWeapon, heroColoring );
-//            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), 1, drawDescriptorForWarriorWithShield, heroColoring );
+         function drawCharacter(y,x,character) {
+            drawCharacterInternal( x, y, getKey(figureFaceDir,figurePhase), character.scale, drawDescriptors[character.weapon + character.shield*2], character.coloring );
          }
 
          function drawCursor(x,y) {
@@ -512,7 +511,7 @@
             }
 
             if ( Math.floor(figurePos[0]+y-cy) == 0 && Math.floor(figurePos[1]+x-cx) == 0 ) {
-               drawCharacter(-y+deltaY,x-deltaX,"green");
+               drawCharacter(-y+deltaY,x-deltaX,{scale:1,coloring:heroColoring,weapon:1,shield:1});
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
