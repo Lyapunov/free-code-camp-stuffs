@@ -317,7 +317,7 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[]]]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}]]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
 
          function drawBackground() {
             context.fillStyle = "black";
@@ -511,7 +511,7 @@
             }
 
             if ( Math.floor( characters[0][0][0]+y-cy) == 0 && Math.floor( characters[0][0][1]+x-cx) == 0 ) {
-               drawCharacter(-y,x,{scale:1,coloring:heroColoring,weapon:1,shield:1});
+               drawCharacter(-y,x,characters[0][4]);
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
