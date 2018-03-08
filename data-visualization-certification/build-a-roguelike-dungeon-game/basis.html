@@ -502,7 +502,7 @@
             }
          }
 
-         function drawCellWall(figurePos,y,x,cy,cx,oy,ox) {
+         function drawCell(figurePos,y,x,cy,cx,oy,ox) {
             if ( !getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0, "gray");
             }
@@ -553,7 +553,7 @@
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCellWall(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox);
+               drawCell(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox);
             }
          }
 
