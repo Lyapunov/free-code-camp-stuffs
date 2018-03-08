@@ -502,7 +502,7 @@
             }
          }
 
-         function drawCell(figurePos,y,x,cy,cx,oy,ox) {
+         function drawCell(y,x,cy,cx,oy,ox) {
             if ( !getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0, "gray");
             }
@@ -510,7 +510,7 @@
                drawWall(-y+oy,x-ox,1, "gray");
             }
 
-            if ( Math.floor(figurePos[0]+y-cy) == 0 && Math.floor(figurePos[1]+x-cx) == 0 ) {
+            if ( Math.floor(figurePosition[0]+y-cy) == 0 && Math.floor(figurePosition[1]+x-cx) == 0 ) {
                drawCharacter(-y,x,{scale:1,coloring:heroColoring,weapon:1,shield:1});
             }
 
@@ -523,7 +523,7 @@
          }
 
 
-         function drawForeground( camCenter, figurePos, tiles=[] ) {
+         function drawForeground( camCenter, tiles=[] ) {
             var cy = Math.floor(camCenter[0]);
             var cx = Math.floor(camCenter[1]);
             var oy = camCenter[0] - cy - 0.5;
@@ -553,7 +553,7 @@
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(figurePos,cellsy[i],cellsx[i],cy,cx,oy,ox);
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox);
             }
          }
 
@@ -649,7 +649,7 @@
             setTimeout( function() {
                drawBackground();
                var tiles = [];
-               drawForeground(figurePosition, figurePosition, tiles);
+               drawForeground(figurePosition, tiles);
                drawCursor(curX,curY);
                curTarg = getCursorsTile(tiles,curX,curY);
                drawTile(curTarg, "yellow");
