@@ -229,7 +229,7 @@
                          ];
 
          var heroColoring =['orange','lightgreen','orange','green','orange','green','cyan','black'];
-         var opponentColoring =['magenta','lightgreen','magenta','green','magenta','green','cyan','black'];
+         var devilColoring =['magenta','red','magenta','red','magenta','red','red','red'];
 
          function drawBox(boxX,boxY,boxSize,boxColor) {
             context.beginPath();
@@ -318,7 +318,7 @@
          
          // all characters on the map - 0th is the player
          var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
-                           [[10.5,10.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
 
          function drawBackground() {
@@ -515,9 +515,8 @@
             }
 
             for ( var i = 0; i < characters.length; ++i ) {
-               if ( Math.floor( characters[i][0][0]+y-cy) == 0 && Math.floor( characters[i][0][1]+x-cx) == 0 ) {
-//                  drawCharacter(0,0,i);
-//                  console.log(oy+cy+0.5,ox+cx+0.5,characters[i][0][0],characters[i][0][1]);
+               console.log(y,x,"|",characters[i][0][0],characters[i][0][1]);
+               if ( Math.floor( characters[i][0][0] - (cy+y) ) == 0 && Math.floor( characters[i][0][1] - (cx+x) ) == 0 ) {
                   drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
                }
             }
