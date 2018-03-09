@@ -515,8 +515,7 @@
             }
 
             for ( var i = 0; i < characters.length; ++i ) {
-               console.log(y,x,"|",characters[i][0][0],characters[i][0][1]);
-               if ( Math.floor( characters[i][0][0] - (cy+y) ) == 0 && Math.floor( characters[i][0][1] - (cx+x) ) == 0 ) {
+               if ( Math.floor(characters[i][0][0]) == cy+y && Math.floor(characters[i][0][1]) == cx+x ) {
                   drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
                }
             }
@@ -554,6 +553,10 @@
                   }
                }
             }
+
+/*            var charindexer = 
+            for ( var i = 0; i < characters.length; ++i ) {
+            }*/
 
             for ( var i = 0; i < cellsx.length; ++i ) {
                drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,tiles);
