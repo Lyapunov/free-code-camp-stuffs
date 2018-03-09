@@ -506,7 +506,7 @@
             }
          }
 
-         function drawCell(y,x,cy,cx,oy,ox) {
+         function drawCell(y,x,cy,cx,oy,ox,characterIndexer) {
             if ( !getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0, "gray");
             }
@@ -514,10 +514,10 @@
                drawWall(-y+oy,x-ox,1, "gray");
             }
 
-            for ( var i = 0; i < characters.length; ++i ) {
-               if ( Math.floor(characters[i][0][0]) == cy+y && Math.floor(characters[i][0][1]) == cx+x ) {
-                  drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
-               }
+            var ind = (cy+y) * 4 * mapRadius + (cx+x);
+            var i = characterIndexer[ind];
+            if ( i !== undefined ) {
+               drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
@@ -554,16 +554,17 @@
                }
             }
 
-/*            var charindexer = 
+            var characterIndexer = {};
             for ( var i = 0; i < characters.length; ++i ) {
-            }*/
+               characterIndexer[ Math.floor(characters[i][0][0]) * 4 * mapRadius + Math.floor(characters[i][0][1]) ] = i;
+            }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
                drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,tiles);
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox);
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndexer);
             }
          }
 
