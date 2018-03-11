@@ -271,7 +271,9 @@
             }
          }
 
-         function drawCharacterInternal(x, y, phaseKey, scale, drawDescriptor, characterColors) {
+         function drawCharacter(y,x,i) {
+            var [phaseKey, scale, drawDescriptor, characterColors] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
+                                                                      drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring];
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
             var [rimage, wimage] = [characterBodyDrawData[phaseKey], weaponDrawData[phaseKey]];
@@ -355,11 +357,6 @@
 
          function getKey(diri,phi) {
             return (1+diri*2)*9 + phi;
-         }
-
-         function drawCharacter(y,x,i) {
-            drawCharacterInternal( x, y, getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                   drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring );
          }
 
          function drawCursor(x,y) {
