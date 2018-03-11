@@ -392,7 +392,7 @@
             return ( y < levelMap.length && y >= 0 && x < levelMap[y].length && x >= 0 ? levelMap[y][x] : 0 );
          }
 
-         function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy,debug=0) {
+         function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
             var dirY  = y - oy;
             var dirX  = x - ox;
             var dirL  = Math.hypot(dirX,dirY);
@@ -467,7 +467,15 @@
             }
          }
 
-         function drawForeground( camCenter, tiles=[] ) {
+         function createCharacterIndex() {
+            var characterIndex = {};
+            for ( var i = 0; i < characters.length; ++i ) {
+               characterIndex[ Math.floor(characters[i][0][0]) * 4 * mapRadius + Math.floor(characters[i][0][1]) ] = i;
+            }
+            return characterIndex;
+         }
+
+         function drawForeground( camCenter, characterIndex, visibleTiles ) {
             var cy = Math.floor(camCenter[0]);
             var cx = Math.floor(camCenter[1]);
             var oy = camCenter[0] - cy - 0.5;
@@ -492,17 +500,12 @@
                }
             }
 
-            var characterIndexer = {};
-            for ( var i = 0; i < characters.length; ++i ) {
-               characterIndexer[ Math.floor(characters[i][0][0]) * 4 * mapRadius + Math.floor(characters[i][0][1]) ] = i;
+            for ( var i = 0; i < cellsx.length; ++i ) {
+               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,tiles);
-            }
-
-            for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndexer);
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndex);
             }
          }
 
@@ -596,11 +599,12 @@
          // common functions 
          function drawScene() {
             setTimeout( function() {
+               var characterIndex = createCharacterIndex();
                drawBackground();
-               var tiles = [];
-               drawForeground(characters[0][0], tiles);
+               var visibleTiles = [];
+               drawForeground(characters[0][0], characterIndex, visibleTiles);
                drawCursor(curX,curY);
-               currentTarget = getCursorsTile(tiles,curX,curY);
+               currentTarget = getCursorsTile(visibleTiles,curX,curY);
                if ( currentTarget !== undefined ) {
                   drawTile(currentTarget, "yellow");
                }
