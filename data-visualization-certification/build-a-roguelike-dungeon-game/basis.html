@@ -453,8 +453,7 @@
                drawWall(-y+oy,x-ox,1, "gray");
             }
 
-            var ind = (cy+y) * 4 * mapRadius + (cx+x);
-            var i = characterIndexer[ind];
+            var i = characterIndexer[getIndexKey([cy+y,cx+x])];
             if ( i !== undefined ) {
                drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
             }
@@ -467,10 +466,14 @@
             }
          }
 
+         function getIndexKey(ps) {
+            return Math.floor(ps[0])*4*mapRadius+Math.floor(ps[1]);
+         }
+
          function createCharacterIndex() {
             var characterIndex = {};
             for ( var i = 0; i < characters.length; ++i ) {
-               characterIndex[ Math.floor(characters[i][0][0]) * 4 * mapRadius + Math.floor(characters[i][0][1]) ] = i;
+               characterIndex[ getIndexKey(characters[i][0]) ] = i;
             }
             return characterIndex;
          }
