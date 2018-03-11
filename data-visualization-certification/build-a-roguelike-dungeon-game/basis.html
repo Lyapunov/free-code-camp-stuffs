@@ -382,50 +382,6 @@
             context.fill();
          }
 
-         function drawStairs(y,x,color,num) {
-            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var py = (x - y) * tileSize + screenHeight / 2;
-
-            if ( num == 0 ) {
-               context.fillStyle = color;
-               context.beginPath();
-               context.moveTo( px, py - tileSize - 2* tileSize );
-               context.lineTo( px + Math.sqrt(3) * tileSize, py - 2* tileSize );
-               context.lineTo( px, py + tileSize );
-               context.lineTo( px - Math.sqrt(3) * tileSize, py );
-               context.closePath();
-               context.fill();
-             
-               context.fillStyle = "black";
-               context.beginPath();
-               context.moveTo( px + Math.sqrt(3) * tileSize, py );
-               context.lineTo( px + Math.sqrt(3) * tileSize, py - 2* tileSize );
-               context.lineTo( px, py + tileSize );
-               context.closePath();
-               context.fill();
-            } 
-            
-            if ( num == 1 ) {
-               context.fillStyle = "black";
-               context.beginPath();
-               context.moveTo( px, py + tileSize );
-               context.lineTo( px - Math.sqrt(3) * tileSize, py );
-               context.lineTo( px - Math.sqrt(3) * tileSize, py - 2 * tileSize );
-               context.lineTo( px, py - tileSize );
-               context.closePath();
-               context.fill();
-
-               context.fillStyle = "black";
-               context.beginPath();
-               context.moveTo( px + Math.sqrt(3) * tileSize, py );
-               context.lineTo( px, py + tileSize );
-               context.lineTo( px, py - tileSize );
-
-               context.closePath();
-               context.fill();
-            }
-         }
-
          function drawWall(y,x,num, color) {
             var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var py = (x - y) * tileSize + screenHeight / 2;
