@@ -30,7 +30,7 @@
 
          var curX = 0;
          var curY = 0;
-         var curTarg = 0;
+         var currentTarget = 0;
 
          //================================= AVATAR ANIMATION BEGINS =================================
 
@@ -326,39 +326,30 @@
             context.fillRect(0,0,screenWidth,screenHeight);
          }
 
-         function drawFloor(y,x, color) {
-            context.fillStyle = color;
-            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var py = (x - y) * tileSize + screenHeight / 2;
+         function contextPathForTileDraw(tile) {
             context.beginPath();
-            context.moveTo( px, py - tileSize );
-            context.lineTo( px + Math.sqrt(3) * tileSize, py );
-            context.lineTo( px, py + tileSize );
-            context.lineTo( px - Math.sqrt(3) * tileSize, py );
+            for ( var i = 0; i < tile.ps.length; ++i ) {
+               ( i == 0 ? context.moveTo( tile.ps[i].x, tile.ps[i].y ) : context.lineTo( tile.ps[i].x, tile.ps[i].y ) );
+            }
             context.closePath();
+         }
+
+         function drawFloor(tile, color) {
+            context.fillStyle = color;
+            contextPathForTileDraw(tile);
             context.fill();
          }
 
          function drawTile(tile,color) {
-            if ( tile !== undefined ) {
-               context.strokeStyle = color;
-               context.beginPath();
-               context.moveTo( tile.p1.x, tile.p1.y );
-               context.lineTo( tile.p2.x, tile.p2.y );
-               context.lineTo( tile.p3.x, tile.p3.y );
-               context.lineTo( tile.p4.x, tile.p4.y );
-               context.closePath();
-               context.stroke();
-            }
+            context.strokeStyle = color;
+            contextPathForTileDraw(tile);
+            context.stroke();
          }
 
          function getFloorTile(y,x,obi) {
             var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var py = (x - y) * tileSize + screenHeight / 2;
-            obi.p1 = {x:px,y:py-tileSize};
-            obi.p2 = {x:px + Math.sqrt(3) * tileSize,y:py};
-            obi.p3 = {x:px,y:py+tileSize};
-            obi.p4 = {x:px - Math.sqrt(3) * tileSize,y:py};
+            obi.ps = [{x:px,y:py-tileSize},{x:px + Math.sqrt(3) * tileSize,y:py},{x:px,y:py+tileSize},{x:px - Math.sqrt(3) * tileSize,y:py}];
             return obi;
          }
 
@@ -455,9 +446,9 @@
 
          function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
             if ( getMapCell(cy+y,cx+x) != 5 ) {
-               drawFloor(-y+oy,x-ox, "#AAAAAA");
-               var obi = {x:x+cx,y:y+cy};
-               tiles.push(getFloorTile(-y+oy,x-ox,obi));
+               var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+               drawFloor(tile, "#AAAAAA");
+               tiles.push(tile);
             }
          }
 
@@ -482,7 +473,6 @@
                drawWall(-y+oy,x-ox,3, "blue");
             }
          }
-
 
          function drawForeground( camCenter, tiles=[] ) {
             var cy = Math.floor(camCenter[0]);
@@ -577,8 +567,8 @@
 
          function getCursorsTile(tiles, cx, cy) {
             for ( var i = 0; i < tiles.length; ++i ) {
-               if ( isPointInTriangle( tiles[i].p1, tiles[i].p2, tiles[i].p4, {x:cx,y:cy} )
-                 || isPointInTriangle( tiles[i].p2, tiles[i].p3, tiles[i].p4, {x:cx,y:cy} ) ) {
+               if ( isPointInTriangle( tiles[i].ps[0], tiles[i].ps[1], tiles[i].ps[3], {x:cx,y:cy} )
+                 || isPointInTriangle( tiles[i].ps[1], tiles[i].ps[2], tiles[i].ps[3], {x:cx,y:cy} ) ) {
                   return tiles[i];
                }
             }
@@ -617,8 +607,10 @@
                var tiles = [];
                drawForeground(characters[0][0], tiles);
                drawCursor(curX,curY);
-               curTarg = getCursorsTile(tiles,curX,curY);
-               drawTile(curTarg, "yellow");
+               currentTarget = getCursorsTile(tiles,curX,curY);
+               if ( currentTarget !== undefined ) {
+                  drawTile(currentTarget, "yellow");
+               }
                ANIMATION = requestAnimationFrame(drawScene);
                moveFigure();
             }, 1000 / fps );
@@ -639,10 +631,10 @@
          }
 
          mainItem.onmousedown = function(event) {
-            if ( curTarg === undefined ) {
+            if ( currentTarget === undefined ) {
                return;
             }
-            var way = bfs({x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},curTarg);
+            var way = bfs({x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},currentTarget);
             characters[0][3] = way;
          };
 
