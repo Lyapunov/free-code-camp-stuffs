@@ -609,7 +609,7 @@
                drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
                if ( currentTarget !== undefined ) {
-                  drawTile(currentTarget, "yellow");
+                  drawTile(currentTarget, characterIndex[getIndexKey([currentTarget.y,currentTarget.x])] === undefined ? "yellow" : "red");
                }
                ANIMATION = requestAnimationFrame(drawScene);
                moveFigure();
