@@ -328,23 +328,23 @@
             context.fillRect(0,0,screenWidth,screenHeight);
          }
 
-         function contextPathForTileDraw(tile) {
+         function contextPathForObjectDraw(obj) {
             context.beginPath();
-            for ( var i = 0; i < tile.ps.length; ++i ) {
-               ( i == 0 ? context.moveTo( tile.ps[i].x, tile.ps[i].y ) : context.lineTo( tile.ps[i].x, tile.ps[i].y ) );
+            for ( var i = 0; i < obj.ps.length; ++i ) {
+               ( i == 0 ? context.moveTo( obj.ps[i].x, obj.ps[i].y ) : context.lineTo( obj.ps[i].x, obj.ps[i].y ) );
             }
             context.closePath();
          }
 
          function drawFloor(tile, color) {
             context.fillStyle = color;
-            contextPathForTileDraw(tile);
+            contextPathForObjectDraw(tile);
             context.fill();
          }
 
          function drawTile(tile,color) {
             context.strokeStyle = color;
-            contextPathForTileDraw(tile);
+            contextPathForObjectDraw(tile);
             context.stroke();
          }
 
@@ -361,11 +361,7 @@
 
          function drawCursor(x,y) {
             context.fillStyle = "red";
-            context.beginPath();
-            context.moveTo( x, y );
-            context.lineTo( x+15, y+20 );
-            context.lineTo( x, y+25 );
-            context.closePath();
+            contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
             context.fill();
          }
 
