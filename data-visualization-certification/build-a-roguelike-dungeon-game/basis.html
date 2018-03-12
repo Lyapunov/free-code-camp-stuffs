@@ -266,11 +266,11 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
-                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
-                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
-                           [[8.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,speed:0.1,range:50}],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,speed:0.05,range:4}],
+                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,speed:0.05,range:4}],
+                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,speed:0.05,range:4}],
+                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,speed:0.05,range:4}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
 
          function manhattan(p1,p2) {
@@ -597,7 +597,7 @@
                if ( targetDistance > errorTolerance ) {
                   var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
                   var incred = [characters[index][0][0],characters[index][0][1]];
-                  incred[i] += 0.1 * sgn;
+                  incred[i] += characters[index][4].speed * sgn;
                   if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== index ) { // attack
                      characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
                      return;
@@ -639,7 +639,8 @@
                } else {
                   aiCounter = 0;
                   for ( var i = 1; i < characters.length; ++i ) {
-                     if ( manhattan(characters[0][0], characters[i][0]) < 3 && characters[i][3].length == 0 ) {
+                     if ( manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
+                       && characters[i][3].length == 0 ) {
                         characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
                                                {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
                                                characterIndex);
