@@ -29,6 +29,7 @@
          var fps = 25;
          var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
          var aiCounter = 0;
+         var deathSpeed = 1/25;
          var ANIMATION;
 
          var curX = 0;
@@ -267,25 +268,25 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50},0],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
-                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
-                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
-                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,exists:1,hp:20,baseAttack:1},0],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
+                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
+                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
+                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
          }
 
-         function drawBox(boxX,boxY,boxSize,boxColor) {
+         function drawBox(boxX,boxY,boxSize,boxColor, exists) {
             context.beginPath();
-            context.rect(boxX, boxY, boxSize, boxSize);
+            context.rect(boxX, boxY, Math.floor(boxSize*exists), Math.floor(boxSize*exists));
             context.fillStyle = boxColor;
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -309,18 +310,21 @@
                drawBox(ux+simage[ind1][0]*percentage,
                        uy+simage[ind1][1]*percentage*scale,
                        simage[ind1][2]*percentage,
-                       characterColors[descriptorValueToColor[cind]]);
+                       characterColors[descriptorValueToColor[cind]],
+                       exists);
             } else {
                drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
                        uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale,
                        (rad===undefined?simage[ind1][2]:rad*2)*percentage,
-                       characterColors[descriptorValueToColor[cind]]);
+                       characterColors[descriptorValueToColor[cind]],
+                       exists);
             }
          }
 
          function drawCharacter(y,x,i) {
-            var [phaseKey, scale, drawDescriptor, characterColors] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                                                      drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring];
+            var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
+                                                                      drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring,
+                                                                      characters[i][4].exists ];
             if ( characters[i][5] ) {
                characters[i][5] = 0;
                characterColors = attackColoring;
@@ -335,7 +339,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,...box));
          }
 
          function drawBackground() {
@@ -487,6 +491,10 @@
          function createCharacterIndex() {
             var characterIndex = {};
             for ( var i = 0; i < characters.length; ++i ) {
+               if ( isCharacterFullyDead(i) ) {
+                  continue;
+               }
+
                characterIndex[ getIndexKey(characters[i][0]) ] = i;
             }
             return characterIndex;
@@ -587,8 +595,21 @@
             }
          }
 
+         function destroying(index) {
+            characters[index][4].exists -= deathSpeed;
+         }
+
+         function kill(index) {
+            console.log('killing ',index);
+            destroying(index);
+         }
+
          function attack(attacker, attacked) {
             console.log("attacking ", attacker, attacked);
+            if ( attacked != 0 ) {
+               kill(attacked);
+               return;
+            }
             characters[attacked][5] = 1;
          }
 
@@ -628,6 +649,14 @@
             characters[index][3].reverse();
          }
 
+         function isCharacterAlive(index) {
+            return ( characters[index][4].exists > 1 - errorTolerance );
+         }
+
+         function isCharacterFullyDead(index) {
+            return ( Math.abs(characters[index][4].exists) < errorTolerance );
+         }
+
          // common functions 
          function drawScene() {
             setTimeout( function() {
@@ -643,6 +672,12 @@
                }
                ANIMATION = requestAnimationFrame(drawScene);
                for ( var i = 0; i < characters.length; ++i ) {
+                  if ( !isCharacterAlive(i) ) {
+                     if ( !isCharacterFullyDead(i) ) {
+                        destroying(i);
+                     }
+                     continue;
+                  }
                   moveCharacter(i, createCharacterIndex()); // easy full update for now
                }
                if ( aiCounter < aiFrequencyDecreaseRatio ) {
@@ -650,6 +685,9 @@
                } else {
                   aiCounter = 0;
                   for ( var i = 1; i < characters.length; ++i ) {
+                     if ( !isCharacterAlive(i) ) {
+                        continue;
+                     }
                      if ( manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
                        && characters[i][3].length == 0 ) {
                         characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
