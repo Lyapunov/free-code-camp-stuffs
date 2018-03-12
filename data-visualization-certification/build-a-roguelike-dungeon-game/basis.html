@@ -381,7 +381,8 @@
                context.globalAlpha = 0.75;
                context.fillStyle   = "#000000";
             }
-            contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * tileSize},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py - 2 * tileSize},{x:px, y:py + bit2 * tileSize - 2 * tileSize}]} );
+            var sy = 1;
+            contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * tileSize+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py - 2 * tileSize+sy},{x:px, y:py + bit2 * tileSize - 2 * tileSize+sy}]} );
             context.fill();
             context.globalAlpha = 1.0;
          }
