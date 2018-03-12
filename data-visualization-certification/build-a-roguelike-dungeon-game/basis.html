@@ -269,11 +269,11 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,exists:1,hp:20,baseAttack:1,baseDefense:0},0],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
-                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
-                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
-                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
+         var characters = [[[15.5,15.5],0,0,[],{scale:1.00,coloring:heroColoring ,weapon:1,shield:1,slowness:5 ,range:50,exists:1,hp:20,baseAttack:1,baseDefense:0},0],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
+                           [[6.5,10.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
+                           [[7.5,11.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
+                           [[7.5,12.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
@@ -612,6 +612,9 @@
             console.log("attacking (", attacker, attacked, ")==> -", attackValue," +", defenseValue," = ",damage);
             console.log('baseAttack:',(characters[attacker][4].baseAttack + characters[attacker][4].weapon));
             console.log('baseDefense:',(characters[attacker][4].baseDefense + characters[attacked][4].shield));
+            if ( damage <= 0 ) {
+               return;
+            }
             characters[attacked][4].hp -= damage;
             if ( characters[attacked][4].hp < 0 ) {
                characters[attacked][4].hp = 0;
