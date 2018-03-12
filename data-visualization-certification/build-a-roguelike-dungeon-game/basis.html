@@ -576,39 +576,39 @@
             }
          }
 
-         function moveFigure(characterIndex) {
-            if ( characters[0][3].length == 0 ) {
-               characters[0][2] = 0;
+         function moveCharacter(index, characterIndex) {
+            if ( characters[index][3].length == 0 ) {
+               characters[index][2] = 0;
                return; 
             }
 
-            characters[0][2] = ( (characters[0][2]) % 8 + 1 );
+            characters[index][2] = ( (characters[index][2]) % 8 + 1 );
 
-            var ctar = characters[0][3][0];
+            var ctar = characters[index][3][0];
            
             for ( var i = 0; i < 2; ++i ) {
-               var targetDistance = Math.abs(ctar[i] + 0.5 - characters[0][0][i]);
+               var targetDistance = Math.abs(ctar[i] + 0.5 - characters[index][0][i]);
                if ( targetDistance > 0.1 ) {
-                  var sgn = Math.sign( ctar[i] + 0.5 - characters[0][0][i] );
-                  var incred = [characters[0][0][0],characters[0][0][1]];
+                  var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
+                  var incred = [characters[index][0][0],characters[index][0][1]];
                   incred[i] += 0.1 * sgn;
                   if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== 0 ) { // attack
-                     characters[0][3] = [[Math.floor(characters[0][0][0]),Math.floor(characters[0][0][1])]];
+                     characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
                      return;
                   }
-                  characters[0][0] = incred;
-                  if ( characters[0][3].length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
-                     characters[0][1] = 2 * ( sgn < 0 ) + i;
+                  characters[index][0] = incred;
+                  if ( characters[index][3].length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
+                     characters[index][1] = 2 * ( sgn < 0 ) + i;
                   }
                   return;
                } else {
-                  characters[0][0][i] = ctar[i] + 0.5;
+                  characters[index][0][i] = ctar[i] + 0.5;
                }
             }
 
-            characters[0][3].reverse();
-            characters[0][3].pop();
-            characters[0][3].reverse();
+            characters[index][3].reverse();
+            characters[index][3].pop();
+            characters[index][3].reverse();
          }
 
          // common functions 
@@ -624,7 +624,9 @@
                   drawTile(currentTarget, characterIndex[getIndexKey([currentTarget.y,currentTarget.x])] === undefined ? "yellow" : "red");
                }
                ANIMATION = requestAnimationFrame(drawScene);
-               moveFigure(characterIndex);
+               for ( var i = 0; i < characters.length; ++i ) {
+                  moveCharacter(i, characterIndex);
+               }
             }, 1000 / fps );
          }
 
