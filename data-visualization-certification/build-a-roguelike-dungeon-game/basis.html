@@ -671,6 +671,7 @@
          // common functions 
          function drawScene() {
             setTimeout( function() {
+               ANIMATION = requestAnimationFrame(drawScene);
                var characterIndex = createCharacterIndex();
                drawBackground();
                var visibleTiles = [];
@@ -681,7 +682,6 @@
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
-               ANIMATION = requestAnimationFrame(drawScene);
                for ( var i = 0; i < characters.length; ++i ) {
                   if ( !isCharacterAlive(i) ) {
                      if ( !isCharacterFullyDead(i) ) {
