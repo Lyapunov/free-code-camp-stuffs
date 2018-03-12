@@ -232,7 +232,8 @@
                          ];
 
          var heroColoring =['orange','lightgreen','orange','green','orange','green','cyan','black'];
-         var devilColoring =['magenta','red','magenta','red','magenta','red','red','red'];
+         var devilColoring =['magenta','tomato','magenta','tomato','magenta','tomato','tomato','tomato'];
+         var attackColoring =['red','red','red','red','red','red','red','red'];
 
          //================================== AVATAR ANIMATION ENDS =================================
 
@@ -266,12 +267,12 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50}],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4}],
-                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4}],
-                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4}],
-                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4}],
-                          ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50},0],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
+                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
+                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
+                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4},0],
+                          ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
@@ -320,6 +321,10 @@
          function drawCharacter(y,x,i) {
             var [phaseKey, scale, drawDescriptor, characterColors] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
                                                                       drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring];
+            if ( characters[i][5] ) {
+               characters[i][5] = 0;
+               characterColors = attackColoring;
+            }
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
             var [rimage, wimage] = [characterBodyDrawData[phaseKey], weaponDrawData[phaseKey]];
@@ -582,6 +587,11 @@
             }
          }
 
+         function attack(attacker, attacked) {
+            console.log("attacking ", attacker, attacked);
+            characters[attacked][5] = 1;
+         }
+
          function moveCharacter(index, characterIndex) {
             if ( characters[index][3].length == 0 ) {
                characters[index][2] = 0;
@@ -599,6 +609,7 @@
                   var incred = [characters[index][0][0],characters[index][0][1]];
                   incred[i] += (0.5/characters[index][4].slowness) * sgn;
                   if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== index ) { // attack
+                     attack(index, characterIndex[getIndexKey(incred)]);
                      characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
                      return;
                   }
