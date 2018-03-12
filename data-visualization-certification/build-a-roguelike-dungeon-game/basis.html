@@ -30,6 +30,7 @@
          var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
          var aiCounter = 0;
          var deathSpeed = 1/25;
+         var attackDeviance = 0.6;
          var ANIMATION;
 
          var curX = 0;
@@ -268,11 +269,11 @@
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,exists:1,hp:20,baseAttack:1},0],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
-                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
-                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
-                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:10,baseAttack:1},0],
+         var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,exists:1,hp:20,baseAttack:1,baseDefense:0},0],
+                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
+                           [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
+                           [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
+                           [[7.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,exists:1,hp:5,baseAttack:1,baseDefense:0},0],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
@@ -323,7 +324,7 @@
 
          function drawCharacter(y,x,i) {
             var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                                                      drawDescriptors[characters[i][4].weapon + characters[i][4].shield*2], characters[i][4].coloring,
+                                                                      drawDescriptors[(characters[i][4].weapon !== 0) + (characters[i][4].shield != 0)*2], characters[i][4].coloring,
                                                                       characters[i][4].exists ];
             if ( characters[i][5] ) {
                characters[i][5] = 0;
@@ -605,8 +606,15 @@
          }
 
          function attack(attacker, attacked) {
-            console.log("attacking ", attacker, attacked);
-            if ( attacked != 0 ) {
+            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + characters[attacker][4].weapon)*(1.0 - attackDeviance*Math.random()) );
+            var defenseValue = Math.round( (characters[attacked][4].baseDefense + characters[attacked][4].shield)*(1.0 - attackDeviance*Math.random()) );
+            var damage = Math.max(attackValue - defenseValue,0);
+            console.log("attacking (", attacker, attacked, ")==> -", attackValue," +", defenseValue," = ",damage);
+            console.log('baseAttack:',(characters[attacker][4].baseAttack + characters[attacker][4].weapon));
+            console.log('baseDefense:',(characters[attacker][4].baseDefense + characters[attacked][4].shield));
+            characters[attacked][4].hp -= damage;
+            if ( characters[attacked][4].hp < 0 ) {
+               characters[attacked][4].hp = 0;
                kill(attacked);
                return;
             }
