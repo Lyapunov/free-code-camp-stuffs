@@ -570,7 +570,7 @@
             }
          }
 
-         function moveFigure() {
+         function moveFigure(characterIndex) {
             if ( characters[0][3].length == 0 ) {
                characters[0][2] = 0;
                return; 
@@ -581,10 +581,19 @@
             var ctar = characters[0][3][0];
            
             for ( var i = 0; i < 2; ++i ) {
-               if ( Math.abs(ctar[i] + 0.5 - characters[0][0][i]) > 0.1 ) {
+               var targetDistance = Math.abs(ctar[i] + 0.5 - characters[0][0][i]);
+               if ( targetDistance > 0.1 ) {
                   var sgn = Math.sign( ctar[i] + 0.5 - characters[0][0][i] );
-                  characters[0][0][i] += 0.1 * sgn;
-                  characters[0][1] = 2 * ( sgn < 0 ) + i;
+                  var incred = [characters[0][0][0],characters[0][0][1]];
+                  incred[i] += 0.1 * sgn;
+                  if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== 0 ) { // attack
+                     characters[0][3] = [[Math.floor(characters[0][0][0]),Math.floor(characters[0][0][1])]];
+                     return;
+                  }
+                  characters[0][0] = incred;
+                  if ( characters[0][3].length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
+                     characters[0][1] = 2 * ( sgn < 0 ) + i;
+                  }
                   return;
                } else {
                   characters[0][0][i] = ctar[i] + 0.5;
@@ -609,7 +618,7 @@
                   drawTile(currentTarget, characterIndex[getIndexKey([currentTarget.y,currentTarget.x])] === undefined ? "yellow" : "red");
                }
                ANIMATION = requestAnimationFrame(drawScene);
-               moveFigure();
+               moveFigure(characterIndex);
             }, 1000 / fps );
          }
 
