@@ -331,15 +331,17 @@
          function contextPathForObjectDraw(obj) {
             context.beginPath();
             for ( var i = 0; i < obj.ps.length; ++i ) {
-               ( i == 0 ? context.moveTo( obj.ps[i].x, obj.ps[i].y ) : context.lineTo( obj.ps[i].x, obj.ps[i].y ) );
+               ( i == 0 ? context.moveTo( Math.floor(obj.ps[i].x), Math.floor(obj.ps[i].y) ) : context.lineTo( Math.floor(obj.ps[i].x), Math.floor(obj.ps[i].y) ) );
             }
             context.closePath();
          }
 
          function drawFloor(tile, color) {
             context.fillStyle = color;
+            context.strokeStyle = color;
             contextPathForObjectDraw(tile);
             context.fill();
+            context.stroke();
          }
 
          function drawTile(tile,color) {
@@ -373,17 +375,13 @@
             var bit2 = (num >= 2) * 2 - 1;
 
             if ( num < 2 ) {
-               context.fillStyle = color;
+               context.globalAlpha = 1.0;
+               context.fillStyle   = color;
             } else {
                context.globalAlpha = 0.75;
-               context.fillStyle = "#000000";
+               context.fillStyle   = "#000000";
             }
-            context.beginPath();
-            context.moveTo( px, py + bit2 * tileSize );
-            context.lineTo( px + bit1 * Math.sqrt(3) * tileSize, py );
-            context.lineTo( px + bit1 * Math.sqrt(3) * tileSize, py - 2 * tileSize );
-            context.lineTo( px, py + (bit2-2) * tileSize );
-            context.closePath();
+            contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * tileSize},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py - 2 * tileSize},{x:px, y:py + bit2 * tileSize - 2 * tileSize}]} );
             context.fill();
             context.globalAlpha = 1.0;
          }
