@@ -674,7 +674,7 @@
                drawForeground(characters[0][0], characterIndex, visibleTiles);
                drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
-               if ( currentTarget !== undefined ) {
+               if ( isCharacterAlive(0) && currentTarget !== undefined ) {
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
@@ -693,7 +693,7 @@
                } else {
                   aiCounter = 0;
                   for ( var i = 1; i < characters.length; ++i ) {
-                     if ( !isCharacterAlive(i) ) {
+                     if ( !isCharacterAlive(i) || !isCharacterAlive(0) ) {
                         continue;
                      }
                      if ( manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
