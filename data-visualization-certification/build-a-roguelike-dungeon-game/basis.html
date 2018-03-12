@@ -21,6 +21,7 @@
          var screenHeight = mainItem.height = window.innerHeight - 20;
          var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
          var tileSize = 35;
+         var errorTolerance = 0.01;
          var mapRadiusX = screenWidth/2/tileSize/Math.sqrt(3);
          var mapRadiusY = screenHeight/2/tileSize;
          var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
@@ -593,7 +594,7 @@
            
             for ( var i = 0; i < 2; ++i ) {
                var targetDistance = Math.abs(ctar[i] + 0.5 - characters[index][0][i]);
-               if ( targetDistance > 0.1 ) {
+               if ( targetDistance > errorTolerance ) {
                   var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
                   var incred = [characters[index][0][0],characters[index][0][1]];
                   incred[i] += 0.1 * sgn;
