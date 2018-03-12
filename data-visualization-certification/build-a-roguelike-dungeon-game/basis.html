@@ -26,6 +26,8 @@
          var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
 
          var fps = 25;
+         var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
+         var aiCounter = 0;
          var ANIMATION;
 
          var curX = 0;
@@ -265,11 +267,14 @@
          // all characters on the map - 0th is the player
          var characters = [[[15.5,15.5],0,0,[],{scale:1,coloring:heroColoring,weapon:1,shield:1}],
                            [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
                            [[6.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
                            [[7.5,11.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
                            [[8.5,12.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path*/
+
+         function manhattan(p1,p2) {
+            return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
+         }
 
          function drawBox(boxX,boxY,boxSize,boxColor) {
             context.beginPath();
@@ -592,7 +597,7 @@
                   var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
                   var incred = [characters[index][0][0],characters[index][0][1]];
                   incred[i] += 0.1 * sgn;
-                  if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== 0 ) { // attack
+                  if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== index ) { // attack
                      characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
                      return;
                   }
@@ -621,11 +626,25 @@
                drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
                if ( currentTarget !== undefined ) {
-                  drawTile(currentTarget, characterIndex[getIndexKey([currentTarget.y,currentTarget.x])] === undefined ? "yellow" : "red");
+                  var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
+                  drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
                ANIMATION = requestAnimationFrame(drawScene);
                for ( var i = 0; i < characters.length; ++i ) {
-                  moveCharacter(i, characterIndex);
+                  moveCharacter(i, createCharacterIndex()); // easy full update for now
+               }
+               if ( aiCounter < aiFrequencyDecreaseRatio ) {
+                  ++aiCounter;
+               } else {
+                  aiCounter = 0;
+                  for ( var i = 1; i < characters.length; ++i ) {
+                     if ( manhattan(characters[0][0], characters[i][0]) < 3 && characters[i][3].length == 0 ) {
+                        characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
+                                               {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
+                                               characterIndex);
+                        console.log(i,'--->', characters[i][3], ' ',characters[i][3].length);
+                     }
+                  }
                }
             }, 1000 / fps );
          }
@@ -648,8 +667,11 @@
             if ( currentTarget === undefined ) {
                return;
             }
-            var way = bfs({x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},currentTarget);
-            characters[0][3] = way;
+            var source = {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])};
+            if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
+               return;
+            }
+            characters[0][3] = bfs(source,currentTarget);
          };
 
          mainItem.onmouseup = function(event) {};
