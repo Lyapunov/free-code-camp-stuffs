@@ -273,7 +273,7 @@
          var devilguyAttribs = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{name:"Hero",scale:1.00,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
                            [[10.5,10.5],0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
@@ -604,21 +604,23 @@
          }
 
          function kill(index) {
-            console.log('killing ',index);
+            sendMessage(characters[index][4].name+" is killed");
             destroying(index);
          }
 
+         function capitalize(text) {
+            return text[0].toUpperCase() + text.substring(1);
+         }
+
          function sendMessage(text) {
-            console.log(text);
+            console.log(capitalize(text)+".");
          }
 
          function attack(attacker, attacked) {
             var attackValue  = Math.round( (characters[attacker][4].baseAttack  + characters[attacker][4].weapon)*(1.0 - attackDeviance*Math.random()) );
             var defenseValue = Math.round( (characters[attacked][4].baseDefense + characters[attacked][4].shield)*(1.0 - attackDeviance*Math.random()) );
             var damage = Math.max(attackValue - defenseValue,0);
-            console.log("attacking (", attacker, attacked, ")==> -", attackValue," +", defenseValue," = ",damage);
-            console.log('baseAttack:',(characters[attacker][4].baseAttack + characters[attacker][4].weapon));
-            console.log('baseDefense:',(characters[attacker][4].baseDefense + characters[attacked][4].shield));
+            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damage <= 0 ? "misses" : "damages " + damage + " (+"+attackValue+"-"+defenseValue+") points"));
             if ( damage <= 0 ) {
                return;
             }
