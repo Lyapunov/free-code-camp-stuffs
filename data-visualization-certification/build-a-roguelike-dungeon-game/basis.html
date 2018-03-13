@@ -234,29 +234,29 @@
                          ];
 
          var heroColoring =['orange','lightgreen','orange','green','orange','green','cyan','black'];
-         var devilColoring =['magenta','tomato','magenta','tomato','magenta','tomato','tomato','tomato'];
+         var devilColoring =['crimson','tomato','crimson','tomato','crimson','tomato','tomato','tomato'];
          var attackColoring =['red','red','red','red','red','red','red','red'];
 
          //================================== AVATAR ANIMATION ENDS =================================
 
          var levelMap= [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,1,0,0,0,0,0,0,0],
+                        [0,0,6,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,5,5,5,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,1,0,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0],
+                        [0,0,4,4,4,1,1,1,0,0,0,1,1,1,1,1,0,0,0,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,4,1,1,1,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,4,4,4,1,0,0,0,1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0],
+                        [0,0,1,1,1,1,4,4,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
@@ -266,6 +266,10 @@
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
 
+         var colorDescription = ["STONEWORLD","SNOWWORLD","FIREWORLD","WATER","CARPET","FAKEDOOR"];
+         var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
+         var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
+
          var figurePhase     = 0;
          
          // all characters on the map - 0th is the player
@@ -274,6 +278,7 @@
                            [[6.5,10.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
                            [[7.5,11.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
                            [[7.5,12.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
+                           [[4.5,20.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
@@ -426,7 +431,7 @@
             var limit   = 50;
             var err     = 1e-6;
 
-            while ( limit && getMapCell( celly, cellx ) != 0 && !( celly == cy + y && cellx == cx + x ) ) {
+            while ( limit && getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
                --limit;
                var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
                                      Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
@@ -457,19 +462,19 @@
          }
 
          function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
-            if ( getMapCell(cy+y,cx+x) != 5 ) {
-               var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-               drawFloor(tile, "#AAAAAA");
-               tiles.push(tile);
-            }
+            var color = floorColors[ getMapCell(cy+y,cx+x) - 1 ];
+            var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+            drawFloor(tile, color);
+            tiles.push(tile);
          }
 
          function drawCell(y,x,cy,cx,oy,ox,characterIndexer) {
+            var color = wallColors[ getMapCell(cy+y,cx+x) - 1 ];
             if ( !getMapCell(cy+y,cx+x-1) ) {
-               drawWall(-y+oy,x-ox,0, "gray");
+               drawWall(-y+oy,x-ox,0,color);
             }
             if ( !getMapCell(cy+y-1,cx+x) ) {
-               drawWall(-y+oy,x-ox,1, "gray");
+               drawWall(-y+oy,x-ox,1,color);
             }
 
             var i = characterIndexer[getIndexKey([cy+y,cx+x])];
@@ -478,10 +483,10 @@
             }
 
             if ( !getMapCell(cy+y+1,cx+x) ) {
-               drawWall(-y+oy,x-ox,2, "blue");
+               drawWall(-y+oy,x-ox,2,color);
             }
             if ( !getMapCell(cy+y,cx+x+1) ) {
-               drawWall(-y+oy,x-ox,3, "blue");
+               drawWall(-y+oy,x-ox,3,color);
             }
          }
 
