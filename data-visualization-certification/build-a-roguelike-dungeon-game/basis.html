@@ -270,15 +270,15 @@
          var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
-         var devilguyAttribs = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+         var devilguyAttributes = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
          
          // all characters on the map - 0th is the player
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
-                           [[10.5,10.5],0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
-                           [[6.5,10.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
-                           [[7.5,11.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
-                           [[7.5,12.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
-                           [[4.5,20.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
+                           [[10.5,10.5],0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[6.5,10.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[7.5,11.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[7.5,12.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[4.5,20.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
