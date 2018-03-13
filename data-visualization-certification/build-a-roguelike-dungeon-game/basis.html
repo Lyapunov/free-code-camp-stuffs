@@ -247,9 +247,9 @@
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,3,3,3,3,3,3,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,1,0,0,0,0,0,0,0],
-                        [0,0,6,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,1,0,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,5,5,5,0,0],
-                        [0,0,1,1,1,1,7,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                        [0,0,6,1,13,1,7,1,1,1,1,1,1,0,2,2,2,2,2,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,13,1,7,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,17,5,5,0,0],
+                        [0,0,1,1,13,1,7,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,1,1,1,0,0],
@@ -287,7 +287,7 @@
 
          function drawBox(boxX,boxY,boxSize,boxColor, exists) {
             context.beginPath();
-            context.rect(boxX, boxY, Math.floor(boxSize*exists), Math.floor(boxSize*exists));
+            context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize*exists));
             context.fillStyle = boxColor;
             context.fill();
          }
@@ -389,6 +389,13 @@
             return obi;
          }
 
+         function getFloorTileScale(y,x,obi,scale) {
+            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
+            var py = (x - y) * tileSize + screenHeight / 2;
+            obi.ps = [{x:px,y:py-tileSize*scale},{x:px + Math.sqrt(3) * tileSize*scale,y:py},{x:px,y:py+tileSize*scale},{x:px - Math.sqrt(3) * tileSize*scale,y:py}];
+            return obi;
+         }
+
          function getKey(diri,phi) {
             return (1+diri*2)*9 + phi;
          }
@@ -486,13 +493,27 @@
 
             var mapval = getMapCell(cy+y,cx+x);
             var speciality = Math.floor((mapval-1) / wallColors.length);
-            if ( speciality ) {
+
+            // table
+            if ( speciality == 1 ) {
                var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
                var tableColor = "#835C3B";
                drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
-               drawRectangle(tile.ps[2].x-2,tile.ps[2].y,Math.floor(tileSize/7),tileSize,tableColor);
+               drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
                drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
                drawFloor(tile,tableColor);
+            }
+
+            // chair
+            if ( speciality == 2 ) {
+               var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
+               var tableColor = "#835C3B";
+               drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize/2,tableColor);
+               drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize/2,tableColor);
+               drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize/2,tableColor);
+               drawFloor(tile,tableColor);
+               
+               drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-tileSize},{x:tile.ps[0].x,y:tile.ps[0].y-tileSize}]}, tableColor)
             }
 
             var i = characterIndexer[getIndexKey([cy+y,cx+x])];
@@ -584,7 +605,7 @@
                for ( var i = 0; i < findings.length; ++i ) {
                   for ( var j = 0; j < dirs.length; ++j ) {
                      var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-                     if ( getMapCell(nextp[0],nextp[1])
+                     if ( getMapCell(nextp[0],nextp[1]) && getMapCell(nextp[0],nextp[1]) < wallColors.length
                        && hops[nextp] === undefined
                        && (nextp[0] === target.y && nextp[1] === target.x || characterIndex[getIndexKey([nextp[0],nextp[1]])] === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
                         nfindings.push(nextp);
