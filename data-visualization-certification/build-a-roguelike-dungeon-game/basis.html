@@ -271,14 +271,16 @@
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
          var figurePhase     = 0;
+
+         var devilguyAttribs = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{scale:1.00,coloring:heroColoring ,weapon:1,shield:1,slowness:5 ,range:50,exists:1,hp:20,baseAttack:1,baseDefense:0},0],
-                           [[10.5,10.5],0,0,[],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
-                           [[6.5,10.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
-                           [[7.5,11.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
-                           [[7.5,12.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
-                           [[4.5,20.5],0,0, [],{scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range: 4,exists:1,hp: 5,baseAttack:1,baseDefense:0},0],
+         var characters = [[[15.5,15.5],0,0,[],{name:"Hero",scale:1.00,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+                           [[10.5,10.5],0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
+                           [[6.5,10.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
+                           [[7.5,11.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
+                           [[7.5,12.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
+                           [[4.5,20.5] ,0,0,[],devilguyAttribs,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          function manhattan(p1,p2) {
@@ -330,7 +332,7 @@
          function drawCharacter(y,x,i) {
             var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
                                                                       drawDescriptors[(characters[i][4].weapon !== 0) + (characters[i][4].shield != 0)*2], characters[i][4].coloring,
-                                                                      characters[i][4].exists ];
+                                                                      characters[i][6].exists ];
             if ( characters[i][5] ) {
                characters[i][5] = 0;
                characterColors = attackColoring;
@@ -600,12 +602,16 @@
          }
 
          function destroying(index) {
-            characters[index][4].exists -= deathSpeed;
+            characters[index][6].exists -= deathSpeed;
          }
 
          function kill(index) {
             console.log('killing ',index);
             destroying(index);
+         }
+
+         function sendMessage(text) {
+            console.log(text);
          }
 
          function attack(attacker, attacked) {
@@ -618,9 +624,9 @@
             if ( damage <= 0 ) {
                return;
             }
-            characters[attacked][4].hp -= damage;
-            if ( characters[attacked][4].hp < 0 ) {
-               characters[attacked][4].hp = 0;
+            characters[attacked][6].hp -= damage;
+            if ( characters[attacked][6].hp < 0 ) {
+               characters[attacked][6].hp = 0;
                kill(attacked);
                return;
             }
@@ -664,11 +670,11 @@
          }
 
          function isCharacterAlive(index) {
-            return ( characters[index][4].exists > 1 - errorTolerance );
+            return ( characters[index][6].exists > 1 - errorTolerance );
          }
 
          function isCharacterFullyDead(index) {
-            return ( Math.abs(characters[index][4].exists) < errorTolerance );
+            return ( Math.abs(characters[index][6].exists) < errorTolerance );
          }
 
          // common functions 
