@@ -249,7 +249,7 @@
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,1,0,0,0,0,0,0,0],
                         [0,0,6,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,2,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,5,5,5,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                        [0,0,1,1,1,1,7,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,1,1,1,0,0],
@@ -288,6 +288,13 @@
          function drawBox(boxX,boxY,boxSize,boxColor, exists) {
             context.beginPath();
             context.rect(boxX, boxY, Math.floor(boxSize*exists), Math.floor(boxSize*exists));
+            context.fillStyle = boxColor;
+            context.fill();
+         }
+
+         function drawRectangle(boxX,boxY,boxSize1,boxSize2,boxColor) {
+            context.beginPath();
+            context.rect(boxX, boxY, boxSize1, boxSize2);
             context.fillStyle = boxColor;
             context.fill();
          }
@@ -475,6 +482,17 @@
             }
             if ( !getMapCell(cy+y-1,cx+x) ) {
                drawWall(-y+oy,x-ox,1,color);
+            }
+
+            var mapval = getMapCell(cy+y,cx+x);
+            var speciality = Math.floor((mapval-1) / wallColors.length);
+            if ( speciality ) {
+               var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
+               var tableColor = "#835C3B";
+               drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
+               drawRectangle(tile.ps[2].x-2,tile.ps[2].y,Math.floor(tileSize/7),tileSize,tableColor);
+               drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
+               drawFloor(tile,tableColor);
             }
 
             var i = characterIndexer[getIndexKey([cy+y,cx+x])];
