@@ -462,14 +462,14 @@
          }
 
          function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
-            var color = floorColors[ getMapCell(cy+y,cx+x) - 1 ];
+            var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
             var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
             drawFloor(tile, color);
             tiles.push(tile);
          }
 
          function drawCell(y,x,cy,cx,oy,ox,characterIndexer) {
-            var color = wallColors[ getMapCell(cy+y,cx+x) - 1 ];
+            var color = wallColors[ (getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
             if ( !getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0,color);
             }
