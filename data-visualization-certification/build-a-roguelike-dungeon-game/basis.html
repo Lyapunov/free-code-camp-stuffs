@@ -732,6 +732,11 @@
             if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
                return;
             }
+            if ( characters[0][3].length
+              && characters[0][3][characters[0][3].length-1][1] == currentTarget.x 
+              && characters[0][3][characters[0][3].length-1][0] == currentTarget.y ) {
+               return;
+            }
             characters[0][3] = bfs(source,currentTarget);
          };
 
