@@ -596,25 +596,18 @@
                                               (characterIndexerBuckets[psel] = characterIndexerBuckets[psel] || []).push(i); });
          }
 
-         function createCharacterIndex(pos) {
-            var pos = characters[0][0];
-            var characterIndex = {};
-            for ( var y = -1; y <=1; ++y ) {
-               for ( var x = -1; x <=1; ++x ) {
-                  var psel = getBucketIndex([y+pos[0],x+pos[1]]);
-                  if ( psel in characterIndexerBuckets ) {
-                     var currentBucket = characterIndexerBuckets[psel];
-                     for ( var j = 0; j < currentBucket.length; ++j ) {
-                        var i = currentBucket[j];
-                        if ( isCharacterFullyDead(i) ) {
-                           continue;
-                        }
-   
-                        characterIndex[ getIndexKey(characters[i][0]) ] = i;
-                     }
-                  }
-               }
+         function createCharacterIndex() {
+            if ( characterIndexerBuckets === undefined ) {
+               generateCharacterIndexerBuckets();
+            } else {
+               partiallyRegenerateIndexerBuckets();
             }
+
+            var characterIndex = {};
+            iterateCharactersAroundPos(characters[0][0],
+                                       characterIndexerBuckets,
+                                       (i)=>{ isCharacterFullyDead(i) || ( characterIndex[ getIndexKey(characters[i][0]) ] = i ) });
+
             return characterIndex;
          }
 
@@ -821,11 +814,6 @@
          function drawScene() {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
-               if ( characterIndexerBuckets === undefined ) {
-                  generateCharacterIndexerBuckets();
-               } else {
-                  partiallyRegenerateIndexerBuckets();
-               }
 
                var characterIndex = createCharacterIndex();
                drawBackground();
