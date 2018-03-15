@@ -790,6 +790,34 @@
             return ( Math.abs(characters[index][6].exists) < errorTolerance );
          }
 
+         function runCharacterAI(characterIndex) {
+            for ( var i = 0; i < characters.length; ++i ) {
+               if ( !isCharacterAlive(i) ) {
+                  if ( !isCharacterFullyDead(i) ) {
+                     destroying(i);
+                  }
+                  continue;
+               }
+               moveCharacter(i, createCharacterIndex()); // easy full update for now
+            }
+            if ( aiCounter < aiFrequencyDecreaseRatio ) {
+               ++aiCounter;
+            } else {
+               aiCounter = 0;
+               for ( var i = 1; i < characters.length; ++i ) {
+                  if ( !isCharacterAlive(i) || !isCharacterAlive(0) ) {
+                     continue;
+                  }
+                  if ( manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
+                    && characters[i][3].length == 0 ) {
+                     characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
+                                            {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
+                                            characterIndex);
+                  }
+               }
+            }
+         }
+
          // common functions 
          function drawScene() {
             setTimeout( function() {
@@ -810,31 +838,7 @@
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
-               for ( var i = 0; i < characters.length; ++i ) {
-                  if ( !isCharacterAlive(i) ) {
-                     if ( !isCharacterFullyDead(i) ) {
-                        destroying(i);
-                     }
-                     continue;
-                  }
-                  moveCharacter(i, createCharacterIndex()); // easy full update for now
-               }
-               if ( aiCounter < aiFrequencyDecreaseRatio ) {
-                  ++aiCounter;
-               } else {
-                  aiCounter = 0;
-                  for ( var i = 1; i < characters.length; ++i ) {
-                     if ( !isCharacterAlive(i) || !isCharacterAlive(0) ) {
-                        continue;
-                     }
-                     if ( manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-                       && characters[i][3].length == 0 ) {
-                        characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
-                                               {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
-                                               characterIndex);
-                     }
-                  }
-               }
+               runCharacterAI(characterIndex);
             }, 1000 / fps );
          }
 
