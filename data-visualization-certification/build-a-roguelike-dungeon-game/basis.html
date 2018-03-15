@@ -283,6 +283,7 @@
 
          var characterIndexerBuckets;
          var characterIndexerGridSize = 15;
+         var bucketIndexMaxX = 10000;
 
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
@@ -545,9 +546,8 @@
             return Math.floor(ps[0])*4*mapRadius+Math.floor(ps[1]);
          }
 
-         var bucketIndexMaxX = 10000;
          function getBucketIndex(pos) {
-            return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
+            return "x" + (Math.round(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.round(pos[1] / characterIndexerGridSize)).toString();
          }
 
          function generateCharacterIndexerBuckets() {
@@ -563,8 +563,8 @@
 
          function iterateCharactersAroundPos(pos, buckets, func1, func2) {
             var distr = {};
-            for ( var y = -2; y <=2; ++y ) {
-               for ( var x = -2; x <=2; ++x ) {
+            for ( var y = -1; y <=1; ++y ) {
+               for ( var x = -1; x <=1; ++x ) {
                   var psel = getBucketIndex([y+pos[0],x+pos[1]]);
                   if ( !(psel in distr) && (psel in buckets) ) {
                      distr[psel] = 1;
