@@ -551,7 +551,7 @@
             return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketIndexMaxX+Math.floor(pos[1] / bucketGridSize)).toString();
          }
 
-         function iterateCharactersAroundPos(pos, buckets, func1, func2) {
+         function iterateOverBucketItemsAroundPos(pos, buckets, func1, func2) {
             var distr = {};
             for ( var y = -1; y <= 1; ++y ) {
                for ( var x = -1; x <= 1; ++x ) {
@@ -585,15 +585,15 @@
 
          function partiallyRegenerateBuckets(pos,buckets,objs) {
             var affectedBuckets = {};
-            iterateCharactersAroundPos(pos,
-                                       buckets,
-                                       undefined,
-                                       (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
+            iterateOverBucketItemsAroundPos(pos,
+                                            buckets,
+                                            undefined,
+                                            (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
 
-            iterateCharactersAroundPos(pos,
-                                       affectedBuckets,
-                                       (i)=>{ var psel = getBucketIndex(objs[i][0]);
-                                              (buckets[psel] = buckets[psel] || []).push(i); });
+            iterateOverBucketItemsAroundPos(pos,
+                                            affectedBuckets,
+                                            (i)=>{ var psel = getBucketIndex(objs[i][0]);
+                                                   (buckets[psel] = buckets[psel] || []).push(i); });
          }
 
          function refreshBuckets(buckets,objs,cleaner,pos) {
@@ -609,9 +609,9 @@
             refreshBuckets(characterBuckets, characters,()=>{ return (characterBuckets = {}); }, characters[0][0]);
 
             var characterIndex = {};
-            iterateCharactersAroundPos(characters[0][0],
-                                       characterBuckets,
-                                       (i)=>{ isCharacterFullyDead(i) || ( characterIndex[ getIndexKey(characters[i][0]) ] = i ) });
+            iterateOverBucketItemsAroundPos(characters[0][0],
+                                            characterBuckets,
+                                            (i)=>{ isCharacterFullyDead(i) || ( characterIndex[ getIndexKey(characters[i][0]) ] = i ) });
 
             return characterIndex;
          }
@@ -789,9 +789,9 @@
          }
 
          function moveCharacters() {
-            iterateCharactersAroundPos(characters[0][0],
-                                       characterBuckets,
-                                       (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
+            iterateOverBucketItemsAroundPos(characters[0][0],
+                                            characterBuckets,
+                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
          }
 
          function giveInstructionsToNPCsWithAI() {
@@ -800,16 +800,16 @@
                ++aiCounter;
             } else {
                aiCounter = 0;
-               iterateCharactersAroundPos(characters[0][0],
-                                          characterBuckets,
-                                          (i)=>{ i != 0
-                                              && isCharacterAlive(i)
-                                              && isCharacterAlive(0) 
-                                              && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-                                              && characters[i][3].length == 0
-                                              && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
-                                                                         {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
-                                                                         characterIndex));
+               iterateOverBucketItemsAroundPos(characters[0][0],
+                                               characterBuckets,
+                                               (i)=>{ i != 0
+                                                   && isCharacterAlive(i)
+                                                   && isCharacterAlive(0) 
+                                                   && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
+                                                   && characters[i][3].length == 0
+                                                   && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
+                                                                              {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
+                                                                              characterIndex));
                                               });
             }
          }
