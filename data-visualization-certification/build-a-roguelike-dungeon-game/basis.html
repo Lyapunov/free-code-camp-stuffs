@@ -783,11 +783,12 @@
             return ( Math.abs(characters[index][6].exists) < errorTolerance );
          }
 
-         function runCharacterAI(characterIndex) {
+         function runCharacterAI() {
             iterateCharactersAroundPos(characters[0][0],
                                        characterIndexerBuckets,
                                        (i)=>{ isCharacterAlive(i) && (moveCharacter(i, createCharacterIndex()) || 1) || isCharacterFullyDead(i) || destroying(i) });
 
+            var characterIndex = createCharacterIndex();
             if ( aiCounter < aiFrequencyDecreaseRatio ) {
                ++aiCounter;
             } else {
@@ -821,7 +822,7 @@
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
-               runCharacterAI(characterIndex);
+               runCharacterAI();
             }, 1000 / fps );
          }
 
