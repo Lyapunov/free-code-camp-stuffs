@@ -273,7 +273,7 @@
          var devilguyAttributes = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:1,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:2,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
                            [[10.5,10.5],0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
@@ -288,9 +288,9 @@
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
          }
 
-         function drawBox(boxX,boxY,boxSize,boxColor, exists) {
+         function drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
             context.beginPath();
-            context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize*exists));
+            context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize2*exists));
             context.fillStyle = boxColor;
             context.fill();
          }
@@ -302,7 +302,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -311,6 +311,7 @@
             if ( w2 === undefined ) {
                w2 = 0.5;
             }
+            var isShield = ((ind1 == 25) || (ind1 == 28))&&shieldval;
             if ( ind1 > 22 ) {
                simage = wimage;
                ind1 -= 23;
@@ -326,12 +327,16 @@
                drawBox(ux+simage[ind1][0]*percentage,
                        uy+simage[ind1][1]*percentage*scale,
                        simage[ind1][2]*percentage,
+                       simage[ind1][2]*percentage,
                        characterColors[descriptorValueToColor[cind]],
                        exists);
             } else {
+               var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
+               var shieldrad = [0.75,1,1.25,1.5,2.0][shieldval-1];
                drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
-                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale,
-                       (rad===undefined?simage[ind1][2]:rad*2)*percentage,
+                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
+                       orad,
+                       orad*(isShield?shieldrad:1),
                        characterColors[descriptorValueToColor[cind]],
                        exists);
             }
@@ -355,7 +360,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,...box));
          }
 
          function drawBackground() {
