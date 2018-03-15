@@ -233,7 +233,7 @@
                            [[0,0,5],[10,0,5],[20,0,5],[30,0,5],[40,0,5],[50,0,5]],
                          ];
 
-         var heroColoring =['orange','lightgreen','orange','green','orange','green','cyan','black'];
+         var heroColoring =['orange','lightgreen','orange','green','orange','green','weaponBased','black'];
          var devilColoring =['crimson','tomato','crimson','tomato','crimson','tomato','tomato','tomato'];
          var attackColoring =['red','red','red','red','red','red','red','red'];
 
@@ -302,7 +302,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,weaponval,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -322,13 +322,17 @@
                   return;
                }
             }
+            var color = characterColors[descriptorValueToColor[cind]];
+            if ( color == "weaponBased" ) {
+               color = ["#966F33","#434b4d","#4682B4",'silver','gold','cyan'][weaponval-1];
+            }
             var percentage = tileSize / 50;
             if ( ind2 === undefined ) {
                drawBox(ux+simage[ind1][0]*percentage,
                        uy+simage[ind1][1]*percentage*scale,
                        simage[ind1][2]*percentage,
                        simage[ind1][2]*percentage,
-                       characterColors[descriptorValueToColor[cind]],
+                       color,
                        exists);
             } else {
                var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
@@ -337,7 +341,7 @@
                        uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
                        orad,
                        orad*(isShield?shieldrad:1),
-                       characterColors[descriptorValueToColor[cind]],
+                       color,
                        exists);
             }
          }
@@ -360,7 +364,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,characters[i][4].weapon,...box));
          }
 
          function drawBackground() {
