@@ -551,14 +551,13 @@
             return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
          }
 
-         function generateCharacterIndexerBuckets() {
-            characterIndexerBuckets = {};
-            for ( var i = 0; i < characters.length; ++i ) {
-               var psel = getBucketIndex(characters[i][0]);
-               if ( !(psel in characterIndexerBuckets) ) {
-                  characterIndexerBuckets[psel] = [];
+         function generateCharacterIndexerBuckets(buckets,objs) {
+            for ( var i = 0; i < objs.length; ++i ) {
+               var psel = getBucketIndex(objs[i][0]);
+               if ( !(psel in buckets) ) {
+                  buckets[psel] = [];
                }
-               characterIndexerBuckets[psel].push(i);
+               buckets[psel].push(i);
             }
          }
 
@@ -584,24 +583,25 @@
             }
          }
 
-         function partiallyRegenerateIndexerBuckets() {
-            var savedCharacterIndexerBuckets = {};
-            iterateCharactersAroundPos(characters[0][0],
-                                       characterIndexerBuckets,
+         function partiallyRegenerateIndexerBuckets(pos,buckets,objs) {
+            var affectedBuckets = {};
+            iterateCharactersAroundPos(pos,
+                                       buckets,
                                        undefined,
-                                       (buckets,psel)=>{savedCharacterIndexerBuckets[psel]=buckets[psel];});
+                                       (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
 
-            iterateCharactersAroundPos(characters[0][0], 
-                                       savedCharacterIndexerBuckets,
-                                       (i)=>{ var psel = getBucketIndex(characters[i][0]);
-                                              (characterIndexerBuckets[psel] = characterIndexerBuckets[psel] || []).push(i); });
+            iterateCharactersAroundPos(pos,
+                                       affectedBuckets,
+                                       (i)=>{ var psel = getBucketIndex(objs[i][0]);
+                                              (buckets[psel] = buckets[psel] || []).push(i); });
          }
 
          function createCharacterIndex() {
             if ( characterIndexerBuckets === undefined ) {
-               generateCharacterIndexerBuckets();
+               characterIndexerBuckets = {};
+               generateCharacterIndexerBuckets(characterIndexerBuckets,characters);
             } else {
-               partiallyRegenerateIndexerBuckets();
+               partiallyRegenerateIndexerBuckets(characters[0][0],characterIndexerBuckets,characters);
             }
 
             var characterIndex = {};
@@ -783,7 +783,7 @@
             return ( Math.abs(characters[index][6].exists) < errorTolerance );
          }
 
-         function runCharacterAI() {
+         function moveNPCsWithAI() {
             iterateCharactersAroundPos(characters[0][0],
                                        characterIndexerBuckets,
                                        (i)=>{ isCharacterAlive(i) && (moveCharacter(i, createCharacterIndex()) || 1) || isCharacterFullyDead(i) || destroying(i) });
@@ -822,7 +822,7 @@
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
-               runCharacterAI();
+               moveNPCsWithAI();
             }, 1000 / fps );
          }
 
