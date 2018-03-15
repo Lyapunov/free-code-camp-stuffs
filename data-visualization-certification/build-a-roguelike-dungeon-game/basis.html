@@ -563,17 +563,21 @@
 
          function iterateCharactersAroundPos(pos, buckets, func1, func2) {
             var distr = {};
-            for ( var y = -1; y <=1; ++y ) {
-               for ( var x = -1; x <=1; ++x ) {
+            for ( var y = -1; y <= 1; ++y ) {
+               for ( var x = -1; x <= 1; ++x ) {
                   var psel = getBucketIndex([y+pos[0],x+pos[1]]);
                   if ( !(psel in distr) && (psel in buckets) ) {
                      distr[psel] = 1;
                      var bucket = buckets[psel];
-                     for ( var j = 0; j < bucket.length; ++j ) {
-                        var i = bucket[j];
-                        func1(i);
+                     if ( func1 ) {
+                        for ( var j = 0; j < bucket.length; ++j ) {
+                           func1(bucket[j]);
+                        }
                      }
-                     func2(buckets, psel);
+                     if ( func2 ) {
+                        func2(buckets, psel);
+                        delete buckets[psel];
+                     }
                   }
                }
             }
@@ -583,14 +587,13 @@
             var savedCharacterIndexerBuckets = {};
             iterateCharactersAroundPos(characters[0][0],
                                        characterIndexerBuckets,
-                                       ()=>{},
-                                       (buckets,psel)=>{savedCharacterIndexerBuckets[psel]=buckets[psel];delete buckets[psel];});
+                                       undefined,
+                                       (buckets,psel)=>{savedCharacterIndexerBuckets[psel]=buckets[psel];});
 
             iterateCharactersAroundPos(characters[0][0], 
                                        savedCharacterIndexerBuckets,
                                        (i)=>{ var psel = getBucketIndex(characters[i][0]);
-                                              (characterIndexerBuckets[psel] = characterIndexerBuckets[psel] || []).push(i); },
-                                       ()=>{});
+                                              (characterIndexerBuckets[psel] = characterIndexerBuckets[psel] || []).push(i); });
          }
 
          function createCharacterIndex(pos) {
