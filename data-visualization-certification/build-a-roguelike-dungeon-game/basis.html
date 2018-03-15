@@ -282,7 +282,7 @@
                            [[22.5,4.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
-         var characterIndexerBuckets;
+         var characterBuckets;
          var characterIndexerGridSize = 15;
          var bucketIndexMaxX = 10000;
 
@@ -597,16 +597,16 @@
          }
 
          function createCharacterIndex() {
-            if ( characterIndexerBuckets === undefined ) {
-               characterIndexerBuckets = {};
-               generateCharacterIndexerBuckets(characterIndexerBuckets,characters);
+            if ( characterBuckets === undefined ) {
+               characterBuckets = {};
+               generateCharacterIndexerBuckets(characterBuckets,characters);
             } else {
-               partiallyRegenerateIndexerBuckets(characters[0][0],characterIndexerBuckets,characters);
+               partiallyRegenerateIndexerBuckets(characters[0][0],characterBuckets,characters);
             }
 
             var characterIndex = {};
             iterateCharactersAroundPos(characters[0][0],
-                                       characterIndexerBuckets,
+                                       characterBuckets,
                                        (i)=>{ isCharacterFullyDead(i) || ( characterIndex[ getIndexKey(characters[i][0]) ] = i ) });
 
             return characterIndex;
@@ -739,11 +739,12 @@
             characters[attacked][5] = 1;
          }
 
-         function moveCharacter(index, characterIndex) {
+         function moveCharacter(index) {
             if ( characters[index][3].length == 0 ) {
                characters[index][2] = 0;
                return; 
             }
+            var characterIndex = createCharacterIndex(); 
 
             characters[index][2] = ( (characters[index][2]) % 8 + 1 );
 
@@ -783,18 +784,20 @@
             return ( Math.abs(characters[index][6].exists) < errorTolerance );
          }
 
-         function moveNPCsWithAI() {
+         function moveCharacters() {
             iterateCharactersAroundPos(characters[0][0],
-                                       characterIndexerBuckets,
-                                       (i)=>{ isCharacterAlive(i) && (moveCharacter(i, createCharacterIndex()) || 1) || isCharacterFullyDead(i) || destroying(i) });
+                                       characterBuckets,
+                                       (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
+         }
 
+         function giveInstructionsToNPCsWithAI() {
             var characterIndex = createCharacterIndex();
             if ( aiCounter < aiFrequencyDecreaseRatio ) {
                ++aiCounter;
             } else {
                aiCounter = 0;
                iterateCharactersAroundPos(characters[0][0],
-                                          characterIndexerBuckets,
+                                          characterBuckets,
                                           (i)=>{ i != 0
                                               && isCharacterAlive(i)
                                               && isCharacterAlive(0) 
@@ -822,7 +825,8 @@
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
-               moveNPCsWithAI();
+               moveCharacters();
+               giveInstructionsToNPCsWithAI();
             }, 1000 / fps );
          }
 
