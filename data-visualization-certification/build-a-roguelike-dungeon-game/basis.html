@@ -279,6 +279,7 @@
                            [[7.5,11.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                            [[7.5,12.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                            [[4.5,20.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[22.5,4.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          var characterIndexerBuckets;
@@ -547,7 +548,7 @@
          }
 
          function getBucketIndex(pos) {
-            return "x" + (Math.round(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.round(pos[1] / characterIndexerGridSize)).toString();
+            return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
          }
 
          function generateCharacterIndexerBuckets() {
@@ -565,7 +566,7 @@
             var distr = {};
             for ( var y = -1; y <= 1; ++y ) {
                for ( var x = -1; x <= 1; ++x ) {
-                  var psel = getBucketIndex([y+pos[0],x+pos[1]]);
+                  var psel = getBucketIndex([characterIndexerGridSize*y+pos[0],characterIndexerGridSize*x+pos[1]]);
                   if ( !(psel in distr) && (psel in buckets) ) {
                      distr[psel] = 1;
                      var bucket = buckets[psel];
