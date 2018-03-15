@@ -795,11 +795,11 @@
          }
 
          function giveInstructionsToNPCsWithAI() {
-            var characterIndex = createCharacterIndex();
             if ( aiCounter < aiFrequencyDecreaseRatio ) {
                ++aiCounter;
             } else {
                aiCounter = 0;
+               var characterIndex = createCharacterIndex();
                iterateOverBucketItemsAroundPos(characters[0][0],
                                                characterBuckets,
                                                (i)=>{ i != 0
