@@ -283,7 +283,7 @@
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
          var characterBuckets;
-         var characterIndexerGridSize = 15;
+         var bucketGridSize = 15;
          var bucketIndexMaxX = 10000;
 
          function manhattan(p1,p2) {
@@ -548,14 +548,14 @@
          }
 
          function getBucketIndex(pos) {
-            return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
+            return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketIndexMaxX+Math.floor(pos[1] / bucketGridSize)).toString();
          }
 
          function iterateCharactersAroundPos(pos, buckets, func1, func2) {
             var distr = {};
             for ( var y = -1; y <= 1; ++y ) {
                for ( var x = -1; x <= 1; ++x ) {
-                  var psel = getBucketIndex([characterIndexerGridSize*y+pos[0],characterIndexerGridSize*x+pos[1]]);
+                  var psel = getBucketIndex([bucketGridSize*y+pos[0],bucketGridSize*x+pos[1]]);
                   if ( !(psel in distr) && (psel in buckets) ) {
                      distr[psel] = 1;
                      var bucket = buckets[psel];
@@ -573,7 +573,7 @@
             }
          }
 
-         function generateCharacterIndexerBuckets(buckets,objs) {
+         function generateBuckets(buckets,objs) {
             for ( var i = 0; i < objs.length; ++i ) {
                var psel = getBucketIndex(objs[i][0]);
                if ( !(psel in buckets) ) {
@@ -583,7 +583,7 @@
             }
          }
 
-         function partiallyRegenerateIndexerBuckets(pos,buckets,objs) {
+         function partiallyRegenerateBuckets(pos,buckets,objs) {
             var affectedBuckets = {};
             iterateCharactersAroundPos(pos,
                                        buckets,
@@ -599,9 +599,9 @@
          function refreshBuckets(buckets,objs,cleaner,pos) {
             if ( buckets == undefined ) {
                buckets = cleaner();
-               generateCharacterIndexerBuckets(characterBuckets,characters);
+               generateBuckets(buckets,objs);
             } else {
-               partiallyRegenerateIndexerBuckets(pos,buckets,objs);
+               partiallyRegenerateBuckets(pos,buckets,objs);
             }
          }
 
