@@ -281,6 +281,9 @@
                            [[4.5,20.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
+         var characterIndexerBuckets;
+         var characterIndexerGridSize = 15;
+
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
          }
@@ -533,14 +536,77 @@
             return Math.floor(ps[0])*4*mapRadius+Math.floor(ps[1]);
          }
 
-         function createCharacterIndex() {
-            var characterIndex = {};
-            for ( var i = 0; i < characters.length; ++i ) {
-               if ( isCharacterFullyDead(i) ) {
-                  continue;
-               }
+         var bucketIndexMaxX = 10000;
+         function getBucketIndex(pos) {
+            return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
+         }
 
-               characterIndex[ getIndexKey(characters[i][0]) ] = i;
+         function generateCharacterIndexerBuckets() {
+            characterIndexerBuckets = {};
+            for ( var i = 0; i < characters.length; ++i ) {
+               var psel = getBucketIndex(characters[i][0]);
+               if ( !(psel in characterIndexerBuckets) ) {
+                  characterIndexerBuckets[psel] = [];
+               }
+               characterIndexerBuckets[psel].push(i);
+            }
+            console.log(characterIndexerBuckets.toString());
+         }
+
+         function partiallyRegenerateIndexerBuckets() {
+            var pos = characters[0][0];
+
+            var savedCharacterIndexerBuckets = {};
+            var distr = {};
+            for ( var y = -1; y <=1; ++y ) {
+               for ( var x = -1; x <=1; ++x ) {
+                  var psel = getBucketIndex([y+pos[0],x+pos[1]]);
+                  if ( !(psel in distr) && (psel in characterIndexerBuckets) ) {
+                     distr[psel] = 1;
+                     savedCharacterIndexerBuckets[psel] = characterIndexerBuckets[psel];
+                     delete characterIndexerBuckets[psel];
+                  }
+               }
+            }
+
+            distr = {};
+            for ( var y = -1; y <=1; ++y ) {
+               for ( var x = -1; x <=1; ++x ) {
+                  var pselOut = getBucketIndex([y+pos[0],x+pos[1]]);
+                  if ( !(pselOut in distr) && (pselOut in savedCharacterIndexerBuckets) ) {
+                     distr[pselOut] = 1;
+                     var currentBucket = savedCharacterIndexerBuckets[pselOut];
+                     for ( var j = 0; j < currentBucket.length; ++j ) {
+                        var i = currentBucket[j];
+                        var psel = getBucketIndex(characters[i][0]);
+                        if ( !( psel in characterIndexerBuckets ) ) {
+                           characterIndexerBuckets[psel] = [];
+                        }
+                        characterIndexerBuckets[psel].push(i);
+                     }
+                  }
+               }
+            }
+         }
+
+         function createCharacterIndex(pos) {
+            var pos = characters[0][0];
+            var characterIndex = {};
+            for ( var y = -1; y <=1; ++y ) {
+               for ( var x = -1; x <=1; ++x ) {
+                  var psel = getBucketIndex([y+pos[0],x+pos[1]]);
+                  if ( psel in characterIndexerBuckets ) {
+                     var currentBucket = characterIndexerBuckets[psel];
+                     for ( var j = 0; j < currentBucket.length; ++j ) {
+                        var i = currentBucket[j];
+                        if ( isCharacterFullyDead(i) ) {
+                           continue;
+                        }
+   
+                        characterIndex[ getIndexKey(characters[i][0]) ] = i;
+                     }
+                  }
+               }
             }
             return characterIndex;
          }
@@ -590,7 +656,7 @@
             return retval;
          }
 
-         function bfs(source,target,characterIndex = createCharacterIndex()) {
+         function bfs(source,target,characterIndex) {
             if ( !getMapCell(source.y,source.x) ) {
                return [];
             }
@@ -720,6 +786,12 @@
          function drawScene() {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
+               if ( characterIndexerBuckets === undefined ) {
+                  generateCharacterIndexerBuckets();
+               } else {
+                  partiallyRegenerateIndexerBuckets();
+               }
+
                var characterIndex = createCharacterIndex();
                drawBackground();
                var visibleTiles = [];
@@ -785,7 +857,7 @@
               && characters[0][3][characters[0][3].length-1][0] == currentTarget.y ) {
                return;
             }
-            characters[0][3] = bfs(source,currentTarget);
+            characters[0][3] = bfs(source,currentTarget,createCharacterIndex());
          };
 
          mainItem.onmouseup = function(event) {};
