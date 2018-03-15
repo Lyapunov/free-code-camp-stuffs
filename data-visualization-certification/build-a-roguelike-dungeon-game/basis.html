@@ -551,16 +551,6 @@
             return "x" + (Math.floor(pos[0] / characterIndexerGridSize)*bucketIndexMaxX+Math.floor(pos[1] / characterIndexerGridSize)).toString();
          }
 
-         function generateCharacterIndexerBuckets(buckets,objs) {
-            for ( var i = 0; i < objs.length; ++i ) {
-               var psel = getBucketIndex(objs[i][0]);
-               if ( !(psel in buckets) ) {
-                  buckets[psel] = [];
-               }
-               buckets[psel].push(i);
-            }
-         }
-
          function iterateCharactersAroundPos(pos, buckets, func1, func2) {
             var distr = {};
             for ( var y = -1; y <= 1; ++y ) {
@@ -583,6 +573,16 @@
             }
          }
 
+         function generateCharacterIndexerBuckets(buckets,objs) {
+            for ( var i = 0; i < objs.length; ++i ) {
+               var psel = getBucketIndex(objs[i][0]);
+               if ( !(psel in buckets) ) {
+                  buckets[psel] = [];
+               }
+               buckets[psel].push(i);
+            }
+         }
+
          function partiallyRegenerateIndexerBuckets(pos,buckets,objs) {
             var affectedBuckets = {};
             iterateCharactersAroundPos(pos,
@@ -596,13 +596,17 @@
                                               (buckets[psel] = buckets[psel] || []).push(i); });
          }
 
-         function createCharacterIndex() {
-            if ( characterBuckets === undefined ) {
-               characterBuckets = {};
+         function refreshBuckets(buckets,objs,cleaner,pos) {
+            if ( buckets == undefined ) {
+               buckets = cleaner();
                generateCharacterIndexerBuckets(characterBuckets,characters);
             } else {
-               partiallyRegenerateIndexerBuckets(characters[0][0],characterBuckets,characters);
+               partiallyRegenerateIndexerBuckets(pos,buckets,objs);
             }
+         }
+
+         function createCharacterIndex() {
+            refreshBuckets(characterBuckets, characters,()=>{ return (characterBuckets = {}); }, characters[0][0]);
 
             var characterIndex = {};
             iterateCharactersAroundPos(characters[0][0],
