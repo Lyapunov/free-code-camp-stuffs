@@ -806,7 +806,7 @@
                drawForeground(characters[0][0], characterIndex, visibleTiles);
                drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
-               if ( isCharacterAlive(0) && currentTarget !== undefined ) {
+               if ( isCharacterAlive(0) && currentTarget !== undefined && getMapCell(currentTarget.y,currentTarget.x) <= floorColors.length ) {
                   var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
