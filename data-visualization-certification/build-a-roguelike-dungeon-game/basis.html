@@ -308,7 +308,8 @@
          var characterBuckets;
          var stuffBuckets;
          var bucketGridSize = 15;
-         var bucketIndexMaxX = 10000;
+         var keyMaxRowSize = 10000;
+         var bucketMaxRowSize = 10000;
 
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
@@ -513,26 +514,15 @@
             return ( celly == cy + y && cellx == cx + x );
          }
 
-         function drawCellFloor(y,x,cy,cx,oy,ox,tiles,stuffIndexer) {
+         function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
             var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
             var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
             drawFloor(tile, color);
 
-            var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
-            if ( i !== undefined ) {
-               var attribs = stuffs[i][1];
-               var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-               drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
-                             Math.round(tile.ps[1].y-attribs.height/2),
-                             attribs.width,
-                             attribs.height,
-                             attribs.color);
-            }
-
             tiles.push(tile);
          }
 
-         function drawCell(y,x,cy,cx,oy,ox,characterIndexer) {
+         function drawCell(y,x,cy,cx,oy,ox,characterIndexer,stuffIndexer) {
             var color = wallColors[ (getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
             if ( !getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0,color);
@@ -543,6 +533,19 @@
 
             var mapval = getMapCell(cy+y,cx+x);
             var speciality = Math.floor((mapval-1) / wallColors.length);
+
+            {
+               var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
+               if ( i !== undefined ) {
+                  var attribs = stuffs[i][1];
+                  var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+                  drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
+                                Math.round(tile.ps[1].y-attribs.height/2),
+                                attribs.width,
+                                attribs.height,
+                                attribs.color);
+               }
+            }
 
             // table
             if ( speciality == 1 ) {
@@ -580,18 +583,18 @@
          }
 
          function getIndexKey(ps) {
-            return Math.floor(ps[0])*4*mapRadius+Math.floor(ps[1]);
+            return Math.floor(ps[0])*keyMaxRowSize+Math.floor(ps[1]);
          }
 
          function getBucketIndex(pos) {
-            return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketIndexMaxX+Math.floor(pos[1] / bucketGridSize)).toString();
+            return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketMaxRowSize+Math.floor(pos[1] / bucketGridSize)).toString();
          }
 
          function iterateOverBucketItemsAroundPos(pos, buckets, func1, func2) {
             var distr = {};
             for ( var y = -1; y <= 1; ++y ) {
                for ( var x = -1; x <= 1; ++x ) {
-                  var psel = getBucketIndex([bucketGridSize*y+pos[0],bucketGridSize*x+pos[1]]);
+                  var psel = getBucketIndex([(bucketGridSize-1)*y+pos[0],(bucketGridSize-1)*x+pos[1]]);
                   if ( !(psel in distr) && (psel in buckets) ) {
                      distr[psel] = 1;
                      var bucket = buckets[psel];
@@ -684,11 +687,11 @@
             var stuffIndexer = createStuffIndex();
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles,stuffIndexer);
+               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndex);
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndex,stuffIndexer);
             }
          }
 
