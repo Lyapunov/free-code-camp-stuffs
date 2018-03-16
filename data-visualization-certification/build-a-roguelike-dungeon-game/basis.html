@@ -340,7 +340,6 @@
             var scale = characters[i][4].scale;
             var characterColors = characters[i][4].coloring;
             if ( characters[i][5] ) {
-               characters[i][5] = 0;
                characterColors = attackColoring;
             }
             var exists = characters[i][6].exists;
@@ -407,6 +406,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
+            characters[i][5] = 0;
          }
 
          function drawBackground() {
