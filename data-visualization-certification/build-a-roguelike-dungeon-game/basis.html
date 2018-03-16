@@ -333,7 +333,20 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,shieldsize,weaponval,weaponcolor,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
+            var phaseKey = getKey(characters[i][1], characters[i][2]);
+            var rimage = characterBodyDrawData[phaseKey];
+            var wimage = weaponDrawData[phaseKey];
+            var scale = characters[i][4].scale;
+            var characterColors = characters[i][4].coloring;
+            if ( characters[i][5] ) {
+               characters[i][5] = 0;
+               characterColors = attackColoring;
+            }
+            var exists = characters[i][6].exists;
+            var shieldrad = getCharacterShieldSize(i);
+            var weaponcolor = getCharacterWeaponColor(i);
+
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -342,7 +355,7 @@
             if ( w2 === undefined ) {
                w2 = 0.5;
             }
-            var isShield = ((ind1 == 25) || (ind1 == 28))&&shieldval;
+            var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > 0.01);
             if ( ind1 > 22 ) {
                simage = wimage;
                ind1 -= 23;
@@ -374,7 +387,6 @@
                        exists);
             } else {
                var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
-               var shieldrad = [0.75,1,1.25,1.5,2.0][shieldval-1];
                drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
                        uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
                        orad,
@@ -385,24 +397,16 @@
          }
 
          function drawCharacter(y,x,i) {
-            var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                                                      drawDescriptors[(characters[i][4].weapon !== undefined) + (characters[i][4].shield !== undefined)*2], characters[i][4].coloring,
-                                                                      characters[i][6].exists ];
-            if ( characters[i][5] ) {
-               characters[i][5] = 0;
-               characterColors = attackColoring;
-            }
+            var drawDescriptor = drawDescriptors[(characters[i][4].weapon !== undefined) + (characters[i][4].shield !== undefined)*2];
+            var scale = characters[i][4].scale;
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
-            var [rimage, wimage] = [characterBodyDrawData[phaseKey], weaponDrawData[phaseKey]];
-            var ylimitratio = 1.0;
             var percentage = tileSize / 50;
             var ymax = 100 * percentage * scale;
             var xmax = 54  * percentage;
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
-            var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,getCharacterShieldValue(i),getCharacterShieldSize(i),getCharacterWeaponValue(i),getCharacterWeaponColor(i),...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
          }
 
          function drawBackground() {
