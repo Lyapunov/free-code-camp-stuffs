@@ -273,6 +273,7 @@
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4}
          var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS["IRON"]     ,width:30,height:4}
          var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS["STEEL"]    ,width:30,height:4}
@@ -286,7 +287,7 @@
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12}
          
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:5,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:0,shield:0,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
