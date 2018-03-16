@@ -17,7 +17,7 @@
          var mainItem     = document.getElementById('canvas');
          var context      = mainItem.getContext('2d');
 
-         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4"};
+         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00"};
 
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
@@ -287,10 +287,32 @@
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
+         function heroHpIncreaser(value) {
+            return ()=>{ isCharacterAlive(0) && (characters[0][6].hp=Math.min(characters[0][4].baseHp,characters[0][6].hp+value));};
+         }
+
+         function damageInRadius(radius, value) {
+            return ()=>{
+               var characterIndex = createCharacterIndex();
+               iterateOverBucketItemsAroundPos(characters[0][0],
+                                               characterBuckets,
+                                               (i)=>{
+                                                   if ( manhattan(characters[0][0], characters[i][0]) < radius ) {
+                                                      damage(i,value);
+                                                   }
+                                                });
+            };
+         }
+
+         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"minor health potion",color:"red"                   ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(30),effectText:"hero heals"}
+         var ATTRIBUTES_HEALTH_POTION       = {name:"health potion",      color:"red"                   ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(60),effectText:"hero heals"}
+         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"major health potion",color:"red"                   ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(90),effectText:"hero heals"}
+         var ATTRIBUTES_NERVE_GASS          = {name:"nerve agent"        ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,60),effectText:"releases deadly nerve agent"}
+
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1,weapon:ATTRIBUTES_WOODEN_STICK,shield:undefined}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,baseAttack:1,baseDefense:0,baseHp:20},0,{hp:20,exists:1,weapon:ATTRIBUTES_WOODEN_STICK,shield:undefined}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
@@ -306,6 +328,12 @@
                   [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD,{exists:1}],
                   [[11.5,17.5],ATTRIBUTES_MINISHIELD   ,{exists:1}],
                   [[11.5,18.5],ATTRIBUTES_SILVER_SWORD ,{exists:1}],
+                  [[22.5,13.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
+                  [[22.5,14.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
+                  [[22.5,15.5],ATTRIBUTES_HEALTH_POTION,{exists:1}],
+                  [[22.5,16.5],ATTRIBUTES_MINOR_HEALTH_POTION,{exists:1}],
+                  [[22.5,17.5],ATTRIBUTES_NERVE_GASS,{exists:1}],
+                  [[22.5,18.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
                   ];
 
          var characterBuckets;
@@ -313,6 +341,7 @@
          var bucketGridSize = 15;
          var keyMaxRowSize = 10000;
          var bucketMaxRowSize = 10000;
+         var multipleObjectCapacity = 5;
 
          function manhattan(p1,p2) {
             return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
@@ -792,15 +821,11 @@
             return (characters[i][6][holder]||ATTRIBUTES_BAREFIST)[attribute];
          }
 
-         function attack(attacker, attacked) {
-            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
-            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterHoldedObjectAttribute(attacker,"shield","value"))*(1.0 - attackDeviance*Math.random()) );
-            var damage = Math.max(attackValue - defenseValue,0);
-            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damage <= 0 ? "misses" : "damages " + damage + " (+"+attackValue+"-"+defenseValue+") points"));
-            if ( damage <= 0 ) {
+         function damage(attacked, value) {
+            if ( value <= 0 ) {
                return;
             }
-            characters[attacked][6].hp -= damage;
+            characters[attacked][6].hp -= value;
             if ( characters[attacked][6].hp < 0 ) {
                characters[attacked][6].hp = 0;
                kill(attacked);
@@ -809,19 +834,50 @@
             characters[attacked][5] = 1;
          }
 
+         function usePotion(number) {
+            if ( characters[0][6].potions === undefined || number > characters[0][6].potions.length ) {
+               return;
+            }
+            var tmp = characters[0][6].potions[characters[0][6].potions.length-1];
+            characters[0][6].potions[characters[0][6].potions.length-1] = characters[0][6].potions[number];
+            characters[0][6].potions[number] = tmp;
+            var exec = characters[0][6].potions.pop();
+            sendMessage('Hero uses potion, '+exec.effectText);
+            exec.effect();
+         }
+
+         function attack(attacker, attacked) {
+            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
+            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterHoldedObjectAttribute(attacker,"shield","value"))*(1.0 - attackDeviance*Math.random()) );
+            var damageValue = Math.max(attackValue - defenseValue,0);
+            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " (+"+attackValue+"-"+defenseValue+") points"));
+            damage(attacked,damageValue);
+         }
+
          function pickup(index,stuff) {
             var holder = stuffs[stuff][1].holder;
             var current = getCharacterHoldedObjectAttribute(index,holder,"value")
             var whatif  = stuffs[stuff][1].value;
-            if ( whatif > current ) {
-               if ( current ) {
-                  sendMessage(characters[index][4].name + " drops " + characters[index][6][holder].name + " and picks up " + stuffs[stuff][1].name);
-                  var tmp = stuffs[stuff][1];
-                  stuffs[stuff][1] = characters[index][6][holder];
-                  characters[index][6][holder] = tmp;
-               } else {
-                  sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name);
-                  characters[index][6][holder] = stuffs[stuff][1];
+            if (whatif >= 0 ) {
+               // hero hold can only once from it at a time, value decides
+               if ( whatif > current ) {
+                  if ( current ) {
+                     sendMessage(characters[index][4].name + " drops " + characters[index][6][holder].name + " and picks up " + stuffs[stuff][1].name);
+                     var tmp = stuffs[stuff][1];
+                     stuffs[stuff][1] = characters[index][6][holder];
+                     characters[index][6][holder] = tmp;
+                  } else {
+                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name);
+                     characters[index][6][holder] = stuffs[stuff][1];
+                     stuffs[stuff][2].exists = 0;
+                  }
+               }
+            } else {
+               // hero can hold multiple from it, and there is no precedence between objects
+
+               if ((characters[index][6][holder]||[]).length < multipleObjectCapacity ) {
+                  characters[index][6][holder] = (characters[index][6][holder]||[]);
+                  characters[index][6][holder].push(stuffs[stuff][1]);
                   stuffs[stuff][2].exists = 0;
                }
             }
@@ -966,6 +1022,7 @@
          (function() {
             initCanvas();
             addEventListener('resize', initCanvas, false);
+            addEventListener('keydown', (event)=>{ if ( parseInt(event.key).toString() == event.key ) { usePotion(parseInt(event.key)-1); } });
          })();
       </script>
    </body>
