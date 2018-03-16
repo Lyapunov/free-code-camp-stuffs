@@ -17,6 +17,8 @@
          var mainItem     = document.getElementById('canvas');
          var context      = mainItem.getContext('2d');
 
+         var SPECIAL_COLORS = {WOODBROWN:"#966F33"};
+
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
          var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
@@ -270,19 +272,25 @@
          var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
-         var devilguyAttributes = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+         var ATTRIBUTES_DEVILGUY = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+         var ATTRIBUTES_WOODEN_STICK = {name:"wooden stick",color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4}
          
          // all characters on the map - 0th is the player
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:1,shield:2,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
-                           [[10.5,10.5],0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
-                           [[6.5,10.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
-                           [[7.5,11.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
-                           [[7.5,12.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
-                           [[4.5,20.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
-                           [[22.5,4.5] ,0,0,[],devilguyAttributes,0,{hp: 5,exists:1}],
+                           [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[7.5,12.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[4.5,20.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[22.5,4.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                           ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
 
+         stuffs = [
+                  [[11.5,15.5],ATTRIBUTES_WOODEN_STICK],
+                  ];
+
          var characterBuckets;
+         var stuffBuckets;
          var bucketGridSize = 15;
          var bucketIndexMaxX = 10000;
 
@@ -326,7 +334,7 @@
             }
             var color = characterColors[descriptorValueToColor[cind]];
             if ( color == "weaponBased" ) {
-               color = ["#966F33","#434b4d","#4682B4",'silver','gold','cyan'][weaponval-1];
+               color = [SPECIAL_COLORS["WOODBROWN"],"#434b4d","#4682B4",'silver','gold','cyan'][weaponval-1];
             }
             var percentage = tileSize / 50;
             if ( ind2 === undefined ) {
@@ -489,10 +497,22 @@
             return ( celly == cy + y && cellx == cx + x );
          }
 
-         function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
+         function drawCellFloor(y,x,cy,cx,oy,ox,tiles,stuffIndexer) {
             var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
             var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
             drawFloor(tile, color);
+
+            var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
+            if ( i !== undefined ) {
+               var attribs = stuffs[i][1];
+               var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+               drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
+                             Math.round(tile.ps[1].y-attribs.height/2),
+                             attribs.width,
+                             attribs.height,
+                             attribs.color);
+            }
+
             tiles.push(tile);
          }
 
@@ -616,6 +636,10 @@
             return createIndexFromBuckets(characterBuckets, characters, ()=>{ return (characterBuckets = {}); }, (i)=>{return !isCharacterFullyDead(i)}, characters[0][0]);
          }
 
+         function createStuffIndex() {
+            return createIndexFromBuckets(stuffBuckets, stuffs, ()=>{ return (stuffBuckets = {}); }, (i)=>{return 1;}, characters[0][0]);
+         }
+
          function drawForeground( camCenter, characterIndex, visibleTiles ) {
             var cy = Math.floor(camCenter[0]);
             var cx = Math.floor(camCenter[1]);
@@ -641,8 +665,10 @@
                }
             }
 
+            var stuffIndexer = createStuffIndex();
+
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
+               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles,stuffIndexer);
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
