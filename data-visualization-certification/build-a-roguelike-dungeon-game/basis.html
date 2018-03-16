@@ -819,7 +819,20 @@
             characters[attacked][5] = 1;
          }
 
-         function moveCharacter(index) {
+         function pickup(index,stuff) {
+            console.log('pickup',index,stuff);
+         }
+
+         function moveCharacter(index,stuffIndexer) {
+            if ( characters[index][2] != 0
+              && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
+              && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance ) {
+               var stuff = stuffIndexer[getIndexKey(characters[index][0])];
+               if ( stuff !== undefined ) {
+                  pickup(index,stuff);
+               }
+            }
+
             if ( characters[index][3].length == 0 ) {
                characters[index][2] = 0;
                return; 
@@ -865,9 +878,10 @@
          }
 
          function moveCharacters() {
+            var stuffIndexer = createStuffIndex();
             iterateOverBucketItemsAroundPos(characters[0][0],
                                             characterBuckets,
-                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
+                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i,stuffIndexer) || 1) || isCharacterFullyDead(i) || destroying(i) });
          }
 
          function giveInstructionsToNPCsWithAI() {
