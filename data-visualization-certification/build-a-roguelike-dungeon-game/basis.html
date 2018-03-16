@@ -395,8 +395,8 @@
          }
 
          function drawCharacter(y,x,i) {
-            var drawDescriptor = drawDescriptors[getCharacterHoldedObjectAttribute(i,"weapon","value")
-                                               + getCharacterHoldedObjectAttribute(i,"shield","value")*2];
+            var drawDescriptor = drawDescriptors[(getCharacterHoldedObjectAttribute(i,"weapon","value") != 0)
+                                               + (getCharacterHoldedObjectAttribute(i,"shield","value") != 0)*2];
             var scale = characters[i][4].scale;
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
@@ -814,16 +814,21 @@
             if ( whatif > current ) {
                if ( current ) {
                   // swap of attributes
-//                  var chattr = 
+                  var namemine  = characters[index][6][holder].name;
+                  var namefloor = stuffs[stuff][1].name;
+                  var tmp = stuffs[stuff][1];
+                  stuffs[stuff][1] = characters[index][6][holder];
+                  characters[index][6][holder] = tmp;
+                  sendMessage(characters[index][4].name + " drops "+ namemine + " and picks up " + namefloor);
                } else {
                   // just picking up and removing
-//                  characters[index]["holder"]
+                  characters[index][6][holder] = stuffs[stuff][1];
                }
-               console.log('pickup',index,stuff,holder,current,whatif);
             }
          }
 
-         function moveCharacter(index,stuffIndexer) {
+         function moveCharacter(index) {
+            var stuffIndexer = createStuffIndex();
             if ( characters[index][2] != 0
               && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
               && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance ) {
@@ -878,10 +883,9 @@
          }
 
          function moveCharacters() {
-            var stuffIndexer = createStuffIndex();
             iterateOverBucketItemsAroundPos(characters[0][0],
                                             characterBuckets,
-                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i,stuffIndexer) || 1) || isCharacterFullyDead(i) || destroying(i) });
+                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
          }
 
          function giveInstructionsToNPCsWithAI() {
