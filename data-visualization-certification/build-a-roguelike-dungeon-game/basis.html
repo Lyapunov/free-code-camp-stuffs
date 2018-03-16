@@ -643,7 +643,7 @@
             var index = {};
             iterateOverBucketItemsAroundPos(pos,
                                             buckets,
-                                            (i)=>{ !condition(i) || ( index[ getIndexKey(objs[i][0]) ] = i ) });
+                                            (i)=>{ condition(i) && ( index[ getIndexKey(objs[i][0]) ] = i ) });
 
             return index;
          }
