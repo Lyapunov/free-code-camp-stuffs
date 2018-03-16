@@ -300,12 +300,12 @@
                           ];
 
          stuffs = [
-                  [[11.5,15.5],ATTRIBUTES_IRON_BAR],
-                  [[11.5,16.5],ATTRIBUTES_STEEL_SWORD],
-                  [[10.5,16.5],ATTRIBUTES_GOLD_SWORD],
-                  [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD],
-                  [[11.5,17.5],ATTRIBUTES_MINISHIELD],
-                  [[11.5,18.5],ATTRIBUTES_SILVER_SWORD],
+                  [[11.5,15.5],ATTRIBUTES_IRON_BAR     ,{exists:1}],
+                  [[11.5,16.5],ATTRIBUTES_STEEL_SWORD  ,{exists:1}],
+                  [[10.5,16.5],ATTRIBUTES_GOLD_SWORD   ,{exists:1}],
+                  [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD,{exists:1}],
+                  [[11.5,17.5],ATTRIBUTES_MINISHIELD   ,{exists:1}],
+                  [[11.5,18.5],ATTRIBUTES_SILVER_SWORD ,{exists:1}],
                   ];
 
          var characterBuckets;
@@ -553,12 +553,14 @@
                var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
                if ( i !== undefined ) {
                   var attribs = stuffs[i][1];
-                  var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-                  drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
-                                Math.round(tile.ps[1].y-attribs.height/2),
-                                attribs.width,
-                                attribs.height,
-                                attribs.color);
+                  if ( stuffs[i][2].exists ) {
+                     var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+                     drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
+                                   Math.round(tile.ps[1].y-attribs.height/2),
+                                   attribs.width,
+                                   attribs.height,
+                                   attribs.color);
+                  }
                }
             }
 
@@ -813,16 +815,14 @@
             var whatif  = stuffs[stuff][1].value;
             if ( whatif > current ) {
                if ( current ) {
-                  // swap of attributes
-                  var namemine  = characters[index][6][holder].name;
-                  var namefloor = stuffs[stuff][1].name;
+                  sendMessage(characters[index][4].name + " drops " + characters[index][6][holder].name + " and picks up " + stuffs[stuff][1].name);
                   var tmp = stuffs[stuff][1];
                   stuffs[stuff][1] = characters[index][6][holder];
                   characters[index][6][holder] = tmp;
-                  sendMessage(characters[index][4].name + " drops "+ namemine + " and picks up " + namefloor);
                } else {
-                  // just picking up and removing
+                  sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name);
                   characters[index][6][holder] = stuffs[stuff][1];
+                  stuffs[stuff][2].exists = 0;
                }
             }
          }
@@ -833,7 +833,7 @@
               && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
               && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance ) {
                var stuff = stuffIndexer[getIndexKey(characters[index][0])];
-               if ( stuff !== undefined ) {
+               if ( stuff !== undefined && stuffs[stuff][2].exists ) {
                   pickup(index,stuff);
                }
             }
