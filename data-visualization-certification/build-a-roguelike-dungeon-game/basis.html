@@ -596,24 +596,24 @@
                                                    (buckets[psel] = buckets[psel] || []).push(i); });
          }
 
-         function refreshBuckets(buckets,objs,cleaner,pos) {
+         function createIndexFromBuckets(buckets,objs,cleaner,condition,pos) {
             if ( buckets == undefined ) {
                buckets = cleaner();
                generateBuckets(buckets,objs);
             } else {
                partiallyRegenerateBuckets(pos,buckets,objs);
             }
+
+            var index = {};
+            iterateOverBucketItemsAroundPos(pos,
+                                            buckets,
+                                            (i)=>{ !condition(i) || ( index[ getIndexKey(objs[i][0]) ] = i ) });
+
+            return index;
          }
-
+         
          function createCharacterIndex() {
-            refreshBuckets(characterBuckets, characters,()=>{ return (characterBuckets = {}); }, characters[0][0]);
-
-            var characterIndex = {};
-            iterateOverBucketItemsAroundPos(characters[0][0],
-                                            characterBuckets,
-                                            (i)=>{ isCharacterFullyDead(i) || ( characterIndex[ getIndexKey(characters[i][0]) ] = i ) });
-
-            return characterIndex;
+            return createIndexFromBuckets(characterBuckets, characters, ()=>{ return (characterBuckets = {}); }, (i)=>{return !isCharacterFullyDead(i)}, characters[0][0]);
          }
 
          function drawForeground( camCenter, characterIndex, visibleTiles ) {
