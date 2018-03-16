@@ -354,7 +354,7 @@
             if ( w2 === undefined ) {
                w2 = 0.5;
             }
-            var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > 0.01);
+            var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > errorTolerance);
             if ( ind1 > 22 ) {
                simage = wimage;
                ind1 -= 23;
