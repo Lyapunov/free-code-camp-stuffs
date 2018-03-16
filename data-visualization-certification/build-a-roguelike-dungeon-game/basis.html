@@ -281,23 +281,24 @@
          var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                     ,width:30,height:4,value:5};
          var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                     ,width:30,height:4,value:6};
 
-         var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12}
-         var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12}
-         var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12}
-         var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12}
-         var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12}
+         var ATTRIBUTES_NO_SHIELD      = {name:"no shield", value:0, size:0};
+         var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12,value:1,size:0.75}
+         var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12,value:2,size:1.00}
+         var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12,value:3,size:1.25}
+         var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50}
+         var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00}
 
-         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:undefined,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:undefined,shield:undefined,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
         
-         // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:undefined,shield:0,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+         // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:undefined,shield:undefined,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,12.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[4.5,20.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[22.5,4.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                          ]; /*positin, faceDir (0 is south, 1 is east, 2 is north, 3 is west), phase, path, attributes, attackbit*/
+                          ];
 
          stuffs = [
                   [[11.5,15.5],ATTRIBUTES_IRON_BAR],
@@ -332,7 +333,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,weaponval,weaponcolor,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,shieldsize,weaponval,weaponcolor,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -385,7 +386,7 @@
 
          function drawCharacter(y,x,i) {
             var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                                                      drawDescriptors[(characters[i][4].weapon !== undefined) + (characters[i][4].shield != 0)*2], characters[i][4].coloring,
+                                                                      drawDescriptors[(characters[i][4].weapon !== undefined) + (characters[i][4].shield !== undefined)*2], characters[i][4].coloring,
                                                                       characters[i][6].exists ];
             if ( characters[i][5] ) {
                characters[i][5] = 0;
@@ -401,7 +402,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,getCharacterWeaponValue(i),getCharacterWeaponColor(i),...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,getCharacterShieldValue(i),getCharacterShieldSize(i),getCharacterWeaponValue(i),getCharacterWeaponColor(i),...box));
          }
 
          function drawBackground() {
@@ -785,13 +786,21 @@
             return (characters[i][4].weapon||ATTRIBUTES_BAREFIST).value;
          }
 
+         function getCharacterShieldValue(i) {
+            return (characters[i][4].shield||ATTRIBUTES_NO_SHIELD).value;
+         }
+
+         function getCharacterShieldSize(i) {
+            return (characters[i][4].shield||ATTRIBUTES_NO_SHIELD).size;
+         }
+
          function getCharacterWeaponColor(i) {
             return (characters[i][4].weapon||ATTRIBUTES_BAREFIST).color;
          }
 
          function attack(attacker, attacked) {
             var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterWeaponValue(attacker))*(1.0 - attackDeviance*Math.random()) );
-            var defenseValue = Math.round( (characters[attacked][4].baseDefense + characters[attacked][4].shield)*(1.0 - attackDeviance*Math.random()) );
+            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterShieldValue(attacked))*(1.0 - attackDeviance*Math.random()) );
             var damage = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damage <= 0 ? "misses" : "damages " + damage + " (+"+attackValue+"-"+defenseValue+") points"));
             if ( damage <= 0 ) {
