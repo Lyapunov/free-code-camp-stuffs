@@ -312,7 +312,7 @@
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,baseAttack:1,baseDefense:0,baseHp:20},0,{hp:20,exists:1,weapon:ATTRIBUTES_WOODEN_STICK,shield:undefined}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,baseAttack:1,baseDefense:0,baseHp:20},0,{hp:20,exists:1,weapon:ATTRIBUTES_WOODEN_STICK,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
@@ -835,14 +835,14 @@
          }
 
          function usePotion(number) {
-            if ( characters[0][6].potions === undefined || number > characters[0][6].potions.length ) {
+            if ( characters[0][6].potions === undefined
+              || number >= characters[0][6].potions.length
+              || characters[0][6].potions[number] === undefined ) {
                return;
             }
-            var tmp = characters[0][6].potions[characters[0][6].potions.length-1];
-            characters[0][6].potions[characters[0][6].potions.length-1] = characters[0][6].potions[number];
-            characters[0][6].potions[number] = tmp;
-            var exec = characters[0][6].potions.pop();
-            sendMessage('Hero uses potion, '+exec.effectText);
+            var exec = characters[0][6].potions[number];
+            characters[0][6].potions[number] = undefined;
+            sendMessage('Hero uses '+exec.name+', '+exec.effectText);
             exec.effect();
          }
 
@@ -875,10 +875,16 @@
             } else {
                // hero can hold multiple from it, and there is no precedence between objects
 
-               if ((characters[index][6][holder]||[]).length < multipleObjectCapacity ) {
-                  characters[index][6][holder] = (characters[index][6][holder]||[]);
-                  characters[index][6][holder].push(stuffs[stuff][1]);
-                  stuffs[stuff][2].exists = 0;
+               if ( characters[index][6][holder].filter(x=>x===undefined).length ) {
+                  for ( var i = 0; i < characters[index][6][holder].length; ++i ) {
+                     if ( characters[index][6][holder][i] !== undefined ) {
+                        continue;
+                     }
+                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name + " and puts it into slot "+(i+1)+" of "+holder);
+                     characters[index][6][holder][i] = stuffs[stuff][1]
+                     stuffs[stuff][2].exists = 0;
+                     return;
+                  }
                }
             }
          }
