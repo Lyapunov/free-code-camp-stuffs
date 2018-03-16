@@ -235,9 +235,9 @@
                            [[0,0,5],[10,0,5],[20,0,5],[30,0,5],[40,0,5],[50,0,5]],
                          ];
 
-         var heroColoring =['orange','lightgreen','orange','green','orange','green','weaponBased','black'];
-         var devilColoring =['crimson','tomato','crimson','tomato','crimson','tomato','tomato','tomato'];
-         var attackColoring =['red','red','red','red','red','red','red','red'];
+         var heroColoring =['orange','lightgreen','orange','green','orange','green'];
+         var devilColoring =['crimson','tomato','crimson','tomato','crimson','tomato'];
+         var attackColoring =['red','red','red','red','red','red'];
 
          //================================== AVATAR ANIMATION ENDS =================================
 
@@ -272,22 +272,25 @@
          var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
-         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:0,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
 
-         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4}
-         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS["IRON"]     ,width:30,height:4}
-         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS["STEEL"]    ,width:30,height:4}
-         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                   ,width:30,height:4}
-         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                     ,width:30,height:4}
-         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                     ,width:30,height:4}
+         var ATTRIBUTES_BAREFIST       = {name:"bare fist", value: 0};
+         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4,value:1};
+         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS["IRON"]     ,width:30,height:4,value:2};
+         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS["STEEL"]    ,width:30,height:4,value:3};
+         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                   ,width:30,height:4,value:4};
+         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                     ,width:30,height:4,value:5};
+         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                     ,width:30,height:4,value:6};
+
          var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12}
          var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12}
          var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12}
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12}
-         
+
+         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,weapon:undefined,shield:0,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+        
          // all characters on the map - 0th is the player
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:0,shield:0,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,weapon:undefined,shield:0,slowness:5,range:50,baseAttack:1,baseDefense:0},0,{hp:20,exists:1}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
@@ -329,7 +332,7 @@
             context.fill();
          }
 
-         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,weaponval,ind1,ind2,w1,w2,rad) {
+         function drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,shieldval,weaponval,weaponcolor,ind1,ind2,w1,w2,rad) {
             var simage = rimage;
             var cind = ind1;
             if ( w1 === undefined ) {
@@ -349,10 +352,17 @@
                   return;
                }
             }
-            var color = characterColors[descriptorValueToColor[cind]];
-            if ( color == "weaponBased" ) {
-               color = [SPECIAL_COLORS["WOODBROWN"],SPECIAL_COLORS["IRON"],SPECIAL_COLORS["STEEL"],'silver','gold','cyan'][weaponval-1];
+            var colorIndex = descriptorValueToColor[cind];
+            var color = characterColors[colorIndex];
+            if ( colorIndex > 5 ) {
+               if ( colorIndex === 6 ) {
+                  color = weaponcolor;
+               }
+               if ( colorIndex === 7 ) {
+                  color = "black";
+               }
             }
+
             var percentage = tileSize / 50;
             if ( ind2 === undefined ) {
                drawBox(ux+simage[ind1][0]*percentage,
@@ -375,7 +385,7 @@
 
          function drawCharacter(y,x,i) {
             var [phaseKey, scale, drawDescriptor, characterColors, exists] = [getKey(characters[i][1], characters[i][2]), characters[i][4].scale,
-                                                                      drawDescriptors[(characters[i][4].weapon !== 0) + (characters[i][4].shield != 0)*2], characters[i][4].coloring,
+                                                                      drawDescriptors[(characters[i][4].weapon !== undefined) + (characters[i][4].shield != 0)*2], characters[i][4].coloring,
                                                                       characters[i][6].exists ];
             if ( characters[i][5] ) {
                characters[i][5] = 0;
@@ -391,7 +401,7 @@
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
             var mx = ux+ux+xmax;
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,characters[i][4].weapon,...box));
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,rimage,wimage,scale,characterColors,exists,characters[i][4].shield,getCharacterWeaponValue(i),getCharacterWeaponColor(i),...box));
          }
 
          function drawBackground() {
@@ -771,8 +781,16 @@
             console.log(capitalize(text)+".");
          }
 
+         function getCharacterWeaponValue(i) {
+            return (characters[i][4].weapon||ATTRIBUTES_BAREFIST).value;
+         }
+
+         function getCharacterWeaponColor(i) {
+            return (characters[i][4].weapon||ATTRIBUTES_BAREFIST).color;
+         }
+
          function attack(attacker, attacked) {
-            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + characters[attacker][4].weapon)*(1.0 - attackDeviance*Math.random()) );
+            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterWeaponValue(attacker))*(1.0 - attackDeviance*Math.random()) );
             var defenseValue = Math.round( (characters[attacked][4].baseDefense + characters[attacked][4].shield)*(1.0 - attackDeviance*Math.random()) );
             var damage = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damage <= 0 ? "misses" : "damages " + damage + " (+"+attackValue+"-"+defenseValue+") points"));
