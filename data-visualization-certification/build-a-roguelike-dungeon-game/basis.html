@@ -43,8 +43,8 @@
 
          function fromChar(chr) {
             var retval = chr.charCodeAt(0);
-            if ( chr == "{" ) retval = 39;
-            if ( chr == "}" ) retval = 92;
+            if ( chr == "{" ) return 9;
+            if ( chr == "}" ) return 62;
             return retval -= 30;
          }
 
