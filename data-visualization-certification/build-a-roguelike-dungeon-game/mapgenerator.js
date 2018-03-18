@@ -1,10 +1,8 @@
 function carveRoom(map,world,y,x,yrad,xrad) {
-   console.log("Check0");
    if ( yrad >= y || xrad >= x || x + xrad >= map[0].length - 1 || y + yrad >= map.length - 1 ) {
       return 0;
    }
 
-   console.log("Check1",x,xrad);
    for ( var py = y - yrad - 1; py <= y + yrad + 1; ++py ) {
       for ( var px = x - xrad - 1; px <= x + xrad + 1; ++px ) {
          if ( map[py][px] != 0 ) {
@@ -138,8 +136,58 @@ function generateMap(sizeY,sizeX,world) {
 
       var throneRoom = throneRoomNumber(rooms);
       for ( var i = 1; i < rooms.length; ++i ) {
-         if ( i != throneRoom ) {
+         if ( i == throneRoom ) {
             continue;
+         }
+         if ( i % 2 ) {
+            if ( rooms[i][2] == 1 && rooms[i][3] == 1 ) {
+               retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+            } else if ( rooms[i][2] == 1 && rooms[i][3] >= 2 )  {
+               retval[rooms[i][0]][rooms[i][1]-1] = 6 + world;
+               retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+               retval[rooms[i][0]][rooms[i][1]+1] = 6 + world;
+            } else if ( rooms[i][2] >= 2 && rooms[i][3] == 1 )  {
+               retval[rooms[i][0]-1][rooms[i][1]] = 6 + world;
+               retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+               retval[rooms[i][0]+1][rooms[i][1]] = 6 + world;
+            } else if ( rooms[i][2] == 2 && rooms[i][3] >= 2 || rooms[i][2] >= 2 && rooms[i][3] == 2 ) {
+               var type = getRandomInt(2);
+               retval[rooms[i][0]-1][rooms[i][1]-1] = 12 + world;
+               retval[rooms[i][0]+1][rooms[i][1]-1] = 12 + world;
+               if ( type ) {
+                  retval[rooms[i][0]][rooms[i][1]-1] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]+1] = 6 + world;
+               } else {
+                  retval[rooms[i][0]-1][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]] = 6 + world;
+               }
+            } else {
+               var type = getRandomInt(2);
+               if ( type ) {
+                  for ( var px = -1; px <= 1; ++px ) {
+                     for ( var py = -1; py <= 1; ++py ) {
+                        if ( !px && !py ) {
+                           continue;
+                        }
+                        retval[rooms[i][0]+py][rooms[i][1]+px] = 6 + world;
+                     }
+                  }
+                  retval[rooms[i][0]-1][rooms[i][1]-2] = 12 + world;
+                  retval[rooms[i][0]][rooms[i][1]-2] = 12 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
+               } else {
+                  retval[rooms[i][0]-1][rooms[i][1]-1] = 6 + world;
+                  retval[rooms[i][0]-1][rooms[i][1]-2] = 12 + world;
+                  retval[rooms[i][0]-1][rooms[i][1]+1] = 6 + world;
+                  retval[rooms[i][0]-1][rooms[i][1]] = 12 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]-1] = 6 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]+1] = 6 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]] = 12 + world;
+               }
+            }
          }
       }
 
