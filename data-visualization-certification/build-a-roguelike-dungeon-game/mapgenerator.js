@@ -1,4 +1,4 @@
-function carveRoom(map,y,x,yrad,xrad) {
+function carveRoom(map,world,y,x,yrad,xrad) {
    console.log("Check0");
    if ( yrad >= y || xrad >= x || x + xrad >= map[0].length - 1 || y + yrad >= map.length - 1 ) {
       return 0;
@@ -16,7 +16,7 @@ function carveRoom(map,y,x,yrad,xrad) {
    var area = 0;
    for ( var py = y - yrad; py <= y + yrad; ++py ) {
       for ( var px = x - xrad; px <= x + xrad; ++px ) {
-         map[py][px] = 1;
+         map[py][px] = world;
          ++area;
       }
    }
@@ -35,32 +35,60 @@ function isInsideRoom(py,px,map,y,x,yrad,xrad) {
 function startingRoomNumber(rooms) {
    var ptr = 0;
    for ( var i = 1; i < rooms.length; ++i ) {
-      if ( rooms[i][1] < rooms[ptr][1] || rooms[i][1] == rooms[ptr][1] && rooms[i][0] < rooms[ptr][0] ) {
+      if ( rooms[i][0] < rooms[ptr][0] || rooms[i][0] == rooms[ptr][0] && rooms[i][1] < rooms[ptr][1] ) {
          ptr = i;
       }
    }
    return ptr;
 }
 
-function generateMap(size) {
+function throneRoomNumber(rooms) {
+   var ptr = 0;
+   for ( var i = 1; i < rooms.length; ++i ) {
+      if ( rooms[i][0] > rooms[ptr][0] || rooms[i][0] == rooms[ptr][0] && rooms[i][1] > rooms[ptr][1] ) {
+         ptr = i;
+      }
+   }
+   return ptr;
+}
+
+function generateBasicRoomStructure(sizeY,sizeX,world) {
    var retval = [];
-   for ( var y = 0; y < size; ++y ) {
+   for ( var y = 0; y < sizeY; ++y ) {
       var row = [];
-      for ( var x = 0; x < size; ++x ) {
+      for ( var x = 0; x < sizeX; ++x ) {
          row.push(0);
       }
       retval.push(row);
    }
-   var sarea = 0;
    var rooms = [];
-   for ( var i = 0; i < 100; ++i ) {
-      var room = [getRandomInt(30),getRandomInt(30),getRandomInt(5)+1,getRandomInt(5)+1];
-      var aarea = carveRoom(retval,...room);
+   rooms.push([2,2,1,1]);
+   var sarea = carveRoom(retval,world,...rooms[0]);
+   for ( var i = 0; i < 200; ++i ) {
+      var room = [getRandomInt(sizeY),getRandomInt(sizeX),getRandomInt(5)+1,getRandomInt(5)+1];
+      var aarea = carveRoom(retval,world,...room);
       if ( aarea ) {
          sarea += aarea;
          rooms.push(room);
       }
    }
+   return [retval,rooms,sarea];
+}
+
+function generateMap(sizeY,sizeX,world) {
+   var retval = [];
+   var rooms = [];
+   var sarea = 0;
+
+   for ( var i = 0; i < 10; ++i ) {
+      var [nretval, nrooms, nsarea] = generateBasicRoomStructure(sizeY,sizeX,world);
+      if ( nsarea > sarea ) {
+         retval = nretval;
+         rooms = nrooms;
+         sarea = nsarea;
+      }
+   }
+
    var mrn = startingRoomNumber(rooms);
    var tmp = rooms[mrn];
    rooms[mrn] = rooms[0];
@@ -73,44 +101,56 @@ function generateMap(size) {
    for ( var i = 1; i < rooms.length; ++i ) {
       oset.push(i);
    }
-   console.log(tset);
-   console.log(oset);
    while ( oset.length > 0 ) {
       var source = tset[getRandomInt(tset.length)];
       var target = oset[getRandomInt(oset.length)];
-      console.log('--->',tset,oset,source,target);
+      var type = getRandomInt(2);
       for ( var ty = Math.min(rooms[source][0],rooms[target][0]); ty <= Math.max(rooms[source][0],rooms[target][0]); ++ty ) {
          var py = ty;
-         var px = rooms[source][1];
-         retval[py][px] = 1;
+         var px = rooms[type?source:target][1];
+         retval[py][px] = world;
          for ( var i = 0; i < rooms.length; ++i ) {
             if ( isInsideRoom(py,px,retval,...rooms[i]) && !(tdic[i]) ) {
                oset = oset.filter(x=>x!=i);
                tset.push(i);
-               tdic[i] = 1;
+               tdic[i] = world;
             }
          }
       }
-      console.log('===>');
       for ( var tx = Math.min(rooms[source][1],rooms[target][1]); tx <= Math.max(rooms[source][1],rooms[target][1]); ++tx ) {
-         var py = rooms[target][0];
+         var py = rooms[type?target:source][0];
          var px = tx;
-         retval[py][px] = 1;
+         retval[py][px] = world;
          for ( var i = 0; i < rooms.length; ++i ) {
             if ( isInsideRoom(py,px,retval,...rooms[i]) && !(tdic[i]) ) {
                oset = oset.filter(x=>x!=i);
                tset.push(i);
-               tdic[i] = 1;
+               tdic[i] = world;
             }
          }
       }
-      console.log('===> x');
+   }
+   // decorating rooms
+   {
+      if ( world == 1 ) {
+         retval[rooms[0][0]][rooms[0][1]-rooms[0][3]] = 6;
+      }
+
+      var throneRoom = throneRoomNumber(rooms);
+      for ( var i = 1; i < rooms.length; ++i ) {
+         if ( i != throneRoom ) {
+            continue;
+         }
+      }
+
+      retval[rooms[throneRoom][0]][rooms[throneRoom][1]] = 17;
+      for ( var i = 1; i <= rooms[throneRoom][3]; ++i ) {
+         retval[rooms[throneRoom][0]][rooms[throneRoom][1]+i] = 5;
+      }
    }
 
-   console.log(sarea);
-/*   console.log(rooms);
-   console.log(mrn);*/
+   console.log('===>',rooms.length,sarea);
    return retval;
 }
 
-console.log(generateMap(30));
+console.log(generateMap(100,25,1));
