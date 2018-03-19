@@ -165,7 +165,7 @@ function generateMap(sizeY,sizeX,world) {
                if ( type ) {
                   for ( var px = -1; px <= 1; ++px ) {
                      for ( var py = -1; py <= 1; ++py ) {
-                        if ( !px && !py ) {
+                        if ( !px && !py || px == 1 && !py ) {
                            continue;
                         }
                         retval[rooms[i][0]+py][rooms[i][1]+px] = 6 + world;
