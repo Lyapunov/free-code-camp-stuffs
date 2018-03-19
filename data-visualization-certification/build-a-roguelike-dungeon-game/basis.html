@@ -856,8 +856,8 @@
                ++walkSfxCounter;
             } else {
                walkSfxCounter = 0;
-               var disti = characters[0][3].length ? manhattan( characters[0][0], characters[0][3][characters[0][3].length-1] ) : 0;
-               if( characters[0][2] && disti ) {
+               var disti = characters[0][3].length ? manhattan( characters[0][0], characters[0][3][characters[0][3].length-1] ) > 0.1 : 0;
+               if( characters[0][2] && disti && isCharacterAlive(i) ) {
                   walkSfx();
                }
             }
