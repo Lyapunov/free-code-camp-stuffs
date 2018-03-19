@@ -87,11 +87,8 @@ function generateMap(sizeY,sizeX,world) {
       }
    }
 
-   var mrn = startingRoomNumber(rooms);
-   var tmp = rooms[mrn];
-   rooms[mrn] = rooms[0];
-   rooms[0] = tmp;
-   mrn = 0;
+   rooms.sort(function (rooma,roomb) {return (rooma[0] > roomb[0] || rooma[0] == roomb[0] && rooma[1] > roomb[1])
+                                            -(roomb[0] > rooma[0] || roomb[0] == rooma[0] && roomb[1] > rooma[1]) });
 
    var tset = [0];
    var tdic = {0:1};
@@ -134,12 +131,12 @@ function generateMap(sizeY,sizeX,world) {
          retval[rooms[0][0]][rooms[0][1]-rooms[0][3]] = 6;
       }
 
-      var throneRoom = throneRoomNumber(rooms);
+      var throneRoom = rooms.length - 1 ;
       for ( var i = 1; i < rooms.length; ++i ) {
          if ( i == throneRoom ) {
             continue;
          }
-         if ( i % 2 ) {
+         if ( i % 3 ) {
             if ( rooms[i][2] == 1 && rooms[i][3] == 1 ) {
                retval[rooms[i][0]][rooms[i][1]] = 6 + world;
             } else if ( rooms[i][2] == 1 && rooms[i][3] >= 2 )  {
