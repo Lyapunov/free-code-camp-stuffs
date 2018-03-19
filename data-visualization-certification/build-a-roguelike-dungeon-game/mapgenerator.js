@@ -62,7 +62,7 @@ function generateBasicRoomStructure(sizeY,sizeX,world) {
    var rooms = [];
    rooms.push([2,2,1,1]);
    var sarea = carveRoom(retval,world,...rooms[0]);
-   for ( var i = 0; i < 200; ++i ) {
+   for ( var i = 0; i < 1000; ++i ) {
       var room = [getRandomInt(sizeY),getRandomInt(sizeX),getRandomInt(5)+1,getRandomInt(5)+1];
       var aarea = carveRoom(retval,world,...room);
       if ( aarea ) {
@@ -194,8 +194,9 @@ function generateMap(sizeY,sizeX,world) {
       }
    }
 
-   console.log('===>',rooms.length,sarea);
+   console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
    return retval;
 }
 
+//generateMap(300,100,1);
 console.log(generateMap(100,25,1));
