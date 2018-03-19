@@ -35,6 +35,7 @@
          var aiCounter = 0;
          var deathSpeed = 1/25;
          var attackDeviance = 0.6;
+         var defenseDeviance = 0.6;
          var ANIMATION;
 
          var curX = 0;
@@ -225,6 +226,7 @@
                   [[10.5,16.5],ATTRIBUTES_GOLD_SWORD   ,{exists:1}],
                   [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD,{exists:1}],
                   [[11.5,17.5],ATTRIBUTES_MINISHIELD   ,{exists:1}],
+                  [[6,17.5],   ATTRIBUTES_TOWER_SHIELD ,{exists:1}],
                   [[11.5,18.5],ATTRIBUTES_SILVER_SWORD ,{exists:1}],
                   [[22.5,13.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
                   [[22.5,14.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
@@ -747,7 +749,7 @@
 
          function attack(attacker, attacked) {
             var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
-            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterHoldedObjectAttribute(attacker,"shield","value"))*(1.0 - attackDeviance*Math.random()) );
+            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterHoldedObjectAttribute(attacked,"shield","value"))*(1.0 - defenseDeviance*Math.random()) );
             var damageValue = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " (+"+attackValue+"-"+defenseValue+") points"));
             damage(attacked,damageValue);
