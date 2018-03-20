@@ -34,8 +34,6 @@
          var walkSfxCounter = 10;
          var aiCounter = 0;
          var deathSpeed = 1/25;
-         var attackDeviance = 0.6;
-         var defenseDeviance = 0.6;
          var ANIMATION;
 
          var curX = 0;
@@ -138,8 +136,6 @@
                                      5,5,5,5,5,
                                      6,6,7,6,6,7];
 
-         var heroColoring =['orange','lightgreen','orange','green','orange','green'];
-         var devilColoring =['crimson','tomato','crimson','tomato','crimson','tomato'];
          var attackColoring =['red','red','red','red','red','red'];
 
          //================================== AVATAR ANIMATION ENDS =================================
@@ -218,21 +214,27 @@
          var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"releases deadly poison gas"}
          var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS["POISON"],width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"releases deadly poison gas"}
 
-         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,slowness:10,range:4,level:1,baseHp:5};
+         function twoColorDesign(colorA, colorB) {
+            return [colorA,colorB,colorA,colorB,colorA,colorB];
+         }
+
+         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5};
+         var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.00,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
+         var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','yellow'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,12.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[4.5,20.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[22.5,4.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
+                           [[4.5,20.5] ,0,0,[],ATTRIBUTES_ZOMBIE  ,0,{hp:10,exists:1}],
+                           [[22.5,4.5] ,0,0,[],ATTRIBUTES_OGRE    ,0,{hp:10,exists:1,weapon:ATTRIBUTES_WOODEN_STICK}],
                           ];
 
          stuffs = [
                   [[11.5,15.5],ATTRIBUTES_IRON_BAR     ,{exists:1}],
-                  [[11.5,16.5],ATTRIBUTES_STEEL_SWORD  ,{exists:1}],
+                  [[11.5,16.5],ATTRIBUTES_WOODEN_STICK ,{exists:1}],
                   [[10.5,16.5],ATTRIBUTES_GOLD_SWORD   ,{exists:1}],
                   [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD,{exists:1}],
                   [[11.5,17.5],ATTRIBUTES_MINISHIELD   ,{exists:1}],
@@ -769,8 +771,12 @@
          }
 
          function attack(attacker, attacked) {
-            var attackValue  = Math.round( (getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
-            var defenseValue = Math.round( (getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value"))*(1.0 - defenseDeviance*Math.random()) );
+            var attackValueMax  = getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value");
+            var attackValueMin  = Math.floor(attackValueMax / 2);
+            var defenseValueMax = getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value");
+            var defenseValueMin = Math.floor(defenseValueMax / 2);
+            var attackValue  =  attackValueMin  + Math.round( (attackValueMax - attackValueMin)*Math.random() );
+            var defenseValue =  defenseValueMin + Math.round( (defenseValueMax-defenseValueMin)*Math.random() );
             var damageValue = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
             damage(attacked,damageValue);
