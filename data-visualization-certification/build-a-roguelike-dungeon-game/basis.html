@@ -772,7 +772,7 @@
             var attackValue  = Math.round( (getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
             var defenseValue = Math.round( (getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value"))*(1.0 - defenseDeviance*Math.random()) );
             var damageValue = Math.max(attackValue - defenseValue,0);
-            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " (+"+attackValue+"-"+defenseValue+") points"));
+            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
             damage(attacked,damageValue);
          }
 
