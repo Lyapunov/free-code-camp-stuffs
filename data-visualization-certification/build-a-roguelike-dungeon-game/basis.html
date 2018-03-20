@@ -219,17 +219,21 @@
          }
 
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5};
-         var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.00,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
+         var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','yellow'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+
+         function createMonster(pos,attributes) {
+            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon}];
+         }
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
-                           [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[7.5,12.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
-                           [[4.5,20.5] ,0,0,[],ATTRIBUTES_ZOMBIE  ,0,{hp:10,exists:1}],
-                           [[22.5,4.5] ,0,0,[],ATTRIBUTES_OGRE    ,0,{hp:10,exists:1,weapon:ATTRIBUTES_WOODEN_STICK}],
+                           createMonster([10.5,10.5],ATTRIBUTES_DEVILGUY),
+                           createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
+                           createMonster([7.5 ,11.5],ATTRIBUTES_DEVILGUY),
+                           createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_ZOMBIE),
+                           createMonster([22.5, 4.5],ATTRIBUTES_OGRE),
                           ];
 
          stuffs = [
