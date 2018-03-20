@@ -170,7 +170,7 @@
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
 
-         var ATTRIBUTES_BAREFIST       = {name:"none", value: 0, size:0};
+         var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4,value:1,holder:"weapon"};
          var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS["IRON"]     ,width:30,height:4,value:2,holder:"weapon"};
          var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS["STEEL"]    ,width:30,height:4,value:3,holder:"weapon"};
@@ -208,10 +208,10 @@
          var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"releases deadly poison gas"}
          var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS["POISON"],width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"releases deadly poison gas"}
 
-         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,slowness:10,range:4,baseAttack:1,baseDefense:0,baseHp:5};
+         var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:devilColoring,slowness:10,range:4,level:1,baseHp:5};
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,baseAttack:1,baseDefense:0,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:heroColoring,slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
                            [[10.5,10.5],0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[6.5,10.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
                            [[7.5,11.5] ,0,0,[],ATTRIBUTES_DEVILGUY,0,{hp: 5,exists:1}],
@@ -747,9 +747,17 @@
             exec.effect();
          }
 
+         function getBaseAttack(i) {
+            return characters[i][4].level;
+         }
+
+         function getBaseDefense(i) {
+            return Math.max(0,characters[i][4].level-2);
+         }
+
          function attack(attacker, attacked) {
-            var attackValue  = Math.round( (characters[attacker][4].baseAttack  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
-            var defenseValue = Math.round( (characters[attacked][4].baseDefense + getCharacterHoldedObjectAttribute(attacked,"shield","value"))*(1.0 - defenseDeviance*Math.random()) );
+            var attackValue  = Math.round( (getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value"))*(1.0 - attackDeviance*Math.random()) );
+            var defenseValue = Math.round( (getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value"))*(1.0 - defenseDeviance*Math.random()) );
             var damageValue = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " (+"+attackValue+"-"+defenseValue+") points"));
             damage(attacked,damageValue);
@@ -948,7 +956,10 @@
          (function() {
             initCanvas();
             addEventListener('resize', initCanvas, false);
-            addEventListener('keydown', (event)=>{ if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; } });
+            addEventListener('keydown', (event)=>{
+               if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
+               if ( event.key == "s" ) { sendMessage("Hero's health is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", level is "+characters[0][4].level); }
+            });
          })();
       </script>
    </body>
