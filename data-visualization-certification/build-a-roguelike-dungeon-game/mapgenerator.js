@@ -144,7 +144,7 @@ function getNthCell(map,low,hi,n) {
    return false;
 }
 
-function generateMap(sizeY,sizeX,world,ept,spt,createEnemy,createStuff) {
+function generateMap(sizeY,sizeX,world,ept,spt,wpt,createEnemy,createStuff) {
    var retval = [];
    var rooms = [];
    var sarea = 0;
@@ -307,7 +307,7 @@ function generateMap(sizeY,sizeX,world,ept,spt,createEnemy,createStuff) {
          
          if ( i != 1 ) {
             var scounter = 0;
-            while ( scounter < 2 ) {
+            while ( scounter < wpt ) {
                var rnum = getRandomInt(numbers[i]);
                var pos  = getNthCell(hmap,helper[i],helper[i+1],rnum);
                if ( !placedict[pos] ) {
@@ -319,7 +319,7 @@ function generateMap(sizeY,sizeX,world,ept,spt,createEnemy,createStuff) {
          }
          if ( i != 0 ) {
             var scounter = 0;
-            while ( scounter < 2 ) {
+            while ( scounter < wpt ) {
                var rnum = getRandomInt(numbers[i]);
                var pos  = getNthCell(hmap,helper[i],helper[i+1],rnum);
                if ( !placedict[pos] ) {
@@ -378,8 +378,12 @@ function drawPack(pack) {
          }
          if ( map[y][x] == 0 ) {
             row += "#";
+         } else if ( map[y][x] == 5 ) {
+            row += "~";
+         } else if ( map[y][x] == 17 ) {
+            row += "h";
          } else {
-            row += ".";
+            row += " ";
          }
       }
       row += "\n";
@@ -390,5 +394,5 @@ function drawPack(pack) {
 
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generateMap(100,20,1,30,10,(pos,code)=>[pos,code*1],(pos,code)=>[pos,code*1]);
+var pack = generateMap(300,100,1,300,50,4,(pos,code)=>[pos,code*1],(pos,code)=>[pos,code*1]);
 console.log(drawPack(pack));
