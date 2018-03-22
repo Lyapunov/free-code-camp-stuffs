@@ -326,34 +326,17 @@ class MapGenerator {
             if ( enemies !== undefined ) {
                var enemyHere = enemies.filter(([pos,code])=>pos[0]==y&&pos[1]==x);
                if ( enemyHere.length ) {
-                  var [pos,code] = enemyHere[0];
-                  if ( code == 0 ) {
-                     row += "o";
-                  } else if ( code == 1 ) {
-                     row += "O";
-                  } else if ( code == 2 ) {
-                     row += "@";
-                  }
+                  var [pos,enemy] = enemyHere[0];
+                  row += enemy;
+
                   continue;
                }
             }
             if ( stuffs !== undefined ) {
                var stuffHere = stuffs.filter(([pos,code])=>pos[0]==y&&pos[1]==x);
                if ( stuffHere.length ) {
-                  var [pos,code] = stuffHere[0];
-                  if ( code == 0 ) {
-                     row += "p";
-                  } else if ( code == 1 ) {
-                     row += "P";
-                  } else if ( code == 2 ) {
-                     row += ",";
-                  } else if ( code == 3 ) {
-                     row += "/";
-                  } else if ( code == 4 ) {
-                     row += "v";
-                  } else if ( code == 5 ) {
-                     row += "V";
-                  }
+                  var [pos,stuff] = stuffHere[0];
+                  row += stuff;
                   continue;
                }
             }
@@ -376,7 +359,35 @@ class MapGenerator {
 
 var generator = new MapGenerator();
 
+function enemyGenerator(pos, code) {
+   if ( code == 0 ) {
+      return [pos,"o"];
+   } else if ( code == 1 ) {
+      return [pos,"O"];
+   } else if ( code == 2 ) {
+      return [pos,"@"];
+   }
+   return [pos,"?"];
+}
+
+function stuffGenerator(pos, code) {
+   if ( code == 0 ) {
+      return [pos,"p"];
+   } else if ( code == 1 ) {
+      return [pos,"P"];
+   } else if ( code == 2 ) {
+      return [pos,","];
+   } else if ( code == 3 ) {
+      return [pos,"/"];
+   } else if ( code == 4 ) {
+      return [pos,"v"];
+   } else if ( code == 5 ) {
+      return [pos,"V"];
+   }
+   return [pos,"?"];
+}
+
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generator.generateMap(300,100,1,300,50,4,(pos,code)=>[pos,code*1],(pos,code)=>[pos,code*1]);
+var pack = generator.generateMap(300,100,1,300,50,4,enemyGenerator,stuffGenerator);
 console.log(generator.drawPack(pack));
