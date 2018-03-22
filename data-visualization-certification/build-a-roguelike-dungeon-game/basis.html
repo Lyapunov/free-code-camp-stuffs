@@ -223,9 +223,8 @@
          var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','yellow'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
 
-         function createMonster(pos,attributes) {
-            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon}];
-         }
+         function createMonster(pos,attributes) { return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon}]; }
+         function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
@@ -237,20 +236,19 @@
                            createMonster([22.5, 4.5],ATTRIBUTES_OGRE),
                           ];
 
-         stuffs = [
-                  [[11.5,15.5],ATTRIBUTES_IRON_BAR     ,{exists:1}],
-                  [[11.5,16.5],ATTRIBUTES_WOODEN_STICK ,{exists:1}],
-                  [[10.5,16.5],ATTRIBUTES_GOLD_SWORD   ,{exists:1}],
-                  [[10.5,17.5],ATTRIBUTES_CRISTAL_SWORD,{exists:1}],
-                  [[11.5,17.5],ATTRIBUTES_MINISHIELD   ,{exists:1}],
-                  [[6,17.5],   ATTRIBUTES_TOWER_SHIELD ,{exists:1}],
-                  [[11.5,18.5],ATTRIBUTES_SILVER_SWORD ,{exists:1}],
-                  [[22.5,13.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
-                  [[22.5,14.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
-                  [[22.5,15.5],ATTRIBUTES_HEALTH_POTION,{exists:1}],
-                  [[22.5,16.5],ATTRIBUTES_MINOR_HEALTH_POTION,{exists:1}],
-                  [[22.5,17.5],ATTRIBUTES_MINOR_POISON_GAS,{exists:1}],
-                  [[22.5,18.5],ATTRIBUTES_MAJOR_HEALTH_POTION,{exists:1}],
+         stuffs = [createStuff([11.5,15.5],ATTRIBUTES_IRON_BAR           ),
+                   createStuff([11.5,16.5],ATTRIBUTES_WOODEN_STICK       ),
+                   createStuff([10.5,16.5],ATTRIBUTES_GOLD_SWORD         ),
+                   createStuff([10.5,17.5],ATTRIBUTES_CRISTAL_SWORD      ),
+                   createStuff([11.5,17.5],ATTRIBUTES_MINISHIELD         ),
+                   createStuff([6,17.5],   ATTRIBUTES_TOWER_SHIELD       ),
+                   createStuff([11.5,18.5],ATTRIBUTES_SILVER_SWORD       ),
+                   createStuff([22.5,13.5],ATTRIBUTES_MAJOR_HEALTH_POTION),
+                   createStuff([22.5,14.5],ATTRIBUTES_MAJOR_HEALTH_POTION),
+                   createStuff([22.5,15.5],ATTRIBUTES_HEALTH_POTION      ),
+                   createStuff([22.5,16.5],ATTRIBUTES_MINOR_HEALTH_POTION),
+                   createStuff([22.5,17.5],ATTRIBUTES_MINOR_POISON_GAS   ),
+                   createStuff([22.5,18.5],ATTRIBUTES_MAJOR_HEALTH_POTION),
                   ];
 
          var characterBuckets;
