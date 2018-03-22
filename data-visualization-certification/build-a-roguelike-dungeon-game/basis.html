@@ -741,6 +741,9 @@
             if ( value <= 0 ) {
                return;
             }
+            if ( !isCharacterAlive(attacked) ) {
+               return;
+            }
             ouchFx();
             characters[attacked][6].hp -= value;
             if ( characters[attacked][6].hp < 0 ) {
