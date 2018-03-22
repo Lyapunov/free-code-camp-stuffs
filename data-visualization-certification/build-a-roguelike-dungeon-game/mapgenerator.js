@@ -280,7 +280,20 @@ class MapGenerator {
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
-                     stuffs.push( createStuff( pos, scounter < 0.9*spt ) );
+                     stuffs.push( createStuff( pos, 0 ) ); // healing potion
+                     ++scounter;
+                  }
+               }
+            }
+
+            {
+               var scounter = 0;
+               while ( scounter < 1 ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  if ( !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     stuffs.push( createStuff( pos, 1 ) ); // poison gas
                      ++scounter;
                   }
                }
@@ -374,7 +387,7 @@ function stuffGenerator(pos, code) {
    if ( code == 0 ) {
       return [pos,"p"];
    } else if ( code == 1 ) {
-      return [pos,"P"];
+      return [pos,"g"];
    } else if ( code == 2 ) {
       return [pos,","];
    } else if ( code == 3 ) {
