@@ -125,7 +125,7 @@ class MapGenerator {
       return false;
    }
 
-   generateMap(sizeY,sizeX,world,ept,spt,wpt,createEnemy,createStuff) {
+   generateMap(sizeY,sizeX,world,ept,spt,wpt,enemySelection,stuffSelection) {
       var retval = [];
       var rooms = [];
       var sarea = 0;
@@ -248,7 +248,7 @@ class MapGenerator {
 
       console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
 
-      if ( createStuff !== undefined && createEnemy !== undefined ) {
+      if ( stuffSelection !== undefined && enemySelection !== undefined ) {
          var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,5]);
          var helper = [10,Math.floor(hlev/3),Math.floor(2*hlev/3),hlev-2];
          var numbers= [];
@@ -268,7 +268,7 @@ class MapGenerator {
                      placedict[pos] = 1;
                      var hienemy = i;
                      var loenemy = Math.max(0,i);
-                     enemies.push( createEnemy( pos, ecounter % 2 ? hienemy : loenemy ) );
+                     enemies.push( [pos, enemySelection[ecounter % 2 ? hienemy : loenemy]] );
                      ++ecounter;
                   }
                }
@@ -280,7 +280,7 @@ class MapGenerator {
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
-                     stuffs.push( createStuff( pos, scounter < 0.9*spt ) );
+                     stuffs.push( [pos, stuffSelection[(scounter < 0.9*spt)*1]] );
                      ++scounter;
                   }
                }
@@ -293,7 +293,7 @@ class MapGenerator {
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
-                     stuffs.push( createStuff( pos, 2+(i>1) ) ); // sword
+                     stuffs.push( [pos, stuffSelection[2+(i>1)]] ); // sword
                      ++scounter;
                   }
                }
@@ -305,7 +305,7 @@ class MapGenerator {
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
-                     stuffs.push( createStuff( pos, 4+(i>1) ) ); // shield
+                     stuffs.push( [pos, stuffSelection[4+(i>1)]] ); // shield
                      ++scounter;
                   }
                }
@@ -359,17 +359,6 @@ class MapGenerator {
 
 var generator = new MapGenerator();
 
-function enemyGenerator(pos, code) {
-   if ( code == 0 ) {
-      return [pos,"o"];
-   } else if ( code == 1 ) {
-      return [pos,"O"];
-   } else if ( code == 2 ) {
-      return [pos,"@"];
-   }
-   return [pos,"?"];
-}
-
 function stuffGenerator(pos, code) {
    if ( code == 0 ) {
       return [pos,"p"];
@@ -389,5 +378,5 @@ function stuffGenerator(pos, code) {
 
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generator.generateMap(300,100,1,300,50,4,enemyGenerator,stuffGenerator);
+var pack = generator.generateMap(300,100,1,300,50,4,["o","O","@"],["p","P",",","/","v","V"]);
 console.log(generator.drawPack(pack));
