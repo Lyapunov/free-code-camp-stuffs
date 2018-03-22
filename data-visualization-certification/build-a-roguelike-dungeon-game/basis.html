@@ -17,7 +17,7 @@
          var mainItem     = document.getElementById('canvas');
          var context      = mainItem.getContext('2d');
 
-         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00"};
+         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513"};
 
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
@@ -497,7 +497,7 @@
                var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
                if ( i !== undefined ) {
                   var attribs = stuffs[i][1];
-                  if ( stuffs[i][2].exists ) {
+                  if ( stuffs[i][2] !== undefined && stuffs[i][2].exists ) {
                      var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
                      drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
                                    Math.round(tile.ps[1].y-attribs.height/2),
@@ -511,7 +511,7 @@
             // table
             if ( speciality == 1 ) {
                var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
-               var tableColor = "#835C3B";
+               var tableColor = SPECIAL_COLORS["TABLEBROWN"];
                drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
                drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
                drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
@@ -521,7 +521,7 @@
             // chair
             if ( speciality == 2 ) {
                var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
-               var tableColor = "#835C3B";
+               var tableColor = SPECIAL_COLORS["CHAIRBROWN"];
                drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize/2,tableColor);
                drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize/2,tableColor);
                drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize/2,tableColor);
