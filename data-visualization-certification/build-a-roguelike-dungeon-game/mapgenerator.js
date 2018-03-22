@@ -227,13 +227,9 @@ class MapGenerator {
                      retval[rooms[i][0]][rooms[i][1]-2] = 12 + world;
                      retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
                   } else {
-                     retval[rooms[i][0]-1][rooms[i][1]-1] = 6 + world;
-                     retval[rooms[i][0]-1][rooms[i][1]-2] = 12 + world;
-                     retval[rooms[i][0]-1][rooms[i][1]+1] = 6 + world;
-                     retval[rooms[i][0]-1][rooms[i][1]] = 12 + world;
-                     retval[rooms[i][0]+1][rooms[i][1]-1] = 6 + world;
+                     retval[rooms[i][0]-1][rooms[i][1]-2] = 6 + world;
+                     retval[rooms[i][0]-1][rooms[i][1]]   = 6 + world;
                      retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
-                     retval[rooms[i][0]+1][rooms[i][1]+1] = 6 + world;
                      retval[rooms[i][0]+1][rooms[i][1]] = 12 + world;
                   }
                }
