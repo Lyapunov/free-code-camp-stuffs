@@ -366,10 +366,11 @@
             context.closePath();
          }
 
-         function drawFloor(tile, color) {
+         function drawFloor(tile, color,tick) {
             context.fillStyle = color;
             context.strokeStyle = color;
             contextPathForObjectDraw(tile);
+            context.lineWidth = tick ? 2 : 1;
             context.fill();
             context.stroke();
          }
@@ -476,7 +477,7 @@
          function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
             var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
             var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-            drawFloor(tile, color);
+            drawFloor(tile, color, getMapCell(cy+y+1,cx+x)&&getMapCell(cy+y,cx+x+1));
 
             tiles.push(tile);
          }
