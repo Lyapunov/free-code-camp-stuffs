@@ -361,7 +361,7 @@
          function contextPathForObjectDraw(obj) {
             context.beginPath();
             for ( var i = 0; i < obj.ps.length; ++i ) {
-               ( i == 0 ? context.moveTo( Math.floor(obj.ps[i].x), Math.floor(obj.ps[i].y) ) : context.lineTo( Math.floor(obj.ps[i].x), Math.floor(obj.ps[i].y) ) );
+               ( i == 0 ? context.moveTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) : context.lineTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) );
             }
             context.closePath();
          }
