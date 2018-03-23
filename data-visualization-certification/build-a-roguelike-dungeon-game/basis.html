@@ -35,6 +35,7 @@
          var aiCounter = 0;
          var deathSpeed = 1/25;
          var ANIMATION;
+         var monsterKillingPerLevelFactor = 50;
 
          var curX = 0;
          var curY = 0;
@@ -208,9 +209,9 @@
             };
          }
 
-         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"minor health potion",color:"red"                   ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(30),effectText:"hero heals"};
-         var ATTRIBUTES_HEALTH_POTION       = {name:"health potion",      color:"red"                   ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(60),effectText:"hero heals"};
-         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"major health potion",color:"red"                   ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(90),effectText:"hero heals"};
+         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"minor health potion",color:"red"                   ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(10),effectText:"hero heals"};
+         var ATTRIBUTES_HEALTH_POTION       = {name:"health potion",      color:"red"                   ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(20),effectText:"hero heals"};
+         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"major health potion",color:"red"                   ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(30),effectText:"hero heals"};
          var ATTRIBUTES_MINOR_POISON_GAS    = {name:"minor poison gas"   ,color:SPECIAL_COLORS["POISON"],width:5,height:5,value:-1,holder:"potions",effect:damageInRadius(10,10),effectText:"deadly poison gas is released"};
          var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
          var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS["POISON"],width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
@@ -223,11 +224,13 @@
          var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','yellow'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
 
+         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
+
          function createMonster(pos,attributes) { return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon}]; }
          function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
+         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
                            createMonster([10.5,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_DEVILGUY),
@@ -746,12 +749,13 @@
             }
             ouchFx();
             characters[attacked][6].hp -= value;
-            if ( characters[attacked][6].hp < 0 ) {
+            if ( characters[attacked][6].hp <= 0 ) {
                characters[attacked][6].hp = 0;
                kill(attacked);
-               return;
+               return 1;
             }
             characters[attacked][5] = 1;
+            return 0;
          }
 
          function usePotion(number) {
@@ -776,6 +780,31 @@
          function getBaseDefense(i) {
             return Math.max(0,characters[i][4].level-2);
          }
+         
+         function levelingOneLevelUp(i) {
+            healSfx();
+            ++characters[i][4].level;
+            characters[i][4].baseHp += 5;
+            characters[i][6].hp = characters[i][4].baseHp;
+         }
+
+         function levelingUp(i) {
+            if ( characters[i][6].xp !== undefined ) {
+               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
+                  levelingOneLevelUp(i);
+               }
+            }
+         }
+
+         function awardXp(i, enemyLevel) {
+            console.log("--->",i," ",enemyLevel);
+            if ( characters[i][6].xp !== undefined ) {
+               var rndPart = (0.75+Math.random()/4);
+               console.log(rndPart);
+               characters[i][6].xp += Math.floor( (minimalLevelXp(enemyLevel+1) / monsterKillingPerLevelFactor) * rndPart );
+               levelingUp(i);
+            }
+         }
 
          function attack(attacker, attacked) {
             var attackValueMax  = getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value");
@@ -786,7 +815,9 @@
             var defenseValue =  defenseValueMin + Math.round( (defenseValueMax-defenseValueMin)*Math.random() );
             var damageValue = Math.max(attackValue - defenseValue,0);
             sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
-            damage(attacked,damageValue);
+            if ( damage(attacked,damageValue) ) {
+               awardXp(attacker,characters[attacked][4].level);
+            }
          }
 
          function pickup(index,stuff) {
@@ -984,7 +1015,7 @@
             addEventListener('resize', initCanvas, false);
             addEventListener('keydown', (event)=>{
                if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
-               if ( event.key == "s" ) { sendMessage("Hero's health is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", level is "+characters[0][4].level); }
+               if ( event.key == "s" ) { sendMessage("Hero's health is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", xp is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level over "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
             });
          })();
       </script>
