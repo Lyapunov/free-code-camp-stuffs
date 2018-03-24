@@ -797,10 +797,8 @@
          }
 
          function awardXp(i, enemyLevel) {
-            console.log("--->",i," ",enemyLevel);
             if ( characters[i][6].xp !== undefined ) {
                var rndPart = (0.75+Math.random()/4);
-               console.log(rndPart);
                characters[i][6].xp += Math.floor( (minimalLevelXp(enemyLevel+1) / monsterKillingPerLevelFactor) * rndPart );
                levelingUp(i);
             }
