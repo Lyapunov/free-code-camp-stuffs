@@ -398,5 +398,5 @@ function stuffGenerator(pos, code) {
 
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generator.generateMap(300,100,1,300,50,4,enemyGenerator,stuffGenerator);
+var pack = generator.generateMap(300,100,1,100,50,4,enemyGenerator,stuffGenerator);
 console.log(generator.drawPack(pack));
