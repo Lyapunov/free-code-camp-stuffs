@@ -856,14 +856,13 @@
          }
 
          function isCharacterAtCellCenter(index) {
-            return characters[index][2] != 0
-              && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
-              && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance;
+            return Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
+                && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance;
          }
 
          function moveCharacter(index) {
             var stuffIndexer = createStuffIndex();
-            if ( isCharacterAtCellCenter(index) ) {
+            if ( characters[index][2] != 0 && isCharacterAtCellCenter(index) ) {
                var stuff = stuffIndexer[getIndexKey(characters[index][0])];
                if ( stuff !== undefined && stuffs[stuff][2].exists ) {
                   pickup(index,stuff);
@@ -944,8 +943,8 @@
                                                    && isCharacterAlive(i)
                                                    && isCharacterAlive(0) 
                                                    && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-//                                                   && isCharacterAtCellCenter(i)
-                                                   && characters[i][3].length == 0
+                                                   && isCharacterAtCellCenter(i)
+//                                                   && characters[i][3].length == 0
                                                    && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
                                                                               {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
                                                                               characterIndex));
