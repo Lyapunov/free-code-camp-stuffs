@@ -1016,7 +1016,7 @@
             addEventListener('resize', initCanvas, false);
             addEventListener('keydown', (event)=>{
                if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
-               if ( event.key == "s" ) { sendMessage("Hp is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", xp is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level over "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
+               if ( event.key == "s" ) { sendMessage("HP is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", XP is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level requires "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
             });
          })();
       </script>
