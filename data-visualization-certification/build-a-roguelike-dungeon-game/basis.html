@@ -944,7 +944,8 @@
                                                    && isCharacterAlive(i)
                                                    && isCharacterAlive(0) 
                                                    && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-                                                   && isCharacterAtCellCenter(i)
+//                                                   && isCharacterAtCellCenter(i)
+                                                   && characters[i][3].length == 0
                                                    && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
                                                                               {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
                                                                               characterIndex));
