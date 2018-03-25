@@ -855,11 +855,15 @@
             }
          }
 
+         function isCharacterAtCellCenter(index) {
+            return characters[index][2] != 0
+              && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
+              && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance;
+         }
+
          function moveCharacter(index) {
             var stuffIndexer = createStuffIndex();
-            if ( characters[index][2] != 0
-              && Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
-              && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance ) {
+            if ( isCharacterAtCellCenter(index) ) {
                var stuff = stuffIndexer[getIndexKey(characters[index][0])];
                if ( stuff !== undefined && stuffs[stuff][2].exists ) {
                   pickup(index,stuff);
@@ -940,7 +944,7 @@
                                                    && isCharacterAlive(i)
                                                    && isCharacterAlive(0) 
                                                    && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-                                                   && characters[i][3].length == 0
+                                                   && isCharacterAtCellCenter(i)
                                                    && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
                                                                               {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
                                                                               characterIndex));
@@ -1013,7 +1017,7 @@
             addEventListener('resize', initCanvas, false);
             addEventListener('keydown', (event)=>{
                if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
-               if ( event.key == "s" ) { sendMessage("Hero's health is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", xp is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level over "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
+               if ( event.key == "s" ) { sendMessage("Hp is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", xp is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level over "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
             });
          })();
       </script>
