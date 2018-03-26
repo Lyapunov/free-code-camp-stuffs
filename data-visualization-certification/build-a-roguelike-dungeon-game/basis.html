@@ -240,8 +240,9 @@
          var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_BLUE_GHOST     = {name:"blue ghost",scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
 
-         var ATTRIBUTES_SUPER_DWARF    = {name:"super dwarf",scale:0.5,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_ELITE_DWARF    = {name:"elite dwarf",scale:0.5,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_GENIE          = {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+         var ATTRIBUTES_STONE_GOLEM    = {name:"stone golem",scale:0.95,coloring:twoColorDesign(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0),slowness:10,range:4,level:2,baseHp:25};
          var ATTRIBUTES_UNDEAD_EX_HERO = {name:"undead ex-hero",scale:1.0,coloring:['royalblue','lightgreen','royalblue','green','royalblue','green'],slowness:5,range:4,level:2,baseHp:20,
                                           defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD};
          var ATTRIBUTES_HELL_KNIGHT    = {name:"hell knight",scale:1.00,coloring:threeColorDesign('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2),slowness:8,range:4,level:2,baseHp:15,
@@ -264,7 +265,7 @@
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_TOUGH_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_GOLD_DWARF),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_STONE_GOLEM),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
@@ -1039,7 +1040,12 @@
               && characters[0][3][characters[0][3].length-1][0] == currentTarget.y ) {
                return;
             }
-            characters[0][3] = bfs(source,currentTarget,createCharacterIndex());
+            var newtarget = bfs(source,currentTarget,createCharacterIndex());
+            console.log(newtarget);
+            if ( newtarget.length == 0 ) {
+               return;
+            }
+            characters[0][3] = newtarget;
          };
 
          mainItem.onmouseup = function(event) {};
