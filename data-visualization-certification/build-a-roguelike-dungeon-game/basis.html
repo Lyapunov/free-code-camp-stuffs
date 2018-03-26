@@ -175,12 +175,12 @@
 
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
-         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS["WOODBROWN"],width:30,height:4,value:1,holder:"weapon"};
-         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS["IRON"]     ,width:30,height:4,value:2,holder:"weapon"};
-         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS["STEEL"]    ,width:30,height:4,value:3,holder:"weapon"};
-         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                   ,width:30,height:4,value:4,holder:"weapon"};
-         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                     ,width:30,height:4,value:5,holder:"weapon"};
-         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                     ,width:30,height:4,value:6,holder:"weapon"};
+         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
+         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS.IRON     ,width:30,height:4,value:2,holder:"weapon"};
+         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS.STEEL    ,width:30,height:4,value:3,holder:"weapon"};
+         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                ,width:30,height:4,value:4,holder:"weapon"};
+         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                  ,width:30,height:4,value:5,holder:"weapon"};
+         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                  ,width:30,height:4,value:6,holder:"weapon"};
 
          var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12,value:1,size:0.75,holder:"shield"}
          var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12,value:2,size:1.00,holder:"shield"}
@@ -229,19 +229,25 @@
          var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE_WARRIOR   = {name:"ogre warrior",scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_DWARF          = {name:"dwarf",scale:0.6,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20};
+         var ATTRIBUTES_TOUGH_DEVILGUY = {name:"tough devilguy",scale:0.80,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5,
+                                          defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+
          var ATTRIBUTES_ICE_GOLEM      = {name:"ice golem",scale:0.95,coloring:twoColorDesign('mediumblue','mediumblue'),slowness:10,range:4,level:2,baseHp:25};
-         var ATTRIBUTES_GHOST          = {name:"ghost"    ,scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
+         var ATTRIBUTES_EVIL_WOOD      = {name:"evil wood",scale:0.90,coloring:twoColorDesign(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN),slowness:10,range:5,level:2,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_GHOST          = {name:"ghost",scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
          var ATTRIBUTES_FIRE_ELEMENTAL = {name:"fire elemental",scale:0.95,coloring:twoColorDesign('yellow','yellow'),slowness:8,range:4,level:2,baseHp:15};
          var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
-         var ATTRIBUTES_BLUE_GHOST     = {name:"blue ghost"    ,scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+         var ATTRIBUTES_BLUE_GHOST     = {name:"blue ghost",scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+
          var ATTRIBUTES_SUPER_DWARF    = {name:"super dwarf",scale:0.5,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
-         var ATTRIBUTES_GENIE          = {name:"genie"    ,scale:1.1,coloring:['green','green','green',"",'green',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+         var ATTRIBUTES_GENIE          = {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
          var ATTRIBUTES_UNDEAD_EX_HERO = {name:"undead ex-hero",scale:1.0,coloring:['royalblue','lightgreen','royalblue','green','royalblue','green'],slowness:5,range:4,level:2,baseHp:20,
                                           defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD};
          var ATTRIBUTES_HELL_KNIGHT    = {name:"hell knight",scale:1.00,coloring:threeColorDesign('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2),slowness:8,range:4,level:2,baseHp:15,
                                           defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD};
          var ATTRIBUTES_MERCURY_GOLEM  = {name:"mercury golem",scale:0.95,coloring:twoColorDesign('silver','silver'),slowness:4,range:4,level:2,baseHp:25};
-         var ATTRIBUTES_SUPER_GENIE    = {name:"super genie"    ,scale:1.1,coloring:['yellow','yellow','yellow',"",'yellow',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
+         var ATTRIBUTES_SUPER_GENIE    = {name:"super genie",scale:1.1,coloring:['yellow','yellow','yellow',"",'yellow',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
+
          var ATTRIBUTES_DIABOLITO      = {name:"diabolito",scale:1.25,coloring:threeColorDesign('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:4,level:2,baseHp:15,
                                           defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD};
 
@@ -254,9 +260,9 @@
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
                            createMonster([10.5,10.5],ATTRIBUTES_GENIE),
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([7.5 ,11.5],ATTRIBUTES_DEVILGUY),
+                           createMonster([7.5 ,11.5],ATTRIBUTES_TOUGH_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_UNDEAD_EX_HERO),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_EVIL_WOOD),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
