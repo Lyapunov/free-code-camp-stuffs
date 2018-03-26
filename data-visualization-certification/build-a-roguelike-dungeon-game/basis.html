@@ -226,7 +226,7 @@
 
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5};
          var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10};
-         var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
+         var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:0.95,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE_WARRIOR   = {name:"ogre warrior",scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_DWARF          = {name:"dwarf",scale:0.6,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20};
          var ATTRIBUTES_TOUGH_DEVILGUY = {name:"tough devilguy",scale:0.80,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5,
@@ -234,6 +234,7 @@
 
          var ATTRIBUTES_ICE_GOLEM      = {name:"ice golem",scale:0.95,coloring:twoColorDesign('mediumblue','mediumblue'),slowness:10,range:4,level:2,baseHp:25};
          var ATTRIBUTES_EVIL_WOOD      = {name:"evil wood",scale:0.90,coloring:twoColorDesign(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN),slowness:10,range:5,level:2,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_STRONG_ZOMBIE  = {name:"strong zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_GHOST          = {name:"ghost",scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
          var ATTRIBUTES_FIRE_ELEMENTAL = {name:"fire elemental",scale:0.95,coloring:twoColorDesign('yellow','yellow'),slowness:8,range:4,level:2,baseHp:15};
          var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
@@ -245,6 +246,7 @@
                                           defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD};
          var ATTRIBUTES_HELL_KNIGHT    = {name:"hell knight",scale:1.00,coloring:threeColorDesign('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2),slowness:8,range:4,level:2,baseHp:15,
                                           defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD};
+         var ATTRIBUTES_GOLD_DWARF     = {name:"gold dwarf",scale:0.5,coloring:twoColorDesign('gold','orange'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_IRON_BAR};
          var ATTRIBUTES_MERCURY_GOLEM  = {name:"mercury golem",scale:0.95,coloring:twoColorDesign('silver','silver'),slowness:4,range:4,level:2,baseHp:25};
          var ATTRIBUTES_SUPER_GENIE    = {name:"super genie",scale:1.1,coloring:['yellow','yellow','yellow',"",'yellow',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
 
@@ -262,7 +264,7 @@
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_TOUGH_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_EVIL_WOOD),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_GOLD_DWARF),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
