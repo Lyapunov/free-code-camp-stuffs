@@ -17,7 +17,7 @@
          var mainItem     = document.getElementById('canvas');
          var context      = mainItem.getContext('2d');
 
-         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY1:"#282828",DARKGRAY2:"#383838"};
+         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
 
          var screenWidth  = mainItem.width  = window.innerWidth  - 20;
          var screenHeight = mainItem.height = window.innerHeight - 20;
@@ -220,14 +220,30 @@
             return [colorA,colorB,colorA,colorB,colorA,colorB];
          }
 
+         function threeColorDesign(colorC, colorA, colorB) {
+            return [colorC,colorB,colorA,colorB,colorA,colorB];
+         }
+
          var ATTRIBUTES_DEVILGUY       = {name:"devilguy",scale:0.75,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5};
+         var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10};
          var ATTRIBUTES_ZOMBIE         = {name:"zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
-         var ATTRIBUTES_OGRE           = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
-         var ATTRIBUTES_ICE_GOLEM      = {name:"ice golem",scale:1.0,coloring:twoColorDesign('mediumblue','mediumblue'),slowness:10,range:4,level:2,baseHp:25};
-         var ATTRIBUTES_FIRE_ELEMENTAL = {name:"fire elemental",scale:1.0,coloring:twoColorDesign('yellow','yellow'),slowness:8,range:4,level:2,baseHp:15};
-         var ATTRIBUTES_UNDEAD_OGRE    = {name:"ogre"    ,scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
-         var ATTRIBUTES_CRAZY_KNIGHT   = {name:"crazy knight",scale:1.0,coloring:twoColorDesign(SPECIAL_COLORS["DARKGRAY1"],SPECIAL_COLORS["DARKGRAY2"]),slowness:8,range:4,level:2,baseHp:15,
+         var ATTRIBUTES_OGRE_WARRIOR   = {name:"ogre warrior",scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_DWARF          = {name:"dwarf",scale:0.6,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20};
+         var ATTRIBUTES_ICE_GOLEM      = {name:"ice golem",scale:0.95,coloring:twoColorDesign('mediumblue','mediumblue'),slowness:10,range:4,level:2,baseHp:25};
+         var ATTRIBUTES_GHOST          = {name:"ghost"    ,scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
+         var ATTRIBUTES_FIRE_ELEMENTAL = {name:"fire elemental",scale:0.95,coloring:twoColorDesign('yellow','yellow'),slowness:8,range:4,level:2,baseHp:15};
+         var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_BLUE_GHOST     = {name:"blue ghost"    ,scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+         var ATTRIBUTES_SUPER_DWARF    = {name:"super dwarf",scale:0.5,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_GENIE          = {name:"genie"    ,scale:1.1,coloring:['green','green','green',"",'green',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
+         var ATTRIBUTES_UNDEAD_EX_HERO = {name:"undead ex-hero",scale:1.0,coloring:['royalblue','lightgreen','royalblue','green','royalblue','green'],slowness:5,range:4,level:2,baseHp:20,
+                                          defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD};
+         var ATTRIBUTES_HELL_KNIGHT    = {name:"hell knight",scale:1.00,coloring:threeColorDesign('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2),slowness:8,range:4,level:2,baseHp:15,
                                           defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD};
+         var ATTRIBUTES_MERCURY_GOLEM  = {name:"mercury golem",scale:0.95,coloring:twoColorDesign('silver','silver'),slowness:4,range:4,level:2,baseHp:25};
+         var ATTRIBUTES_SUPER_GENIE    = {name:"super genie"    ,scale:1.1,coloring:['yellow','yellow','yellow',"",'yellow',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
+         var ATTRIBUTES_DIABOLITO      = {name:"diabolito",scale:1.25,coloring:threeColorDesign('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:4,level:2,baseHp:15,
+                                          defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD};
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
 
@@ -236,11 +252,11 @@
         
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
          var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
-                           createMonster([10.5,10.5],ATTRIBUTES_CRAZY_KNIGHT),
+                           createMonster([10.5,10.5],ATTRIBUTES_GENIE),
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_ZOMBIE),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_UNDEAD_EX_HERO),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
@@ -318,6 +334,9 @@
             }
             var colorIndex = descriptorValueToColor[cind];
             var color = characterColors[colorIndex];
+            if ( color === "" ) {
+               return;
+            }
             if ( colorIndex > 5 ) {
                if ( colorIndex === 6 ) {
                   color = weaponcolor;
@@ -357,7 +376,11 @@
             var xmax = 54  * percentage;
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
+            if  ( characters[i][4].transparency ) {
+               context.globalAlpha = characters[i][4].transparency;
+            }
             drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
+            context.globalAlpha = 1.0;
             characters[i][5] = 0;
          }
 
