@@ -228,15 +228,17 @@
          var ATTRIBUTES_THIEF          = {name:"thief"   ,scale:1.00,coloring:['orange','royalblue','orange','blue','orange','blue'],slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_OGRE_WARRIOR   = {name:"ogre warrior",scale:0.9,coloring:twoColorDesign('limegreen','olive'),slowness:5,range:4,level:1,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_DWARF          = {name:"dwarf",scale:0.6,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20};
+         var ATTRIBUTES_EVIL_WOOD      = {name:"evil wood",scale:0.90,coloring:twoColorDesign(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN),slowness:10,range:5,level:2,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_TOUGH_DEVILGUY = {name:"tough devilguy",scale:0.80,coloring:twoColorDesign('crimson','tomato'),slowness:10,range:4,level:1,baseHp:5,
                                           defaultWeapon:ATTRIBUTES_WOODEN_STICK};
+         var ATTRIBUTES_GIANT          = {name:"giant"   ,scale:1.30,coloring:['orange','limegreen','orange','olive','orange','olive'],slowness:10,range:5,level:2,baseHp:10};
 
          var ATTRIBUTES_ICE_GOLEM      = {name:"ice golem",scale:0.95,coloring:twoColorDesign('mediumblue','mediumblue'),slowness:10,range:4,level:2,baseHp:25};
-         var ATTRIBUTES_EVIL_WOOD      = {name:"evil wood",scale:0.90,coloring:twoColorDesign(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN),slowness:10,range:5,level:2,baseHp:10,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
-         var ATTRIBUTES_STRONG_ZOMBIE  = {name:"strong zombie"  ,scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
-         var ATTRIBUTES_MASTER_THIEF   = {name:"master thief"   ,scale:1.00,coloring:['orange','tomato','orange','crimson','orange','crimson'],slowness:10,range:5,level:2,baseHp:10};
-         var ATTRIBUTES_GHOST          = {name:"ghost",scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
+         var ATTRIBUTES_STRONG_ZOMBIE  = {name:"strong zombie",scale:1.10,coloring:twoColorDesign('mediumseagreen','mediumaquamarine'),slowness:10,range:5,level:2,baseHp:10};
+         var ATTRIBUTES_MASTER_THIEF   = {name:"master thief" ,scale:1.00,coloring:['orange','tomato','orange','crimson','orange','crimson'],slowness:10,range:5,level:2,baseHp:10};
+         var ATTRIBUTES_GHOST          = {name:"ghost"        ,scale:0.90,coloring:twoColorDesign('gray','gray'),slowness:10,range:5,level:2,baseHp:10,transparency:0.5};
          var ATTRIBUTES_FIRE_ELEMENTAL = {name:"fire elemental",scale:0.95,coloring:twoColorDesign('yellow','yellow'),slowness:8,range:4,level:2,baseHp:15};
+         var ATTRIBUTES_CRAZY_GIANT    = {name:"crazy giant"   ,scale:1.30,coloring:['orange','orange','orange','olive','orange','olive'],slowness:10,range:5,level:2,baseHp:10};
          var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_BLUE_ORB       = {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
          var ATTRIBUTES_BLUE_DAEMON    = {name:"blue daemon",scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
@@ -267,7 +269,7 @@
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_TOUGH_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_MASTER_THIEF),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_CRAZY_GIANT),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
