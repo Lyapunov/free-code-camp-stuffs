@@ -16,7 +16,6 @@ var deathSpeed = 1.0;
          var monsterKillingPerLevelFactor = 20;
          var heroBaseHp = 20;
          var heroHpPerLevelIncrease = 5;
-         var heroStartingLevel = 1;
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
@@ -32,6 +31,7 @@ var deathSpeed = 1.0;
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
+         var heroStartingLevel = 1;
          var heroDefaultWeapon = undefined;
          var heroDefaultShield = undefined;
 
