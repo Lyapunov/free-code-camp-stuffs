@@ -31,7 +31,7 @@ var deathSpeed = 1.0;
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
-         var heroStartingLevel = 1;
+         var heroStartingLevel = 5;
          var heroDefaultWeapon = undefined;
          var heroDefaultShield = undefined;
 
@@ -218,8 +218,8 @@ var deathSpeed = 1.0;
              {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:2},
              {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1},
              {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4},
-             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 8,range:5,level:5,weakness:2,transparency:0.5},
-             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 8,range:5,level:5,weakness:2},
+             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 6,range:5,level:5,weakness:2,transparency:0.5},
+             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 8,range:5,level:5,weakness:1},
              {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2},
              {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness:10,range:5,level:6,weakness:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
              {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,transparency:0.50},
