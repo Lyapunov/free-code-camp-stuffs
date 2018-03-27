@@ -35,7 +35,6 @@ var deathSpeed = 1.0;
          }
 
          function sendMessage(text) {
-//            console.log(capitalize(text)+".");
          }
 
          function getCharacterHoldedObjectAttribute(i,holder,attribute) {
@@ -270,7 +269,18 @@ function battleStats(i,j) {
    for ( var u = 0; u < 1000; ++u ) {
       sample.push(battleTest(i,j));
    }
-   console.log(avg(sample),dev(sample));
+   return ""+avg(sample).toFixed(3)+" "+dev(sample).toFixed(3);
 }
 
-console.log(battleStats(0,1));
+function pad(x) {
+   while (x.length < 20) {
+      x += " ";
+   }
+   return x;
+}
+
+initCharacters();
+console.log('---> Hero level',characters[0][4].level);
+for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
+   console.log(pad(characters[i+1][4].name),battleStats(0,i+1));
+}
