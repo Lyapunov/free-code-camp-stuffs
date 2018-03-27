@@ -254,7 +254,7 @@ function battleTest(i,j) {
    var tim2 = 0;
    var killCount = 0;
 
-   while ( isCharacterAlive(i) ) {
+   while ( isCharacterAlive(i) && killCount < 100 ) {
       if ( ++tim1 >= characters[i][4].slowness ) {
          tim1 = 0;
          attack(i,j);
