@@ -1,5 +1,19 @@
 
+var characters;
+var deathSpeed = 1.0;
+
          var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
+
+         var tileSize = 35;
+         var errorTolerance = 0.01;
+         var fps = 25;
+         var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
+         var walkSfxFrequency = 10;
+         var walkSfxCounter = 10;
+         var aiCounter = 0;
+         var deathSpeed = 1/25;
+         var ANIMATION;
+         var monsterKillingPerLevelFactor = 50;
 
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
@@ -21,7 +35,7 @@
          }
 
          function sendMessage(text) {
-            console.log(capitalize(text)+".");
+//            console.log(capitalize(text)+".");
          }
 
          function getCharacterHoldedObjectAttribute(i,holder,attribute) {
@@ -35,7 +49,6 @@
             if ( !isCharacterAlive(attacked) ) {
                return;
             }
-            ouchFx();
             characters[attacked][6].hp -= value;
             if ( characters[attacked][6].hp <= 0 ) {
                characters[attacked][6].hp = 0;
@@ -132,6 +145,14 @@
                              && healSfx(); };
          }
 
+         function isCharacterAlive(index) {
+            return ( characters[index][6].exists > 1 - errorTolerance );
+         }
+
+         function isCharacterFullyDead(index) {
+            return ( characters[index][6].exists < errorTolerance );
+         }
+
          function damageInRadius(radius, value) {
             return ()=>{
                var characterIndex = createCharacterIndex();
@@ -199,11 +220,57 @@
                                           defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD},
          ];
 
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
-                          ];
-
-for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
-   characters.push([5,5], ATTRIBUTES_OF_ENEMIES[i]);
+function initCharacters() {
+   characters = [];
+   characters.push([[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}]);
+   for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
+      characters.push(createMonster([i+1,i+1], ATTRIBUTES_OF_ENEMIES[i]));
+   }
 }
 
-console.log(characters);
+function battleTest(i,j) {
+   initCharacters();
+
+   var tim1 = 0;
+   var tim2 = 0;
+   var killCount = 0;
+
+   while ( isCharacterAlive(i) ) {
+      if ( ++tim1 >= characters[i][4].slowness ) {
+         tim1 = 0;
+         attack(i,j);
+      }
+      if ( ++tim2 >= characters[j][4].slowness ) {
+         tim2 = 0;
+         attack(j,i);
+      }
+      if ( !isCharacterAlive(j) ) {
+         characters[j] = createMonster([j,j], ATTRIBUTES_OF_ENEMIES[j-1]);
+         ++killCount;
+      }
+   }
+   return killCount + (1.0-characters[j][6].hp/characters[j][4].baseHp);
+}
+
+function sum(arr) {
+   return arr.reduce((t,x)=>t+=x,0);
+}
+
+function avg(arr) {
+   return sum(arr)/arr.length;
+}
+
+function dev(arr) {
+   var avga = avg(arr); 
+   return Math.sqrt(arr.reduce((t,x)=>t+=((x-avga)**2),0)/arr.length);
+}
+
+function battleStats(i,j) {
+   var sample = [];
+   for ( var u = 0; u < 1000; ++u ) {
+      sample.push(battleTest(i,j));
+   }
+   console.log(avg(sample),dev(sample));
+}
+
+console.log(battleStats(0,1));
