@@ -138,8 +138,6 @@
                                      5,5,5,5,5,
                                      6,6,7,6,6,7];
 
-         var attackColoring =['red','red','red','red','red','red'];
-
          //================================== AVATAR ANIMATION ENDS =================================
 
          var levelMap= [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -240,6 +238,8 @@
          var ATTRIBUTES_UNDEAD_OGRE    = {name:"undead ogre",scale:0.9,coloring:twoColorDesign('royalblue','olive'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_BLUE_GHOST     = {name:"blue ghost",scale:0.85,coloring:twoColorDesign('blue','blue'),slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
 
+         var ATTRIBUTES_BLUE_ORB       = {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
+
          var ATTRIBUTES_ELITE_DWARF    = {name:"elite dwarf",scale:0.5,coloring:twoColorDesign('orange','mediumblue'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_WOODEN_STICK};
          var ATTRIBUTES_GENIE          = {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.25};
          var ATTRIBUTES_STONE_GOLEM    = {name:"stone golem",scale:0.95,coloring:twoColorDesign(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0),slowness:10,range:4,level:2,baseHp:25};
@@ -247,6 +247,7 @@
                                           defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD};
          var ATTRIBUTES_HELL_KNIGHT    = {name:"hell knight",scale:1.00,coloring:threeColorDesign('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2),slowness:8,range:4,level:2,baseHp:15,
                                           defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD};
+         var ATTRIBUTES_FIRE_ORB       = {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
          var ATTRIBUTES_GOLD_DWARF     = {name:"gold dwarf",scale:0.5,coloring:twoColorDesign('gold','orange'),slowness:5,range:4,level:2,baseHp:20,defaultWeapon:ATTRIBUTES_IRON_BAR};
          var ATTRIBUTES_MERCURY_GOLEM  = {name:"mercury golem",scale:0.95,coloring:twoColorDesign('silver','silver'),slowness:4,range:4,level:2,baseHp:25};
          var ATTRIBUTES_SUPER_GENIE    = {name:"super genie",scale:1.1,coloring:['yellow','yellow','yellow',"",'yellow',""],slowness:10,range:5,level:2,baseHp:10,transparency:0.50};
@@ -265,7 +266,7 @@
                            createMonster([6.5 ,10.5],ATTRIBUTES_DEVILGUY),
                            createMonster([7.5 ,11.5],ATTRIBUTES_TOUGH_DEVILGUY),
                            createMonster([7.5 ,12.5],ATTRIBUTES_DEVILGUY),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_STONE_GOLEM),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_FIRE_ORB),
                            createMonster([22.5, 4.5],ATTRIBUTES_UNDEAD_OGRE),
                           ];
 
@@ -315,8 +316,8 @@
             var wimage = weaponDrawData[phaseKey];
             var scale = characters[i][4].scale;
             var characterColors = characters[i][4].coloring;
-            if ( characters[i][5] ) {
-               characterColors = attackColoring;
+            if ( characters[i][5] ) { // drawing in red because of damage
+               characterColors = characterColors.map(x=>x?"red":"");
             }
             var exists = characters[i][6].exists;
             var shieldrad   = getCharacterHoldedObjectAttribute(i,"shield","size");
