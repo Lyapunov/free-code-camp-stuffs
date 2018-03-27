@@ -16,6 +16,7 @@ var deathSpeed = 1.0;
          var monsterKillingPerLevelFactor = 20;
          var heroBaseHp = 20;
          var heroHpPerLevelIncrease = 5;
+         var heroStartingLevel = 1;
 
          function getBaseHp(level) {
             return heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease;
@@ -90,7 +91,6 @@ var deathSpeed = 1.0;
          }
          
          function levelingOneLevelUp(i) {
-            healSfx();
             ++characters[i][4].level;
             characters[i][4].baseHp += heroHpPerLevelIncrease;
             characters[i][6].hp = characters[i][4].baseHp;
@@ -98,9 +98,9 @@ var deathSpeed = 1.0;
 
          function levelingUp(i) {
             if ( characters[i][6].xp !== undefined ) {
-               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
+/*               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
                   levelingOneLevelUp(i);
-               }
+               }*/
             }
          }
 
@@ -238,7 +238,10 @@ var deathSpeed = 1.0;
 
 function initCharacters() {
    characters = [];
-   characters.push([[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:heroBaseHp},0,{hp:heroBaseHp,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}]);
+   var hero = [[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}];
+   hero[4].baseHp = getBaseHp(hero[4].level);
+   hero[6].hp     = hero[4].baseHp;
+   characters.push(hero);
    for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
       characters.push(createMonster([i+1,i+1], ATTRIBUTES_OF_ENEMIES[i]));
    }
@@ -289,16 +292,16 @@ function battleStats(i,j) {
    return ""+avg(sample).toFixed(3)+" "+dev(sample).toFixed(3);
 }
 
-function pad(x) {
-   while (x.length < 20) {
+function pad(x,size) {
+   x = "" + x;
+   while (x.length < size) {
       x += " ";
    }
    return x;
 }
 
 initCharacters();
-console.log(characters);
 console.log('---> Hero level',characters[0][4].level);
 for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
-   console.log(pad(characters[i+1][4].name),battleStats(0,i+1));
+   console.log(pad(characters[i+1][4].name,20),pad(characters[i+1][4].level,5),battleStats(0,i+1));
 }
