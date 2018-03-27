@@ -18,6 +18,23 @@ var deathSpeed = 1.0;
          var heroHpPerLevelIncrease = 5;
          var heroStartingLevel = 1;
 
+         var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
+         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
+         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS.IRON     ,width:30,height:4,value:2,holder:"weapon"};
+         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS.STEEL    ,width:30,height:4,value:3,holder:"weapon"};
+         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                ,width:30,height:4,value:4,holder:"weapon"};
+         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                  ,width:30,height:4,value:5,holder:"weapon"};
+         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                  ,width:30,height:4,value:6,holder:"weapon"};
+
+         var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12,value:1,size:0.75,holder:"shield"}
+         var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12,value:2,size:1.00,holder:"shield"}
+         var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12,value:3,size:1.25,holder:"shield"}
+         var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
+         var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
+
+         var heroDefaultWeapon = undefined;
+         var heroDefaultShield = undefined;
+
          function getBaseHp(level) {
             return heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease;
          }
@@ -131,20 +148,6 @@ var deathSpeed = 1.0;
          var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
 
-         var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
-         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
-         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS.IRON     ,width:30,height:4,value:2,holder:"weapon"};
-         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS.STEEL    ,width:30,height:4,value:3,holder:"weapon"};
-         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                ,width:30,height:4,value:4,holder:"weapon"};
-         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                  ,width:30,height:4,value:5,holder:"weapon"};
-         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                  ,width:30,height:4,value:6,holder:"weapon"};
-
-         var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12,value:1,size:0.75,holder:"shield"}
-         var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12,value:2,size:1.00,holder:"shield"}
-         var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12,value:3,size:1.25,holder:"shield"}
-         var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
-         var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
-
          function heroHpIncreaser(value) {
             return ()=>{ return isCharacterAlive(0)
                              && (characters[0][6].hp < characters[0][4].baseHp)
@@ -238,7 +241,7 @@ var deathSpeed = 1.0;
 
 function initCharacters() {
    characters = [];
-   var hero = [[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}];
+   var hero = [[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined]}];
    hero[4].baseHp = getBaseHp(hero[4].level);
    hero[6].hp     = hero[4].baseHp;
    characters.push(hero);
