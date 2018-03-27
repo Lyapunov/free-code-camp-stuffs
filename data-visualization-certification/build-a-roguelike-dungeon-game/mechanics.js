@@ -31,7 +31,7 @@ var deathSpeed = 1.0;
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
-         var heroStartingLevel = 5;
+         var heroStartingLevel = 1;
          var heroDefaultWeapon = undefined;
          var heroDefaultShield = undefined;
 
