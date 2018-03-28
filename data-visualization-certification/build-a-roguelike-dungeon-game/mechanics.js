@@ -31,9 +31,44 @@ var deathSpeed = 1.0;
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
+         // 1 +1 +1
+         // 2 +1 +1
+         // 3 +2 +2
+         // 4 +3 +3
+         // 5 +3 +3
+         // 6 +4 +4
+         // 7 +5 +5
+         // 8 +5 +5
+         // 9 +6 +5
+
+
+         var weaponPerLevel = [undefined,
+                               undefined,
+                               ATTRIBUTES_WOODEN_STICK,
+                               ATTRIBUTES_IRON_BAR,
+                               ATTRIBUTES_IRON_BAR,
+                               ATTRIBUTES_STEEL_SWORD,
+                               ATTRIBUTES_SILVER_SWORD,
+                               ATTRIBUTES_GOLD_SWORD,
+                               ATTRIBUTES_GOLD_SWORD,
+                               ATTRIBUTES_CRISTAL_SWORD,
+                               ATTRIBUTES_CRISTAL_SWORD];
+
+         var shieldPerLevel = [undefined, 
+                               undefined,
+                               ATTRIBUTES_MINISHIELD,
+                               ATTRIBUTES_BUCKLER_SHIELD,
+                               ATTRIBUTES_BUCKLER_SHIELD,
+                               ATTRIBUTES_BATTLESHIELD,
+                               ATTRIBUTES_BATTLESHIELD,
+                               ATTRIBUTES_KITE_SHIELD,
+                               ATTRIBUTES_KITE_SHIELD,
+                               ATTRIBUTES_TOWER_SHIELD,
+                               ATTRIBUTES_TOWER_SHIELD];
+
          var heroStartingLevel = 1;
-         var heroDefaultWeapon = undefined;
-         var heroDefaultShield = undefined;
+         var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
+         var heroDefaultShield = shieldPerLevel[heroStartingLevel];
 
          function getBaseHp(level) {
             return heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease;
@@ -304,7 +339,7 @@ function pad(x,size) {
 }
 
 initCharacters();
-console.log('---> Hero level',characters[0][4].level,', hp:',characters[0][6].hp);
+console.log('---> Hero level',characters[0][4].level,', hp:',characters[0][6].hp, ', weapon:',(characters[0][6].weapon?characters[0][6].weapon.name:"nothing"), ', shield:',(characters[0][6].weapon?characters[0][6].shield.name:"nothing"));
 for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
    console.log(pad(characters[i+1][4].name,20),pad(characters[i+1][4].level,5),battleStats(0,i+1));
 }
