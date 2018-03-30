@@ -70,6 +70,55 @@ var deathSpeed = 1.0;
          var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
          var heroDefaultShield = shieldPerLevel[heroStartingLevel];
 
+         function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
+         function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
+
+         var undeadExHeroColors = ['royalblue','lightgreen','royalblue','green','royalblue','green'];
+         var knightColors = threeColors('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2);
+         var zombieColors = twoColors('mediumseagreen','mediumaquamarine');
+         var tiefColors = ['orange','royalblue','orange','blue','orange','blue'];
+         var evilWoodColors = twoColors(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN);
+         var giantColors = ['orange','limegreen','orange','olive','orange','olive'];
+         var strongZombieColors = twoColors('mediumseagreen','mediumaquamarine');
+         var masterTiefColors = ['orange','tomato','orange','crimson','orange','crimson'];
+         var crazyGiantColors = ['orange','orange','orange','olive','orange','olive'];
+         var stoneGolemColors = twoColors(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0);
+         var superGenieColors = ['yellow','yellow','yellow',"",'yellow',""];
+
+         var ATTRIBUTES_OF_ENEMIES = [
+             {name:"devilguy",scale:0.75,coloring:twoColors('crimson','tomato'),         slowness:10,range:4,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"ogre"    ,scale:0.9,coloring:twoColors('limegreen','olive'),         slowness: 8,range:5,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"zombie"  ,scale:0.95,coloring:zombieColors,                          slowness:10,range:4,level:2,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"thief"   ,scale:1.00,coloring:tiefColors,                            slowness: 6,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1},
+             {name:"ogre warrior",scale:0.9,coloring:twoColors('limegreen','olive'),     slowness: 8,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"dwarf",scale:0.6,coloring:twoColors('orange','mediumblue'),          slowness: 5,range:5,level:3,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"evil wood",scale:0.90,coloring:evilWoodColors,                       slowness: 9,range:5,level:3,weakness:2,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"tough devilguy",scale:0.80,coloring:twoColors('crimson','tomato'),   slowness: 9,range:5,level:3,weakness:3,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"giant"   ,scale:1.30,coloring:giantColors,                           slowness: 6,range:5,level:4,weakness:2,baseAttack:1,baseDefense:1},
+
+             {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:3,baseAttack:3,baseDefense:1},
+             {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1,baseAttack:1,baseDefense:1},
+             {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4,baseAttack:2,baseDefense:2},
+             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 7,range:5,level:5,weakness:2,baseAttack:2,baseDefense:3,transparency:0.5},
+             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 7,range:5,level:5,weakness:1,baseAttack:2,baseDefense:1},
+             {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2,baseAttack:2,baseDefense:3},
+             {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness: 9,range:5,level:6,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,baseAttack:3,baseDefense:4,transparency:0.50},
+             {name:"blue daemon",scale:0.85,coloring:twoColors('blue','blue'),           slowness: 5,range:5,level:7,weakness:2,baseAttack:2,baseDefense:3,transparency:0.25},
+
+             {name:"elite dwarf",scale:0.5,coloring:twoColors('orange','mediumblue'),    slowness: 5,range:5,level:7,weakness:3,baseAttack:3,baseDefense:4,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],   slowness: 7,range:5,level:7,weakness:2,baseAttack:4,baseDefense:4,transparency:0.25},
+             {name:"stone golem",scale:0.95,coloring:stoneGolemColors,                   slowness: 8,range:4,level:8,weakness:2,baseAttack:4,baseDefense:3},
+             {name:"undead ex-hero",scale:1.0,coloring:undeadExHeroColors,               slowness: 5,range:5,level:8,weakness:4,baseAttack:4,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"hell knight",scale:1.00,coloring:knightColors,                       slowness: 8,range:6,level:8,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],              slowness: 8,range:5,level:9,weakness:2,baseAttack:4,baseDefense:5,transparency:0.50},
+             {name:"gold dwarf",scale:0.5,coloring:twoColors('gold','orange'),           slowness: 5,range:5,level:9,weakness:4,baseAttack:5,baseDefense:4,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
+             {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
+
+             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD},
+         ];
+
          function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
@@ -214,60 +263,6 @@ var deathSpeed = 1.0;
          var ATTRIBUTES_MINOR_POISON_GAS    = {name:"minor poison gas"   ,color:SPECIAL_COLORS["POISON"],width:5,height:5,value:-1,holder:"potions",effect:damageInRadius(10,10),effectText:"deadly poison gas is released"};
          var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
          var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS["POISON"],width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
-
-         function twoColors(colorA, colorB) {
-            return [colorA,colorB,colorA,colorB,colorA,colorB];
-         }
-
-         function threeColors(colorC, colorA, colorB) {
-            return [colorC,colorB,colorA,colorB,colorA,colorB];
-         }
-
-         var undeadExHeroColors = ['royalblue','lightgreen','royalblue','green','royalblue','green'];
-         var knightColors = threeColors('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2);
-         var zombieColors = twoColors('mediumseagreen','mediumaquamarine');
-         var tiefColors = ['orange','royalblue','orange','blue','orange','blue'];
-         var evilWoodColors = twoColors(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN);
-         var giantColors = ['orange','limegreen','orange','olive','orange','olive'];
-         var strongZombieColors = twoColors('mediumseagreen','mediumaquamarine');
-         var masterTiefColors = ['orange','tomato','orange','crimson','orange','crimson'];
-         var crazyGiantColors = ['orange','orange','orange','olive','orange','olive'];
-         var stoneGolemColors = twoColors(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0);
-         var superGenieColors = ['yellow','yellow','yellow',"",'yellow',""];
-
-         var ATTRIBUTES_OF_ENEMIES = [
-             {name:"devilguy",scale:0.75,coloring:twoColors('crimson','tomato'),         slowness:10,range:4,level:1,weakness:2,baseAttack:0,baseDefense:0},
-             {name:"ogre"    ,scale:0.9,coloring:twoColors('limegreen','olive'),         slowness: 8,range:5,level:1,weakness:2,baseAttack:0,baseDefense:0},
-             {name:"zombie"  ,scale:0.95,coloring:zombieColors,                          slowness:10,range:4,level:2,weakness:2,baseAttack:1,baseDefense:0},
-             {name:"thief"   ,scale:1.00,coloring:tiefColors,                            slowness: 6,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1},
-             {name:"ogre warrior",scale:0.9,coloring:twoColors('limegreen','olive'),     slowness: 8,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"dwarf",scale:0.6,coloring:twoColors('orange','mediumblue'),          slowness: 5,range:5,level:3,weakness:2,baseAttack:1,baseDefense:0},
-             {name:"evil wood",scale:0.90,coloring:evilWoodColors,                       slowness: 9,range:5,level:3,weakness:2,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"tough devilguy",scale:0.80,coloring:twoColors('crimson','tomato'),   slowness: 9,range:5,level:3,weakness:3,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_IRON_BAR},
-             {name:"giant"   ,scale:1.30,coloring:giantColors,                           slowness: 6,range:5,level:4,weakness:2,baseAttack:1,baseDefense:1},
-
-             {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:3,baseAttack:3,baseDefense:1},
-             {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1,baseAttack:1,baseDefense:1},
-             {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4,baseAttack:2,baseDefense:2},
-             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 7,range:5,level:5,weakness:2,baseAttack:2,baseDefense:3,transparency:0.5},
-             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 7,range:5,level:5,weakness:1,baseAttack:2,baseDefense:1},
-             {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2,baseAttack:2,baseDefense:3},
-             {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness: 9,range:5,level:6,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,baseAttack:3,baseDefense:4,transparency:0.50},
-             {name:"blue daemon",scale:0.85,coloring:twoColors('blue','blue'),           slowness: 5,range:5,level:7,weakness:2,baseAttack:2,baseDefense:3,transparency:0.25},
-
-             {name:"elite dwarf",scale:0.5,coloring:twoColors('orange','mediumblue'),    slowness: 5,range:5,level:7,weakness:3,baseAttack:3,baseDefense:4,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],   slowness: 7,range:5,level:7,weakness:2,baseAttack:4,baseDefense:4,transparency:0.25},
-             {name:"stone golem",scale:0.95,coloring:stoneGolemColors,                   slowness: 8,range:4,level:8,weakness:2,baseAttack:4,baseDefense:3},
-             {name:"undead ex-hero",scale:1.0,coloring:undeadExHeroColors,               slowness: 5,range:5,level:8,weakness:4,baseAttack:4,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD},
-             {name:"hell knight",scale:1.00,coloring:knightColors,                       slowness: 8,range:6,level:8,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD},
-             {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],              slowness: 8,range:5,level:9,weakness:2,baseAttack:4,baseDefense:5,transparency:0.50},
-             {name:"gold dwarf",scale:0.5,coloring:twoColors('gold','orange'),           slowness: 5,range:5,level:9,weakness:4,baseAttack:5,baseDefense:4,defaultWeapon:ATTRIBUTES_IRON_BAR},
-             {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
-             {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
-
-             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD},
-         ];
 
 function initCharacters() {
    characters = [];
