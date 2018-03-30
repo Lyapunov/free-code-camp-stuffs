@@ -70,9 +70,7 @@ var deathSpeed = 1.0;
          var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
          var heroDefaultShield = shieldPerLevel[heroStartingLevel];
 
-         function getBaseHp(level) {
-            return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2;
-         }
+         function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
 
@@ -81,7 +79,7 @@ var deathSpeed = 1.0;
             return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
          }
          function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
- 
+
          function destroying(index) {
             characters[index][6].exists -= deathSpeed;
          }
@@ -179,10 +177,6 @@ var deathSpeed = 1.0;
                awardXp(attacker,characters[attacked][4].level);
             }
          }
-
-         var colorDescription = ["STONEWORLD","SNOWWORLD","FIREWORLD","WATER","CARPET","FAKEDOOR"];
-         var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
-         var wallColors = ["gray","#CDCDCD","darkred","blue","magenta","#835C3B"];
 
 
          function heroHpIncreaser(value) {
