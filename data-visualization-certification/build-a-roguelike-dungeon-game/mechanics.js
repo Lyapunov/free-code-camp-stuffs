@@ -257,13 +257,6 @@ var deathSpeed = 1.0;
             };
          }
 
-         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"minor health potion",color:"red"                   ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(10),effectText:"hero heals"};
-         var ATTRIBUTES_HEALTH_POTION       = {name:"health potion",      color:"red"                   ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(20),effectText:"hero heals"};
-         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"major health potion",color:"red"                   ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(30),effectText:"hero heals"};
-         var ATTRIBUTES_MINOR_POISON_GAS    = {name:"minor poison gas"   ,color:SPECIAL_COLORS["POISON"],width:5,height:5,value:-1,holder:"potions",effect:damageInRadius(10,10),effectText:"deadly poison gas is released"};
-         var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS["POISON"],width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
-         var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS["POISON"],width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
-
 function initCharacters() {
    characters = [];
    var hero = [[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined]}];
