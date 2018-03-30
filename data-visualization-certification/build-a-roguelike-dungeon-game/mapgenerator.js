@@ -257,14 +257,15 @@ class MapGenerator {
          for ( var i = 0; i < 3; ++i ) {
             {
                var ecounter = 0;
+               var disti = Math.floor((helper[i+1] - helper[i])/3.0);
+               var subhelper = [helper[i],helper[i]+disti,helper[i]+2*disti,helper[i+1],helper[i+1]];
                while ( ecounter < ept ) {
                   var rnum = this.getRandomInt(numbers[i]);
-                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  var order = ecounter % 3;
+                  var pos  = this.getNthCell(hmap,subhelper[order],subhelper[order+2],rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
-                     var hienemy = i;
-                     var loenemy = Math.max(0,i);
-                     enemies.push( createEnemy( pos, ecounter % 2 ? hienemy : loenemy ) );
+                     enemies.push( createEnemy( pos, (i*3+order) ) );
                      ++ecounter;
                   }
                }
@@ -369,14 +370,7 @@ class MapGenerator {
 var generator = new MapGenerator();
 
 function enemyGenerator(pos, code) {
-   if ( code == 0 ) {
-      return [pos,"o"];
-   } else if ( code == 1 ) {
-      return [pos,"O"];
-   } else if ( code == 2 ) {
-      return [pos,"@"];
-   }
-   return [pos,"?"];
+   return [pos,(code+1).toString()];
 }
 
 function stuffGenerator(pos, code) {
