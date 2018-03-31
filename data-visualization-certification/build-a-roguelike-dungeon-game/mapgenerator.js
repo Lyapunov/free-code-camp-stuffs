@@ -275,7 +275,7 @@ class MapGenerator {
                while ( scounter < spt ) {
                   var rnum = this.getRandomInt(numbers[i]);
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
-                  if ( !placedict[pos] ) {
+                  if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
                      stuffs.push( createStuff( pos, 0 ) ); // healing potion
                      ++scounter;
@@ -288,7 +288,7 @@ class MapGenerator {
                while ( scounter < 1 ) {
                   var rnum = this.getRandomInt(numbers[i]);
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
-                  if ( !placedict[pos] ) {
+                  if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
                      stuffs.push( createStuff( pos, 1 ) ); // poison gas
                      ++scounter;
@@ -306,7 +306,7 @@ class MapGenerator {
                      wup = wlow + Math.floor((wup - wlow)/3);
                   }
                   var pos = this.getNthCell(hmap,wlow,wup,rnum);
-                  if ( !placedict[pos] ) {
+                  if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
                      stuffs.push( createStuff( pos, 2+(i>1) ) ); // sword
                      ++scounter;
@@ -318,7 +318,7 @@ class MapGenerator {
                while ( scounter < wpt ) {
                   var rnum = this.getRandomInt(numbers[i]);
                   var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
-                  if ( !placedict[pos] ) {
+                  if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
                      stuffs.push( createStuff( pos, 4+(i>1) ) ); // shield
                      ++scounter;
