@@ -117,7 +117,7 @@ var deathSpeed = 1.0;
 
          function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
-         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
+         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
 
          var heroStartingLevel = 1;
          var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
@@ -216,7 +216,7 @@ var deathSpeed = 1.0;
          function awardXp(i, enemyLevel) {
             if ( characters[i][6].xp !== undefined ) {
                var rndPart = (0.75+Math.random()/4);
-               characters[i][6].xp += Math.floor( (minimalLevelXp(enemyLevel+1) / monsterKillingPerLevelFactor) * rndPart );
+               characters[i][6].xp += Math.floor( ((minimalLevelXp(enemyLevel+1)-minimalLevelXp(enemyLevel)) / monsterKillingPerLevelFactor) * rndPart );
                levelingUp(i);
             }
          }
