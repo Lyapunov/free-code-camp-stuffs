@@ -262,8 +262,8 @@ class MapGenerator {
                while ( ecounter < ept ) {
                   var rnum = this.getRandomInt(numbers[i]);
                   var order = ecounter % 3;
-                  var pos  = this.getNthCell(hmap,subhelper[order],subhelper[order+2],rnum);
-                  if ( !placedict[pos] ) {
+                  var pos = this.getNthCell(hmap,subhelper[order],subhelper[order+2],rnum);
+                  if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
                      enemies.push( createEnemy( pos, (i*3+order) ) );
                      ++ecounter;
