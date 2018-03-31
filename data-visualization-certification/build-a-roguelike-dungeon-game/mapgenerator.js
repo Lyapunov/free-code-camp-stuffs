@@ -302,7 +302,7 @@ class MapGenerator {
                   var rnum = this.getRandomInt(numbers[i]);
                   var wlow = helper[i];
                   var wup = helper[i+1];
-                  if ( scounter == 0 && i == 0 ) {
+                  if ( scounter == 0 && i == 0 && world == 1 ) {
                      wup = wlow + Math.floor((wup - wlow)/3);
                   }
                   var pos = this.getNthCell(hmap,wlow,wup,rnum);
@@ -397,5 +397,5 @@ function stuffGenerator(pos, code) {
 
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generator.generateMap(300,100,1,100,50,4,enemyGenerator,stuffGenerator);
+var pack = generator.generateMap(300,100,1,90,60,4,enemyGenerator,stuffGenerator);
 console.log(generator.drawPack(pack));
