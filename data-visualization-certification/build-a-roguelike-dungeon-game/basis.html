@@ -885,6 +885,16 @@
             }
          }
 
+         function pickupAttempt(index) {
+            var stuffIndexer = createStuffIndex();
+            if ( characters[index][2] != 0 && isCharacterAtCellCenter(index) ) {
+               var stuff = stuffIndexer[getIndexKey(characters[index][0])];
+               if ( stuff !== undefined && stuffs[stuff][2].exists ) {
+                  pickup(index,stuff);
+               }
+            }
+         }
+
          function pickup(index,stuff) {
             var holder = stuffs[stuff][1].holder;
             var current = getCharacterHoldedObjectAttribute(index,holder,"value")
@@ -928,13 +938,7 @@
          }
 
          function moveCharacter(index) {
-            var stuffIndexer = createStuffIndex();
-            if ( characters[index][2] != 0 && isCharacterAtCellCenter(index) ) {
-               var stuff = stuffIndexer[getIndexKey(characters[index][0])];
-               if ( stuff !== undefined && stuffs[stuff][2].exists ) {
-                  pickup(index,stuff);
-               }
-            }
+            pickupAttempt(index);
 
             if ( characters[index][3].length == 0 ) {
                characters[index][2] = 0;
