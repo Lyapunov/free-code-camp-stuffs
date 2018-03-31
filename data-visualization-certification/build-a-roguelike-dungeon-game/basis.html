@@ -836,6 +836,7 @@
             } else {
                sendMessage('Hero uses '+exec.name+', but nothing happens');
             }
+            pickupAttempt(0,1);
          }
 
          function magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
@@ -885,9 +886,9 @@
             }
          }
 
-         function pickupAttempt(index) {
+         function pickupAttempt(index,forgiving) {
             var stuffIndexer = createStuffIndex();
-            if ( characters[index][2] != 0 && isCharacterAtCellCenter(index) ) {
+            if ( (characters[index][2] != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
                var stuff = stuffIndexer[getIndexKey(characters[index][0])];
                if ( stuff !== undefined && stuffs[stuff][2].exists ) {
                   pickup(index,stuff);
@@ -938,7 +939,7 @@
          }
 
          function moveCharacter(index) {
-            pickupAttempt(index);
+            pickupAttempt(index,0);
 
             if ( characters[index][3].length == 0 ) {
                characters[index][2] = 0;
