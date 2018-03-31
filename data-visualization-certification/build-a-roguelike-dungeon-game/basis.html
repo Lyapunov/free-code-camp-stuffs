@@ -269,17 +269,29 @@
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
 
+         var heroStartingLevel = 1;
+         var heroDefaultWeapon = undefined;
+         var heroDefaultShield = undefined;
+
+         function createHero(pos) {
+            var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined]}];
+            hero[4].baseHp = getBaseHp(hero[4].level);
+            hero[6].hp     = hero[4].baseHp;
+            return hero;
+         }
+
          function createMonster(pos,attributes) {
             attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
             return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
          }
+
          function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
 
          // all characters on the map - 0th is the player, [[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
-         var characters = [[[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:1,baseHp:20},0,{hp:20,xp:0,exists:1,weapon:undefined,shield:undefined,potions:[undefined,undefined,undefined,undefined,undefined]}],
-                           createMonster([10.5,10.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="genie")[0]),
+         var characters = [createHero([15.5,15.5]),
+                           createMonster([10.5,10.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="ogre")[0]),
                            createMonster([6.5 ,10.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
-                           createMonster([7.5 ,11.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="tough devilguy")[0]),
+                           createMonster([7.5 ,11.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
                            createMonster([7.5 ,12.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
                            createMonster([4.5 ,20.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="crazy giant")[0]),
                            createMonster([22.5, 4.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="undead ogre")[0]),
