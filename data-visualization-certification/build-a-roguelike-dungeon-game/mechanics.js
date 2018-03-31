@@ -66,10 +66,6 @@ var deathSpeed = 1.0;
                                ATTRIBUTES_TOWER_SHIELD,
                                ATTRIBUTES_TOWER_SHIELD];
 
-         var heroStartingLevel = 1;
-         var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
-         var heroDefaultShield = shieldPerLevel[heroStartingLevel];
-
          function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
          function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
 
@@ -123,10 +119,22 @@ var deathSpeed = 1.0;
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(2,level); }
 
+         var heroStartingLevel = 1;
+         var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
+         var heroDefaultShield = shieldPerLevel[heroStartingLevel];
+
+         function createHero(pos) {
+            var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined]}];
+            hero[4].baseHp = getBaseHp(hero[4].level);
+            hero[6].hp     = hero[4].baseHp;
+            return hero;
+         }
+
          function createMonster(pos,attributes) {
             attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
             return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
          }
+
          function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
 
          function destroying(index) {
@@ -259,10 +267,7 @@ var deathSpeed = 1.0;
 
 function initCharacters() {
    characters = [];
-   var hero = [[15.5,15.5],0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined]}];
-   hero[4].baseHp = getBaseHp(hero[4].level);
-   hero[6].hp     = hero[4].baseHp;
-   characters.push(hero);
+   characters.push(createHero([15.5,15.5]));
    for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
       characters.push(createMonster([i+1,i+1], ATTRIBUTES_OF_ENEMIES[i]));
    }
