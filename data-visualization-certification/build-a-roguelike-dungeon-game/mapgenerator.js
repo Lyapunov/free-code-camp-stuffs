@@ -300,7 +300,12 @@ class MapGenerator {
                var scounter = 0;
                while ( scounter < wpt ) {
                   var rnum = this.getRandomInt(numbers[i]);
-                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  var wlow = helper[i];
+                  var wup = helper[i+1];
+                  if ( scounter == 0 && i == 0 ) {
+                     wup = wlow + Math.floor((wup - wlow)/3);
+                  }
+                  var pos = this.getNthCell(hmap,wlow,wup,rnum);
                   if ( !placedict[pos] ) {
                      placedict[pos] = 1;
                      stuffs.push( createStuff( pos, 2+(i>1) ) ); // sword
