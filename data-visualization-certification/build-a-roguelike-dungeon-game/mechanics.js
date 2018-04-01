@@ -211,18 +211,7 @@ var deathSpeed = 1.0;
             return Math.max(0,magicFunction(characters[i][4].level)-2+(characters[i][4].baseDefense?characters[i][4].baseDefense:0));
          }
          
-         function levelingOneLevelUp(i) {
-            ++characters[i][4].level;
-            characters[i][4].baseHp += heroHpPerLevelIncrease;
-            characters[i][6].hp = characters[i][4].baseHp;
-         }
-
          function levelingUp(i) {
-            if ( characters[i][6].xp !== undefined ) {
-/*               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
-                  levelingOneLevelUp(i);
-               }*/
-            }
          }
 
          function awardXp(i, enemyLevel) {
