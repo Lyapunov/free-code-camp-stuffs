@@ -1,3 +1,15 @@
+if ( process.argv.length != 3 || parseInt(process.argv[2]).toString() !==  process.argv[2] ) {
+   var arg0 = process.argv[0].split('/');
+   var arg0basename = arg0[arg0.length-1];
+   var arg1 = process.argv[1].split('/');
+   var arg1basename = arg1[arg1.length-1];
+
+   console.log('USAGE: '+arg0basename+' '+arg1basename+' <0 (required XPs / levels) | 1-9 (monster killing table)>');
+   console.log('EXAMPLES:');
+   console.log('   '+arg0basename+' '+arg1basename+' 0');
+   console.log('   '+arg0basename+' '+arg1basename+' 5');
+   process.exit(0);
+}
 
 var characters;
 var deathSpeed = 1.0;
@@ -119,7 +131,7 @@ var deathSpeed = 1.0;
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
 
-         var heroStartingLevel = 1;
+         var heroStartingLevel = parseInt(process.argv[2]);
          var heroDefaultWeapon = weaponPerLevel[heroStartingLevel];
          var heroDefaultShield = shieldPerLevel[heroStartingLevel];
 
@@ -324,6 +336,14 @@ function pad(x,size) {
       x += " ";
    }
    return x;
+}
+
+if ( parseInt(process.argv[2]) == 0 ) {
+   console.log("---> Requirements:");
+   for ( var i = 1; i <= 10; ++i ) {
+      console.log('   level '+pad(i.toString(),2)+': '+minimalLevelXp(i)+' xp');
+   }
+   process.exit(0);
 }
 
 initCharacters();
