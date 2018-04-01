@@ -347,7 +347,7 @@ if ( parseInt(process.argv[2]) == 0 ) {
 }
 
 initCharacters();
-console.log('---> Hero level',characters[0][4].level,', hp:',characters[0][6].hp, ', weapon:',(characters[0][6].weapon?characters[0][6].weapon.name:"nothing"), ', shield:',(characters[0][6].weapon?characters[0][6].shield.name:"nothing"));
+console.log('---> Hero level',characters[0][4].level,', hp:',characters[0][6].hp, ', weapon:',(characters[0][6].weapon?characters[0][6].weapon.name:"nothing"), ', shield:',(characters[0][6].shield?characters[0][6].shield.name:"nothing"));
 for ( var i = 0; i < ATTRIBUTES_OF_ENEMIES.length; ++i ) {
    console.log(pad(characters[i+1][4].name,20),pad(characters[i+1][4].level,5),battleStats(0,i+1));
 }
