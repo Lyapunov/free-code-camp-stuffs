@@ -1,2 +1,10 @@
-1. Add cheat mode for the quick map traversal, playing it through requires too much energy.
-2. River: walls should not be blue along the river! Guess something to fix it.
+1. Add cheat mode for the quick map traversal, playing it through requires too much energy. [DONE, patch damage with 4 lines]
+         function damage(attacked, value) {
+            if ( !attacked ) {
+               value = 0;
+            } else {
+               value = 1000;
+            }
+            if ( value <= 0 ) {
+2. River: walls should not be blue along the river! Guess something to fix it. [DONE]
+3. Best weapon & armor in the throne room!
