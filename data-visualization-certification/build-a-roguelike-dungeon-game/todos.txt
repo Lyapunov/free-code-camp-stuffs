@@ -1,0 +1,2 @@
+1. Add cheat mode for the quick map traversal, playing it through requires too much energy.
+2. River: walls should not be blue along the river! Guess something to fix it.
