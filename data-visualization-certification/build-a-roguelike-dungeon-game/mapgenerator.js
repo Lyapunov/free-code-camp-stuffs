@@ -31,6 +31,14 @@ class MapGenerator {
       return px >= x-xrad && px <= x+xrad && py >= y-yrad && py <= y+yrad;
    }
 
+   extendRetval(retval, num) {
+      for ( var y = 0; y < retval.length; ++y ) {
+         for ( var i = 0; i < num; ++i ) {
+            retval[y].push(0);
+         }
+      }
+   }
+
    generateBasicRoomStructure(sizeY,sizeX,world) {
       var retval = [];
       for ( var y = 0; y < sizeY; ++y ) {
@@ -326,6 +334,7 @@ class MapGenerator {
                }
             }
          }
+         this.extendRetval(retval, 3);
          return [retval,enemies,stuffs];
       } else {
          return [retval,undefined,undefined];
