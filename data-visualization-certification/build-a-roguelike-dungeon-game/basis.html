@@ -159,8 +159,8 @@
                         [0,0,4,4,4,1,1,1,0,0,0,1,1,1,1,1,0,0,0,1,0,1,1,1,1,0,0],
                         [0,0,1,1,4,1,1,1,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0],
                         [0,0,1,1,4,4,4,1,0,0,0,1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0],
-                        [0,0,1,1,1,1,4,4,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0],
+                        [0,0,1,1,1,1,4,4,0,0,0,0,1,1,1,0,0,1,0,1,1,1,1,1,1,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,1,0,1,1,1,1,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
@@ -520,6 +520,8 @@
                dist += jump;
                sx = sx + dirX * jump;
                sy = sy + dirY * jump;
+               var pcellx = cellx;
+               var pcelly = celly;
                if ( Math.abs(sx) < err && dirX < 0) {
                   sx = 1;
                   cellx -= 1;
@@ -537,6 +539,12 @@
                   sy = 0;
                   celly += 1;
                   arrived = 4;
+               }
+               if ( pcellx != cellx && pcelly != celly ) {
+                  if ( !getMapCell( celly, pcellx ) && !getMapCell( pcelly, cellx ) ) {
+                     [celly,cellx] = [pcelly,pcellx];
+                     break;
+                  }
                }
             }
 
@@ -853,7 +861,7 @@
          function levelingOneLevelUp(i) {
             healSfx();
             ++characters[i][4].level;
-            characters[i][4].baseHp += heroHpPerLevelIncrease;
+            characters[i][4].baseHp = getBaseHp(characters[i][4].level);
             characters[i][6].hp = characters[i][4].baseHp;
          }
 
