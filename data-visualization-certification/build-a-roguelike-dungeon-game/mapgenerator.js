@@ -149,6 +149,7 @@ class MapGenerator {
 
       rooms.sort(function (rooma,roomb) {return (rooma[0] > roomb[0] || rooma[0] == roomb[0] && rooma[1] > roomb[1])
                                                -(roomb[0] > rooma[0] || roomb[0] == rooma[0] && roomb[1] > rooma[1]) });
+      var throneRoom = rooms.length - 1;
 
       var tset = [0];
       var tdic = {0:1};
@@ -191,7 +192,6 @@ class MapGenerator {
             retval[rooms[0][0]][rooms[0][1]-rooms[0][3]] = 6;
          }
 
-         var throneRoom = rooms.length - 1 ;
          for ( var i = 1; i < rooms.length; ++i ) {
             if ( i == throneRoom ) {
                continue;
@@ -335,6 +335,42 @@ class MapGenerator {
             }
          }
          this.extendRetval(retval, 3);
+
+         {
+            // river
+            var [ty,tx] = rooms[throneRoom];
+            --tx;
+            while ( retval[ty][tx] == world ) {
+              --tx;
+            }
+            ++tx;
+            var tx2 = tx-1;
+            while ( tx2 > 0 && retval[ty][tx2] == 0 ) {
+              --tx2;
+            }
+            if ( tx2 > 0 ) {
+               tx = tx2;
+               while ( tx2 > 0 && retval[ty][tx2] != 0 ) {
+                 --tx2;
+               }
+               ++tx2;
+               if ( tx2 > 0 ) {
+                  tx = tx2;
+               }
+            }
+            retval[ty][tx] = 4;
+            var s = 0;
+            for ( var x = tx; x < retval[ty].length-2; ++x ) {
+               retval[ty-s][x] = 4;
+               retval[ty-s][x+1] = 4;
+               ++s;
+            }
+            while (ty-s > 1) {
+               retval[ty-s][x] = 4;
+               ++s;
+            }
+         }
+
          return [retval,enemies,stuffs];
       } else {
          return [retval,undefined,undefined];
@@ -367,6 +403,8 @@ class MapGenerator {
             if ( map[y][x] == 0 ) {
                row += "#";
             } else if ( map[y][x] == 5 ) {
+               row += "=";
+            } else if ( map[y][x] == 4 ) {
                row += "~";
             } else if ( map[y][x] == 17 ) {
                row += "h";
