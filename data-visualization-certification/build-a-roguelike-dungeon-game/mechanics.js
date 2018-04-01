@@ -25,7 +25,7 @@ var deathSpeed = 1.0;
          var aiCounter = 0;
          var deathSpeed = 1/25;
          var ANIMATION;
-         var monsterKillingPerLevelFactor = 20;
+         var monsterKillingPerLevelFactor = 30;
          var heroBaseHp = 20;
          var heroHpPerLevelIncrease = 5;
 
