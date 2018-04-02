@@ -594,11 +594,11 @@
                if ( i !== undefined ) {
                   var attribs = stuffs[i][1];
                   if ( stuffs[i][2] !== undefined && stuffs[i][2].exists ) {
-                     var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-                     drawRectangle(Math.round(0.5*tile.ps[1].x+0.5*tile.ps[3].x-attribs.width/2),
-                                   Math.round(tile.ps[1].y-attribs.height/2),
-                                   attribs.width,
-                                   attribs.height,
+                     var [px,py] = getTileCenter(-y+oy,x-ox);
+                     drawRectangle(Math.round(px-scaledValue(attribs.width/2)),
+                                   Math.round(py-scaledValue(attribs.height/2)),
+                                   scaledValue(attribs.width),
+                                   scaledValue(attribs.height),
                                    attribs.color);
                   }
                }
