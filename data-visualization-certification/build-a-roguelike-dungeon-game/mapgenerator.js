@@ -273,7 +273,7 @@ class MapGenerator {
                   var pos = this.getNthCell(hmap,subhelper[order],subhelper[order+2],rnum);
                   if ( pos && !placedict[pos] ) {
                      placedict[pos] = 1;
-                     enemies.push( createEnemy( pos, (i*3+order) ) );
+                     enemies.push( createEnemy( pos, (i*3+order+9*(world-1)) ) );
                      ++ecounter;
                   }
                }
@@ -336,8 +336,9 @@ class MapGenerator {
          }
          this.extendRetval(retval, 3);
 
-         {
+         if ( world < 3 ) {
             // river
+            var riverColor = 3 + world;
             var [ty,tx] = rooms[throneRoom];
             --tx;
             while ( retval[ty][tx] == world ) {
@@ -358,15 +359,15 @@ class MapGenerator {
                   tx = tx2;
                }
             }
-            retval[ty][tx] = 4;
+            retval[ty][tx] = riverColor;
             var s = 0;
             for ( var x = tx; x < retval[ty].length-2; ++x ) {
-               retval[ty-s][x] = 4;
-               retval[ty-s][x+1] = 4;
+               retval[ty-s][x] = riverColor;
+               retval[ty-s][x+1] = riverColor;
                ++s;
             }
             while (ty-s > 1) {
-               retval[ty-s][x] = 4;
+               retval[ty-s][x] = riverColor;
                ++s;
             }
          }
@@ -422,7 +423,7 @@ class MapGenerator {
 var generator = new MapGenerator();
 
 function enemyGenerator(pos, code) {
-   return [pos,(code+1).toString()];
+   return [pos,((code%9)+1).toString()];
 }
 
 function stuffGenerator(pos, code) {
