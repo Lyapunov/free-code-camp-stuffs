@@ -8,3 +8,4 @@
             if ( value <= 0 ) {
 2. River: walls should not be blue along the river! Guess something to fix it. [DONE]
 3. Best weapon & armor in the throne room 1,2!
+4. Fix a bug with lineWidth, snowman!
