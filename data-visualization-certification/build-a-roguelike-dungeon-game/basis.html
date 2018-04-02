@@ -873,6 +873,12 @@
             console.log(capitalize(text)+".");
          }
 
+         function getWorldName() {
+            if ( characters[0][0][1] < 73 ) return "catacombs";
+            if ( characters[0][0][1] < 145 ) return "iceworld";
+            return "hellworld";
+         } 
+
          function getCharacterHoldedObjectAttribute(i,holder,attribute) {
             return (characters[i][6][holder]||ATTRIBUTES_BAREFIST)[attribute];
          }
@@ -1166,6 +1172,7 @@
                if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
                if ( event.key == "s" ) { sendMessage("HP is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", XP is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level requires "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
                if ( event.key == "p" ) { sendMessage("Position is "+characters[0][0].toString()); }
+               if ( event.key == "w" ) { sendMessage("World is "+getWorldName()); }
             });
          })();
       </script>
