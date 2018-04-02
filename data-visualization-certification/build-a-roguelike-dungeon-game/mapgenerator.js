@@ -256,7 +256,7 @@ class MapGenerator {
          }
       }
 
-      console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
+      // console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
 
       if ( createStuff !== undefined && createEnemy !== undefined ) {
          var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,5]);
