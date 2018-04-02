@@ -145,11 +145,11 @@
          var levelMap= [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
-                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
+                        [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,15,9,3,3,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
                         [0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0],
                         [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,3,3,3,3,3,3,0,0],
-                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,2,2,2,2,0,1,0,0,0,0,0,0,0],
+                        [0,0,1,1,1,1,1,1,1,1,1,1,1,0,14,8,2,2,0,1,0,0,0,0,0,0,0],
                         [0,0,6,1,13,1,7,1,1,1,1,1,1,0,2,2,2,2,2,1,0,1,1,1,1,1,0],
                         [0,0,1,1,13,1,7,1,1,1,1,1,1,0,0,0,0,0,0,1,0,1,17,5,5,5,0],
                         [0,0,1,1,13,1,7,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0],
@@ -294,7 +294,7 @@
                            createMonster([6.5 ,10.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
                            createMonster([7.5 ,11.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
                            createMonster([7.5 ,12.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
-                           createMonster([4.5 ,20.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="crazy giant")[0]),
+                           createMonster([4.5 ,20.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="devilguy")[0]),
                            createMonster([22.5, 4.5],ATTRIBUTES_OF_ENEMIES.filter(x=>x.name=="undead ogre")[0]),
                           ];
 
@@ -335,6 +335,17 @@
             context.beginPath();
             context.rect(boxX, boxY, boxSize1, boxSize2);
             context.fillStyle = boxColor;
+            context.fill();
+         }
+
+         function drawCircle( pnt, radius, strokeColor, fillColor ) {
+            context.strokeStyle = strokeColor;
+            context.fillStyle   = fillColor;
+            context.beginPath();
+            context.arc( pnt.x, pnt.y, radius, 0, 2 * Math.PI, false );
+            context.closePath();
+            context.lineWidth = 1;
+            context.stroke();
             context.fill();
          }
 
@@ -450,9 +461,13 @@
             context.stroke();
          }
 
+         function getTileCenter(y,x) {
+            return [(x + y) * Math.sqrt(3) * tileSize + screenWidth / 2,
+                    (x - y) * tileSize + screenHeight / 2];
+         }
+
          function getFloorTile(y,x,obi) {
-            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var py = (x - y) * tileSize + screenHeight / 2;
+            var [px,py] = getTileCenter(y,x);
             obi.ps = [{x:px,y:py-tileSize},{x:px + Math.sqrt(3) * tileSize,y:py},{x:px,y:py+tileSize},{x:px - Math.sqrt(3) * tileSize,y:py}];
             return obi;
          }
@@ -570,6 +585,7 @@
 
             var mapval = getMapCell(cy+y,cx+x);
             var speciality = Math.floor((mapval-1) / wallColors.length);
+            var sworld = (mapval-1) % wallColors.length;
 
             {
                var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
@@ -586,14 +602,29 @@
                }
             }
 
-            // table
             if ( speciality == 1 ) {
-               var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
-               var tableColor = SPECIAL_COLORS["TABLEBROWN"];
-               drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
-               drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
-               drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
-               drawFloor(tile,tableColor);
+               if ( sworld == 1 ) {
+                  // christmas tree
+                  var [px,py] = getTileCenter(-y+oy,x-ox);
+                  context.fillStyle = SPECIAL_COLORS.TABLEBROWN;
+                  contextPathForObjectDraw({ps:[{x:px-3,y:py},{x:px+3,y:py},{x:px+3,y:py-10},{x:px-3,y:py-10}]});
+                  context.fill();
+                  context.fillStyle = 'green';
+                  contextPathForObjectDraw({ps:[{x:px-20,y:py-10},{x:px+20,y:py-10},{x:px,y:py-70}]});
+                  context.fill();
+                  drawCircle({x:px+8,y:py-20},2,'yellow','yellow');
+                  drawCircle({x:px-5,y:py-30},2,'yellow','yellow');
+                  drawCircle({x:px+5,y:py-35},2,'magenta','magenta');
+                  drawCircle({x:px-1,y:py-43},2,'yellow','yellow');
+               } else {
+                  // table
+                  var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
+                  var tableColor = SPECIAL_COLORS.TABLEBROWN;
+                  drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
+                  drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
+                  drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
+                  drawFloor(tile,tableColor);
+               }
             }
 
             // chair
