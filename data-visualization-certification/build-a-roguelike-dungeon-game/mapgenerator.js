@@ -39,20 +39,23 @@ class MapGenerator {
       }
    }
 
-   generateBasicRoomStructure(sizeY,sizeX,world) {
+   generateBasicRoomStructure(sizeY,sizeX,world,lshift) {
       var retval = [];
       for ( var y = 0; y < sizeY; ++y ) {
          var row = [];
-         for ( var x = 0; x < sizeX; ++x ) {
+         for ( var x = 0; x < sizeX+lshift; ++x ) {
             row.push(0);
          }
          retval.push(row);
       }
       var rooms = [];
-      rooms.push([2,2,1,1]);
+      rooms.push([2,2+lshift,1,1]);
       var sarea = this.carveRoom(retval,world,...rooms[0]);
       for ( var i = 0; i < 1000; ++i ) {
-         var room = [this.getRandomInt(sizeY),this.getRandomInt(sizeX),this.getRandomInt(5)+1,this.getRandomInt(5)+1];
+         var room = [this.getRandomInt(sizeY),this.getRandomInt(sizeX)+lshift,this.getRandomInt(5)+1,this.getRandomInt(5)+1];
+         if ( room[1] - lshift <= room[3] ) {
+            continue;
+         }
          var aarea = this.carveRoom(retval,world,...room);
          if ( aarea ) {
             sarea += aarea;
@@ -133,13 +136,16 @@ class MapGenerator {
       return false;
    }
 
-   generateMap(sizeY,sizeX,world,ept,spt,wpt,createEnemy,createStuff) {
+   generateMap(sizeY,sizeX,world,ept,spt,wpt,createEnemy,createStuff,lshift) {
       var retval = [];
       var rooms = [];
       var sarea = 0;
+      if ( !lshift ) {
+         lshift = 0;
+      }
 
       for ( var i = 0; i < 10; ++i ) {
-         var [nretval, nrooms, nsarea] = this.generateBasicRoomStructure(sizeY,sizeX,world);
+         var [nretval, nrooms, nsarea] = this.generateBasicRoomStructure(sizeY,sizeX,world,lshift);
          if ( nsarea > sarea ) {
             retval = nretval;
             rooms = nrooms;
