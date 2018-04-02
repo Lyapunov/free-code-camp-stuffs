@@ -400,6 +400,32 @@ class MapGenerator {
       }
    }
 
+   mergeMaps(map1,map2) {
+      var retval = [];
+      for ( var y = 0; y < Math.max(map1.length,map2.length); ++y ) {
+         var width1 = ( y < map1.length ? map1[y].length : 0 );
+         var width2 = ( y < map2.length ? map2[y].length : 0 );
+         var row = [];
+         for ( var x = 0; x < Math.max(width1,width2); ++x ) {
+            var val1 = this.getMapCell(map1,y,x);
+            var val2 = this.getMapCell(map2,y,x);
+            row.push((val1 || val2));
+         }
+         retval.push(row);
+      }
+      return retval;
+   }
+
+   generateThreeInOneMap(sizeY,sizeX,ept,spt,wpt,enemyGenerator,stuffGenerator) {
+      var [map1,enemies1,stuffs1] = generator.generateMap(sizeY,sizeX,1,ept,spt,wpt,enemyGenerator,stuffGenerator);
+      var [map2,enemies2,stuffs2] = generator.generateMap(sizeY,sizeX,2,ept,spt,wpt,enemyGenerator,stuffGenerator,sizeX+2);
+      var [map3,enemies3,stuffs3] = generator.generateMap(sizeY,sizeX,3,ept,spt,wpt,enemyGenerator,stuffGenerator,2*sizeX+4);
+      var fullMap = this.mergeMaps(this.mergeMaps(map1,map2),map3);
+      fullMap[2][sizeX+2]   = 4;
+      fullMap[2][2*sizeX+4] = 5;
+      return [fullMap,enemies1.concat(enemies2).concat(enemies3),stuffs1.concat(stuffs2).concat(stuffs3)];
+   }
+
    drawPack(pack) {
       var [map,enemies,stuffs] = pack;
       var retval = "";
@@ -466,5 +492,8 @@ function stuffGenerator(pos, code) {
 
 //generateMap(300,100,1);
 //var pack = generateMap(100,20,1);
-var pack = generator.generateMap(210,70,1,45,30,4,enemyGenerator,stuffGenerator);
+//var pack = generator.generateMap(210,70,1,45,30,4,enemyGenerator,stuffGenerator);
+//console.log(generator.drawPack(pack));
+
+var pack = generator.generateThreeInOneMap(210,70,45,30,4,enemyGenerator,stuffGenerator);
 console.log(generator.drawPack(pack));
