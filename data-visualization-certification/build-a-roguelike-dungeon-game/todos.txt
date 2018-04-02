@@ -10,4 +10,4 @@
 3. Best weapon & armor in the throne room 1,2! [NEVER]
 4. Fix a bug with lineWidth, snowman! [DONE]
 5. Changing the name minor health potion to health potion. [DONE]
-6. Adding naming the world (catacombs, iceworld, hellworld). Iceword is x >= 73.
+6. Adding naming the world (catacombs, iceworld, hellworld). Iceworld is x >= 73. Hellworld >= 145. [DONE]
