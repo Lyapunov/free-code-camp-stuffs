@@ -574,6 +574,8 @@
             tiles.push(tile);
          }
 
+         function scaledValue(value) { return Math.round((value/35)*tileSize); }
+
          function drawCell(y,x,cy,cx,oy,ox,characterIndexer,stuffIndexer) {
             var color = wallColors[ (getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
             if ( !getMapCell(cy+y,cx+x-1) ) {
@@ -607,22 +609,27 @@
                   // christmas tree
                   var [px,py] = getTileCenter(-y+oy,x-ox);
                   context.fillStyle = SPECIAL_COLORS.TABLEBROWN;
-                  contextPathForObjectDraw({ps:[{x:px-3,y:py},{x:px+3,y:py},{x:px+3,y:py-10},{x:px-3,y:py-10}]});
+                  contextPathForObjectDraw({ps:[{x:px-scaledValue(3),y:py},
+                                                {x:px+scaledValue(3),y:py},
+                                                {x:px+scaledValue(3),y:py-scaledValue(10)},
+                                                {x:px-scaledValue(3),y:py-scaledValue(10)}]});
                   context.fill();
                   context.fillStyle = 'green';
-                  contextPathForObjectDraw({ps:[{x:px-20,y:py-10},{x:px+20,y:py-10},{x:px,y:py-70}]});
+                  contextPathForObjectDraw({ps:[{x:px-scaledValue(20),y:py-scaledValue(10)},
+                                                {x:px+scaledValue(20),y:py-scaledValue(10)},
+                                                {x:px                ,y:py-scaledValue(70)}]});
                   context.fill();
-                  drawCircle({x:px+8,y:py-20},2,'yellow','yellow');
-                  drawCircle({x:px-5,y:py-30},2,'yellow','yellow');
-                  drawCircle({x:px+5,y:py-35},2,'magenta','magenta');
-                  drawCircle({x:px-1,y:py-43},2,'yellow','yellow');
+                  drawCircle({x:px+scaledValue(8),y:py-scaledValue(20)},scaledValue(2),'yellow','yellow');
+                  drawCircle({x:px-scaledValue(5),y:py-scaledValue(30)},scaledValue(2),'yellow','yellow');
+                  drawCircle({x:px+scaledValue(5),y:py-scaledValue(35)},scaledValue(2),'magenta','magenta');
+                  drawCircle({x:px-scaledValue(1),y:py-scaledValue(43)},scaledValue(2),'yellow','yellow');
                } else {
                   // table
                   var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
                   var tableColor = !sworld ? SPECIAL_COLORS.TABLEBROWN : SPECIAL_COLORS.STEEL;
-                  drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
-                  drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
-                  drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
+                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y,               scaledValue(5),scaledValue(35),tableColor);
+                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(35),tableColor);
+                  drawRectangle(tile.ps[3].x,               tile.ps[3].y,               scaledValue(5),scaledValue(35),tableColor);
                   drawFloor(tile,tableColor);
                }
             }
@@ -631,24 +638,24 @@
                if ( sworld == 1 ) {
                   // snowman
                   var [px,py] = getTileCenter(-y+oy,x-ox);
-                  drawCircle({x:px,y:py-20},20,'black','white');
-                  drawCircle({x:px,y:py-37},15,'black','white');
-                  drawCircle({x:px,y:py-53},10,'black','white');
-                  drawCircle({x:px-4,y:py-55},1,'black','black');
-                  drawCircle({x:px+4,y:py-55},1,'black','black');
-                  drawCircle({x:px,y:py-28},1,'black','black');
-                  drawCircle({x:px,y:py-33},1,'black','black');
-                  drawCircle({x:px,y:py-38},1,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(20)},scaledValue(20),'black','white');
+                  drawCircle({x:px,               y:py-scaledValue(37)},scaledValue(15),'black','white');
+                  drawCircle({x:px,               y:py-scaledValue(53)},scaledValue(10),'black','white');
+                  drawCircle({x:px-scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px+scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(28)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(33)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(38)},scaledValue(1) ,'black','black');
                } else {
                   // chair
                   var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
                   var chairColor = sworld == 2 ? 'silver' : SPECIAL_COLORS.CHAIRBROWN; 
-                  drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize/2,chairColor);
-                  drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize/2,chairColor);
-                  drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize/2,chairColor);
+                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y               ,scaledValue(5),scaledValue(18),chairColor);
+                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(18),chairColor);
+                  drawRectangle(tile.ps[3].x               ,tile.ps[3].y               ,scaledValue(5),scaledValue(18),chairColor);
                   drawFloor(tile,chairColor);
                   
-                  drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-tileSize},{x:tile.ps[0].x,y:tile.ps[0].y-tileSize}]}, chairColor)
+                  drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-scaledValue(35)},{x:tile.ps[0].x,y:tile.ps[0].y-scaledValue(35)}]}, chairColor);
                }
             }
 
