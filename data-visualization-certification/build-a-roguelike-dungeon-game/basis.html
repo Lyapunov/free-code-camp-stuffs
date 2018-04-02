@@ -210,6 +210,10 @@
             };
          }
 
+         function winning() {
+            sendMessage("hero won the game");
+         }
+
          var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"minor health potion",color:"red"                ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(0.25),effectText:"hero heals"};
          var ATTRIBUTES_HEALTH_POTION       = {name:"health potion",      color:"red"                ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(0.33),effectText:"hero heals"};
          var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"major health potion",color:"red"                ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(0.5),effectText:"hero heals"};
@@ -263,7 +267,7 @@
              {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
              {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
 
-             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD},
+             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD,deathProcedure:winning},
          ];
 
          function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
@@ -846,6 +850,9 @@
 
          function destroying(index) {
             characters[index][6].exists -= deathSpeed;
+            if ( isCharacterFullyDead(index) && characters[index][4].deathProcedure ) {
+               characters[index][4].deathProcedure();
+            }
          }
 
          function kill(index) {
@@ -1153,7 +1160,7 @@
             addEventListener('keydown', (event)=>{
                if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
                if ( event.key == "s" ) { sendMessage("HP is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", XP is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level requires "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
-               if ( event.key == "x" ) { awardXp(0,characters[0][4].level); }
+               if ( event.key == "p" ) { sendMessage("Position is "+characters[0][0].toString()); }
             });
          })();
       </script>
