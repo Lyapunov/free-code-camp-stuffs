@@ -372,6 +372,22 @@ class MapGenerator {
             }
          }
 
+         if ( world == 3 ) {
+            // Diabolito
+            var [ty,tx,ry,rx] = rooms[throneRoom];
+            var xit = false;
+            for ( var y = ty-ry; y <= ty+ry && !xit; ++y ) {
+               for ( var x = tx-rx; x <= tx+rx && !xit; ++x ) {
+                  var pos = [y,x];
+                  if ( !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     enemies.push( createEnemy( pos, 27 ) );
+                     xit = true;
+                  }
+               }
+            }
+         }
+
          return [retval,enemies,stuffs];
       } else {
          return [retval,undefined,undefined];
@@ -423,7 +439,11 @@ class MapGenerator {
 var generator = new MapGenerator();
 
 function enemyGenerator(pos, code) {
-   return [pos,((code%9)+1).toString()];
+   if ( code < 27 ) {
+      return [pos,((code%9)+1).toString()];
+   } else {
+      return [pos,"D"];
+   }
 }
 
 function stuffGenerator(pos, code) {
