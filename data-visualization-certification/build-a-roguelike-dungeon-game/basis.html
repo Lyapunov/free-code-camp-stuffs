@@ -344,7 +344,7 @@
             context.beginPath();
             context.arc( pnt.x, pnt.y, radius, 0, 2 * Math.PI, false );
             context.closePath();
-            context.lineWidth = 1;
+            context.lineWidth = 2;
             context.stroke();
             context.fill();
          }
@@ -619,7 +619,7 @@
                } else {
                   // table
                   var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
-                  var tableColor = SPECIAL_COLORS.TABLEBROWN;
+                  var tableColor = !sworld ? SPECIAL_COLORS.TABLEBROWN : SPECIAL_COLORS.STEEL;
                   drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize,tableColor);
                   drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize,tableColor);
                   drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize,tableColor);
@@ -627,16 +627,29 @@
                }
             }
 
-            // chair
             if ( speciality == 2 ) {
-               var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
-               var tableColor = SPECIAL_COLORS["CHAIRBROWN"];
-               drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize/2,tableColor);
-               drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize/2,tableColor);
-               drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize/2,tableColor);
-               drawFloor(tile,tableColor);
-               
-               drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-tileSize},{x:tile.ps[0].x,y:tile.ps[0].y-tileSize}]}, tableColor)
+               if ( sworld == 1 ) {
+                  // snowman
+                  var [px,py] = getTileCenter(-y+oy,x-ox);
+                  drawCircle({x:px,y:py-20},20,'black','white');
+                  drawCircle({x:px,y:py-37},15,'black','white');
+                  drawCircle({x:px,y:py-53},10,'black','white');
+                  drawCircle({x:px-4,y:py-55},1,'black','black');
+                  drawCircle({x:px+4,y:py-55},1,'black','black');
+                  drawCircle({x:px,y:py-28},1,'black','black');
+                  drawCircle({x:px,y:py-33},1,'black','black');
+                  drawCircle({x:px,y:py-38},1,'black','black');
+               } else {
+                  // chair
+                  var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
+                  var chairColor = sworld == 2 ? 'silver' : SPECIAL_COLORS.CHAIRBROWN; 
+                  drawRectangle(tile.ps[1].x-5,tile.ps[1].y,Math.floor(tileSize/7),tileSize/2,chairColor);
+                  drawRectangle(tile.ps[2].x-2,tile.ps[2].y-2,Math.floor(tileSize/7),tileSize/2,chairColor);
+                  drawRectangle(tile.ps[3].x,  tile.ps[3].y,Math.floor(tileSize/7),tileSize/2,chairColor);
+                  drawFloor(tile,chairColor);
+                  
+                  drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-tileSize},{x:tile.ps[0].x,y:tile.ps[0].y-tileSize}]}, chairColor)
+               }
             }
 
             var i = characterIndexer[getIndexKey([cy+y,cx+x])];
