@@ -771,7 +771,7 @@ function stuffGenerator(pos, code) {
    }
 }
 
-         var [levelMap,characters,stuffs] = generator.generateThreeInOneMap(210,70,45,30,4,enemyGenerator,stuffGenerator);
+         var [gameMap,characters,stuffs] = generator.generateThreeInOneMap(210,70,45,30,4,enemyGenerator,stuffGenerator);
          characters[0] = createHero([2.5,2.5]);
 
          var characterBuckets;
@@ -972,7 +972,7 @@ function stuffGenerator(pos, code) {
          }
 
          function getMapCell(y,x) {
-            return ( y < levelMap.length && y >= 0 && x < levelMap[y].length && x >= 0 ? levelMap[y][x] : 0 );
+            return ( y < gameMap.length && y >= 0 && x < gameMap[y].length && x >= 0 ? gameMap[y][x] : 0 );
          }
 
          function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
