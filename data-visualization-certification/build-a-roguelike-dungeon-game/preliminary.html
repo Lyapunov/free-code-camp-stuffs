@@ -1,0 +1,1633 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <style>
+         body {
+            margin : 0px;
+            padding: 0px;
+            cursor : none;
+         }
+      </style>
+   </head>
+   <body>
+   	<canvas id="canvas" width="500" height="500">
+      Your browser doesn't support html5 canvas.
+      </canvas>
+      <script>
+         var mainItem     = document.getElementById('canvas');
+         var context      = mainItem.getContext('2d');
+
+         var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
+
+         var screenWidth  = mainItem.width  = window.innerWidth  - 20;
+         var screenHeight = mainItem.height = window.innerHeight - 20;
+         var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
+         var tileSize = 35;
+         var errorTolerance = 0.01;
+         var mapRadiusX = screenWidth/2/tileSize/Math.sqrt(3);
+         var mapRadiusY = screenHeight/2/tileSize;
+         var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
+
+         var fps = 25;
+         var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
+         var walkSfxFrequency = 10;
+         var walkSfxCounter = 10;
+         var aiCounter = 0;
+         var deathSpeed = 1/25;
+         var ANIMATION;
+         var monsterKillingPerLevelFactor = 30;
+         var heroBaseHp = 20;
+         var heroHpPerLevelIncrease = 5;
+
+         var curX = 0;
+         var curY = 0;
+         var currentTarget = 0;
+
+         //================================= AVATAR ANIMATION BEGINS =================================
+
+         function fromChar(chr,shift) {
+            var retval = chr.charCodeAt(0);
+            if ( chr == "{" ) return 39-shift;
+            if ( chr == "}" ) return 92-shift;
+            return retval -= shift;
+         }
+
+         function stringDecoder(period,shift,code) {
+            var [ptr1,counter,retval,row] = [0,0,[],[]];
+            while (ptr1 < code.length) {
+               var tuple = [fromChar(code[ptr1],shift),fromChar(code[ptr1+1],shift),5];
+               if ( code[ptr1+2] == '|' ) tuple[2] = 12;
+               if ( code[ptr1+2] == '~' ) tuple[2] = 15;
+               ptr1+=2+(tuple[2]!=5);
+               row.push(tuple);
+               ++counter;
+               if ( counter == period ) {
+                  retval.push(row);
+                  row = [];
+                  counter = 0;
+               }
+            }
+            return retval;
+         }
+
+         var walkAudio = new Audio( "data:audio/ogg;base64,T2dnUwACAAAAAAAAAAAER3N7AAAAAKnicT0BHgF2b3JiaXMAAAAAAUAfAAAAAAAAsDYAAAAAAACZAU9nZ1MAAAAAAAAAAAAABEdzewEAAACclrl8Czz///////////+1A3ZvcmJpcywAAABYaXBoLk9yZyBsaWJWb3JiaXMgSSAyMDE1MDEwNSAo4puE4puE4puE4puEKQAAAAABBXZvcmJpcxJCQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBADIAAAYhiGH3knMkFOQSSYpVcw5CKH1DjnlFGTSUsaYYoxRzpBTDDEFMYbQKYUQ1E45pQwiCENInWTOIEs96OBi5zgQGrIiAIgCAACMQYwhxpBzDEoGIXKOScggRM45KZ2UTEoorbSWSQktldYi55yUTkompbQWUsuklNZCKwUAAAQ4AAAEWAiFhqwIAKIAABCDkFJIKcSUYk4xh5RSjinHkFLMOcWYcowx6CBUzDHIHIRIKcUYc0455iBkDCrmHIQMMgEAAAEOAAABFkKhISsCgDgBAIMkaZqlaaJoaZooeqaoqqIoqqrleabpmaaqeqKpqqaquq6pqq5seZ5peqaoqp4pqqqpqq5rqqrriqpqy6ar2rbpqrbsyrJuu7Ks256qyrapurJuqq5tu7Js664s27rkearqmabreqbpuqrr2rLqurLtmabriqor26bryrLryratyrKua6bpuqKr2q6purLtyq5tu7Ks+6br6rbqyrquyrLu27au+7KtC7vourauyq6uq7Ks67It67Zs20LJ81TVM03X9UzTdVXXtW3VdW1bM03XNV1XlkXVdWXVlXVddWVb90zTdU1XlWXTVWVZlWXddmVXl0XXtW1Vln1ddWVfl23d92VZ133TdXVblWXbV2VZ92Vd94VZt33dU1VbN11X103X1X1b131htm3fF11X11XZ1oVVlnXf1n1lmHWdMLqurqu27OuqLOu+ruvGMOu6MKy6bfyurQvDq+vGseu+rty+j2rbvvDqtjG8um4cu7Abv+37xrGpqm2brqvrpivrumzrvm/runGMrqvrqiz7uurKvm/ruvDrvi8Mo+vquirLurDasq/Lui4Mu64bw2rbwu7aunDMsi4Mt+8rx68LQ9W2heHVdaOr28ZvC8PSN3a+AACAAQcAgAATykChISsCgDgBAAYhCBVjECrGIIQQUgohpFQxBiFjDkrGHJQQSkkhlNIqxiBkjknIHJMQSmiplNBKKKWlUEpLoZTWUmotptRaDKG0FEpprZTSWmopttRSbBVjEDLnpGSOSSiltFZKaSlzTErGoKQOQiqlpNJKSa1lzknJoKPSOUippNJSSam1UEproZTWSkqxpdJKba3FGkppLaTSWkmptdRSba21WiPGIGSMQcmck1JKSamU0lrmnJQOOiqZg5JKKamVklKsmJPSQSglg4xKSaW1kkoroZTWSkqxhVJaa63VmFJLNZSSWkmpxVBKa621GlMrNYVQUgultBZKaa21VmtqLbZQQmuhpBZLKjG1FmNtrcUYSmmtpBJbKanFFluNrbVYU0s1lpJibK3V2EotOdZaa0ot1tJSjK21mFtMucVYaw0ltBZKaa2U0lpKrcXWWq2hlNZKKrGVklpsrdXYWow1lNJiKSm1kEpsrbVYW2w1ppZibLHVWFKLMcZYc0u11ZRai621WEsrNcYYa2415VIAAMCAAwBAgAlloNCQlQBAFAAAYAxjjEFoFHLMOSmNUs45JyVzDkIIKWXOQQghpc45CKW01DkHoZSUQikppRRbKCWl1losAACgwAEAIMAGTYnFAQoNWQkARAEAIMYoxRiExiClGIPQGKMUYxAqpRhzDkKlFGPOQcgYc85BKRljzkEnJYQQQimlhBBCKKWUAgAAChwAAAJs0JRYHKDQkBUBQBQAAGAMYgwxhiB0UjopEYRMSielkRJaCylllkqKJcbMWomtxNhICa2F1jJrJcbSYkatxFhiKgAA7MABAOzAQig0ZCUAkAcAQBijFGPOOWcQYsw5CCE0CDHmHIQQKsaccw5CCBVjzjkHIYTOOecghBBC55xzEEIIoYMQQgillNJBCCGEUkrpIIQQQimldBBCCKGUUgoAACpwAAAIsFFkc4KRoEJDVgIAeQAAgDFKOSclpUYpxiCkFFujFGMQUmqtYgxCSq3FWDEGIaXWYuwgpNRajLV2EFJqLcZaQ0qtxVhrziGl1mKsNdfUWoy15tx7ai3GWnPOuQAA3AUHALADG0U2JxgJKjRkJQCQBwBAIKQUY4w5h5RijDHnnENKMcaYc84pxhhzzjnnFGOMOeecc4wx55xzzjnGmHPOOeecc84556CDkDnnnHPQQeicc845CCF0zjnnHIQQCgAAKnAAAAiwUWRzgpGgQkNWAgDhAACAMZRSSimllFJKqKOUUkoppZRSAiGllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimVUkoppZRSSimllFJKKaUAIN8KBwD/BxtnWEk6KxwNLjRkJQAQDgAAGMMYhIw5JyWlhjEIpXROSkklNYxBKKVzElJKKYPQWmqlpNJSShmElGILIZWUWgqltFZrKam1lFIoKcUaS0qppdYy5ySkklpLrbaYOQelpNZaaq3FEEJKsbXWUmuxdVJSSa211lptLaSUWmstxtZibCWlllprqcXWWkyptRZbSy3G1mJLrcXYYosxxhoLAOBucACASLBxhpWks8LR4EJDVgIAIQEABDJKOeecgxBCCCFSijHnoIMQQgghREox5pyDEEIIIYSMMecghBBCCKGUkDHmHIQQQgghhFI65yCEUEoJpZRSSucchBBCCKWUUkoJIYQQQiillFJKKSGEEEoppZRSSiklhBBCKKWUUkoppYQQQiillFJKKaWUEEIopZRSSimllBJCCKGUUkoppZRSQgillFJKKaWUUkooIYRSSimllFJKCSWUUkoppZRSSikhlFJKKaWUUkoppQAAgAMHAIAAI+gko8oibDThwgMQAAAAAgACTACBAYKCUQgChBEIAAAAAAAIAPgAAEgKgIiIaOYMDhASFBYYGhweICIkAAAAAAAAAAAAAAAABE9nZ1MABGwMAAAAAAAABEdzewIAAAAvJcoWDkVCR0k7ODk6PUY/OTkvjhfntxSLIsUAvkvWMq7pu5aVlKh8M6cdc9exWbs/69iOKgiEbB/bON+Er5kRtZRVq9oiIVWC0X+YRmlTMfQS01PxHyYAjhu3H4paJmBwbgrLENRwk9QhETtpxA0WeoZfJzWMB0XUq9Mh/bd1KmFQaZajQUaz09ctLCnw3p6i6LrL2n4ynW0CipySFrVUkS+CALLpje7lkSNFg3Bw3suPf/nxu/hGEQVAECif14UEIhtp5/MXBZ8H3/peHld6oByZR/XteAdFDKS69KeWYQ+uYz5IzaMSN6aVmJ/5rfbjMr9o2sP5HrzZg/Oh2516f9N0zwaQyqX+ZgtP785TcmcN3uzBiUPlgnJR53b3s+43lqShlb2fcSoAgiHSUYAaOio2QSvoWFefN0RVyh6dbdrwyfb05L1uI819GEN8fGThsnruK9q3Okbvd7nAF83XwK93AQCKHkcPRYacxkAf2Kt0zFp2jmDyUw7AcE1QEV0FSvPmtTF0Qr/AdxxN736KvcJb0bImFRHvEdGrAI4d1x8WxlSckHsU6tOH3LkZliZbV3c8AnlSH0fgyZRyoq4jZQcDmAo8l7AeV/Li655rgrmyGqYrAI4dd2+3KCx0gnr3zPl85Ek0zmBFE2FfpheeVnWONEweSOWnIe2+0LnWq5hyg+DIWHcegrFhmtHGHgCKnNY7CiuVY2hRzJJPIEibVYd9w9R7zifeWuvymcyZHUWKXn1VDKieB1aprhRaxibK2cqVNknDbHul5zEApqS4LGrjM/j54tjY3ubTzF6HfewZC344X16f18fLvRdERgIwyMShv5ye58fl4EUSsSSyfTSA3a/qMjdOBP7Y64/NGuUCAIKgbLUAgaRAm5BdneXXq5c6RP3wj8pJgBt9vkw+zO1KTdjuK7Uxm4x3zR8cPTO97m6ocLsVtfkjrwi7hvIkAIody06DQC7DCuW0IX9vLx0a7dSIuTvnOnJzwFXSwuVRHVkjXWyvFalk2x8kk8gs8sxA+u3ZJcydAI4d5xeFRUZjGPnkY0v8jIsV3Exa+BAyjEd+vu7jo5+29xDy2d1bfqqIFAD1Fx6QXR/WZVDnnu03AYoZbwuqQkvBF+COHL0TADiN8QM91km0zPoHe+aEnH5LGZxLqYFu/EBpDDBRfaMA" );
+
+         var ouchAudio = new Audio( "data:audio/wav;base64,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" );
+
+         var pickupAudio = new Audio( "data:audio/ogg;base64,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lFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkqppJRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoplVJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSCgCQinAAkHowoQwUGrISAEgFAACMUUopxpyDEDHmGGPQSSgpYsw5xhyUklLlHIQQUmktt8o5CCGk1FJtmXNSWosx5hgz56SkFFvNOYdSUoux5ppr7qS0VmuuNedaWqs115xzzbm0FmuuOdecc8sx15xzzjnnGHPOOeecc84FAOA0OACAHtiwOsJJ0VhgoSErAYBUAAACGaUYc8456BBSjDnnHIQQIoUYc845CCFUjDnnHHQQQqgYc8w5CCGEkDnnHIQQQgghcw466CCEEEIHHYQQQgihlM5BCCGEEEooIYQQQgghhBA6CCGEEEIIIYQQQgghhFJKCCGEEEIJoZRQAABggQMAQIANqyOcFI0FFhqyEgAAAgCAHJagUs6EQY5Bjw1BylEzDUJMOdGZYk5qMxVTkDkQnXQSGWpB2V4yCwAAgCAAIMAEEBggKPhCCIgxAABBiMwQCYVVsMCgDBoc5gHAA0SERACQmKBIu7iALgNc0MVdB0IIQhCCWBxAAQk4OOGGJ97whBucoFNU6iAAAAAAAAwA4AEA4KAAIiKaq7C4wMjQ2ODo8AgAAAAAABYA+AAAOD6AiIjmKiwuMDI0Njg6PAIAAAAAAAAAAICAgAAAAAAAQAAAAICAT2dnUwAENzsAAAAAAADYxeALAgAAAHud7P0RFEtEQEZDQUJEQDw6NC8bAQHc2OXVdp89CgAAAPCN+ffe+yQOAFrYrZlXxiaEI99H/2IdOAMk2AQ47AAAAAAAuMYZoIdpWKhU/gJQQ7zYUru/w0THv4wiObRV4f3E1sAQ9impgWGyjzm2TmDEr63zAN75NdbmEb8QCN/jXWx4PHd4nZRksg0gGGUAAAAAAMCX9Xv2YwMBzzIoUWBZ5bqVLs9PadxTi3pP/sbhm7HX37ulQgAA3ukt6p+1ecUVFul9nD4lHl0ZOGrAYQGEAgAAAAAAY1M2ra1MP+w/OajzVwCBSRwtTfCAv/BvPnATJk9A3Kw3Ah4JxrnNI29hXO6fI3YaHl7fYChha8kmQF0BAAAAAABcNuDLT+s9bv8yMASgJKCyZSW9nOadvsIU8sLF7Lzep0s/zi8wAAA++eXD/6XXx7RPP3ao/UupVebBnW/ATgE2gNk+AwAAAABwdw9jN23UQVVrrQR6BoBDwA7AR40/OqqG+YbEm7WAC6gCXunFyj8/+RRL/l2wI7XTeOihHpHBBh0AcCAAAAAAABB5Z21fby8VpFowtpUBcDEK9lud0BsL2Kdrg+vkg751+wK+CB5A/4u+F8peqZfM+dnhEUv6tFlwGQDGDAAAAACAvuw5UsnfYz8V8X3hRwJwIhgZ/xk5VHXWCC7e3CkGiINoEgDeCM5y/yNQRiJGcNXthxPqKg8IxySwTQfAKQCQGAAAAACA6kvef+I9098hrAffJ0AhAgXsADAA8vNYrpdzBf7/VjL2At74tcnNpQ7lnh7W8OOr1vEAY5xACdyAdASAfVVFAAAAAADA90j8/jxae2hNPvG3AUAbAADQjnaUABkwDCMCYAL++IX+U+KVDD/15RV+XFdX4wHOiWUDuAHHEQD8fg0AAAAAAACA9uWY22jGqMeo/hsACBYAACjTAAD8GAeeyIXTfxJuBbv98nBK/WpdOi4APVJPHgHA86UAAAAAAAAAAGgvqfUPAAC8c60m4uzVsYD+TRUA9Msqnsgd7+/v5hXOh895xM+T8uMBgK0BBbCOAKAPAAAAAAAAAAD4BFEAsBMAngEAAHARAMDPAJ7I3V6v+m5Y2IuX28PtWcAECwDGJBAAAAAAAAAAUGEzVgD/MyC/3A1wVgVcuEYBnsj99yxfpgBuAEIBAAAAADCEROGDiXOygEEBDg4=" );
+
+         var healAudio = new Audio( "data:audio/ogg;base64,T2dnUwACAAAAAAAAAAAs+c4UAAAAAEtY0q4BHgF2b3JiaXMAAAAAAUAfAAAAAAAAsDYAAAAAAACZAU9nZ1MAAAAAAAAAAAAALPnOFAEAAAD2m1wWCzz///////////+1A3ZvcmJpcywAAABYaXBoLk9yZyBsaWJWb3JiaXMgSSAyMDE1MDEwNSAo4puE4puE4puE4puEKQAAAAABBXZvcmJpcxJCQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBADIAAAYhiGH3knMkFOQSSYpVcw5CKH1DjnlFGTSUsaYYoxRzpBTDDEFMYbQKYUQ1E45pQwiCENInWTOIEs96OBi5zgQGrIiAIgCAACMQYwhxpBzDEoGIXKOScggRM45KZ2UTEoorbSWSQktldYi55yUTkompbQWUsuklNZCKwUAAAQ4AAAEWAiFhqwIAKIAABCDkFJIKcSUYk4xh5RSjinHkFLMOcWYcowx6CBUzDHIHIRIKcUYc0455iBkDCrmHIQMMgEAAAEOAAABFkKhISsCgDgBAIMkaZqlaaJoaZooeqaoqqIoqqrleabpmaaqeqKpqqaquq6pqq5seZ5peqaoqp4pqqqpqq5rqqrriqpqy6ar2rbpqrbsyrJuu7Ks256qyrapurJuqq5tu7Js664s27rkearqmabreqbpuqrr2rLqurLtmabriqor26bryrLryratyrKua6bpuqKr2q6purLtyq5tu7Ks+6br6rbqyrquyrLu27au+7KtC7vourauyq6uq7Ks67It67Zs20LJ81TVM03X9UzTdVXXtW3VdW1bM03XNV1XlkXVdWXVlXVddWVb90zTdU1XlWXTVWVZlWXddmVXl0XXtW1Vln1ddWVfl23d92VZ133TdXVblWXbV2VZ92Vd94VZt33dU1VbN11X103X1X1b131htm3fF11X11XZ1oVVlnXf1n1lmHWdMLqurqu27OuqLOu+ruvGMOu6MKy6bfyurQvDq+vGseu+rty+j2rbvvDqtjG8um4cu7Abv+37xrGpqm2brqvrpivrumzrvm/runGMrqvrqiz7uurKvm/ruvDrvi8Mo+vquirLurDasq/Lui4Mu64bw2rbwu7aunDMsi4Mt+8rx68LQ9W2heHVdaOr28ZvC8PSN3a+AACAAQcAgAATykChISsCgDgBAAYhCBVjECrGIIQQUgohpFQxBiFjDkrGHJQQSkkhlNIqxiBkjknIHJMQSmiplNBKKKWlUEpLoZTWUmotptRaDKG0FEpprZTSWmopttRSbBVjEDLnpGSOSSiltFZKaSlzTErGoKQOQiqlpNJKSa1lzknJoKPSOUippNJSSam1UEproZTWSkqxpdJKba3FGkppLaTSWkmptdRSba21WiPGIGSMQcmck1JKSamU0lrmnJQOOiqZg5JKKamVklKsmJPSQSglg4xKSaW1kkoroZTWSkqxhVJaa63VmFJLNZSSWkmpxVBKa621GlMrNYVQUgultBZKaa21VmtqLbZQQmuhpBZLKjG1FmNtrcUYSmmtpBJbKanFFluNrbVYU0s1lpJibK3V2EotOdZaa0ot1tJSjK21mFtMucVYaw0ltBZKaa2U0lpKrcXWWq2hlNZKKrGVklpsrdXYWow1lNJiKSm1kEpsrbVYW2w1ppZibLHVWFKLMcZYc0u11ZRai621WEsrNcYYa2415VIAAMCAAwBAgAlloNCQlQBAFAAAYAxjjEFoFHLMOSmNUs45JyVzDkIIKWXOQQghpc45CKW01DkHoZSUQikppRRbKCWl1losAACgwAEAIMAGTYnFAQoNWQkARAEAIMYoxRiExiClGIPQGKMUYxAqpRhzDkKlFGPOQcgYc85BKRljzkEnJYQQQimlhBBCKKWUAgAAChwAAAJs0JRYHKDQkBUBQBQAAGAMYgwxhiB0UjopEYRMSielkRJaCylllkqKJcbMWomtxNhICa2F1jJrJcbSYkatxFhiKgAA7MABAOzAQig0ZCUAkAcAQBijFGPOOWcQYsw5CCE0CDHmHIQQKsaccw5CCBVjzjkHIYTOOecghBBC55xzEEIIoYMQQgillNJBCCGEUkrpIIQQQimldBBCCKGUUgoAACpwAAAIsFFkc4KRoEJDVgIAeQAAgDFKOSclpUYpxiCkFFujFGMQUmqtYgxCSq3FWDEGIaXWYuwgpNRajLV2EFJqLcZaQ0qtxVhrziGl1mKsNdfUWoy15tx7ai3GWnPOuQAA3AUHALADG0U2JxgJKjRkJQCQBwBAIKQUY4w5h5RijDHnnENKMcaYc84pxhhzzjnnFGOMOeecc4wx55xzzjnGmHPOOeecc84556CDkDnnnHPQQeicc845CCF0zjnnHIQQCgAAKnAAAAiwUWRzgpGgQkNWAgDhAACAMZRSSimllFJKqKOUUkoppZRSAiGllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimVUkoppZRSSimllFJKKaUAIN8KBwD/BxtnWEk6KxwNLjRkJQAQDgAAGMMYhIw5JyWlhjEIpXROSkklNYxBKKVzElJKKYPQWmqlpNJSShmElGILIZWUWgqltFZrKam1lFIoKcUaS0qppdYy5ySkklpLrbaYOQelpNZaaq3FEEJKsbXWUmuxdVJSSa211lptLaSUWmstxtZibCWlllprqcXWWkyptRZbSy3G1mJLrcXYYosxxhoLAOBucACASLBxhpWks8LR4EJDVgIAIQEABDJKOeecgxBCCCFSijHnoIMQQgghREox5pyDEEIIIYSMMecghBBCCKGUkDHmHIQQQgghhFI65yCEUEoJpZRSSucchBBCCKWUUkoJIYQQQiillFJKKSGEEEoppZRSSiklhBBCKKWUUkoppYQQQiillFJKKaWUEEIopZRSSimllBJCCKGUUkoppZRSQgillFJKKaWUUkooIYRSSimllFJKCSWUUkoppZRSSikhlFJKKaWUUkoppQAAgAMHAIAAI+gko8oibDThwgMQAAAAAgACTACBAYKCUQgChBEIAAAAAAAIAPgAAEgKgIiIaOYMDhASFBYYGhweICIkAAAAAAAAAAAAAAAABE9nZ1MABDQUAAAAAAAALPnOFAIAAABuwlK3FjM2ODQ7OjE8ODM8NSctLCowJykkAQGuaZ1jRV3ApACQsa/Labe2Jhb8cuV/5wEAAOx4LzoAW7bE6kaYu3y9AvMSohr78kzYNwCuagJUJYAYJRBkOABQr1xebQAAWDFduColcPKfT4sjM3u2HP5SGp104W5S85cXGUpXfip4LQGqbAOSBttqdAAEKhYA4KtrR68pAADA+KzfiY4mMnC22v0rpx9uAxSL+Q+wclHzPM4cR7Wb2HD7AKpqpK0SgHedIMgwAMCloeGOCwCA/dFH84CV+/v/TEWAi3K255YNAKwWffwgg1dfzxnjJQCqqYpqFoD53hCwMPAAAHx9TPr2AcCHjnnyBgA6UydZbbVPGADxKouD6lptGB9Iko2xpv20hVKY2edAAa5rvqcsAP0/o1FgEWgAAFZfkv5JAAx3q3uhslYHAMDr9icmtN3Cms+BpkuXf+jnRG/DJk8lMWR3CwKuq75WvAJQf9VToLNgAABbSH/vug2cf6D9Y3kOADy+yla9lRPwY5XiRAH0GGyt/QAAsqkRn70C0HfKOeXwYJECAJD7mk/Kt6RyPrdM/ubrZAIAbvexub713vtaApBF59A3zcU5OJl44tyWNtgBsquZkWQCwI4qU6OBHAMAgN1Zt5oEgEw/oPtyslrvIgkAAO4voj67OEaMEgFzqOMPdSzi0e8ZzwKyqpltlQkA7MMbOFIJAAA2yJAXRt76AAC1umq/u/qZPlcBACEZz+f2+w+AHSsP4sSyKQCuq1Xo0gGqAVCR0wAAgB982ZP+4awAAAAAAPwWRE/2wCz839W1AADwePT3w9O/Pw486JkSKua+yohTEwCyq5n/ZnPAdDoHgFIBoGf/M5gBAOD+/NbTFU4f7kd2DQBAP7ztvd6CYe3rCqDbietmqe8jAK6rVfhmRDKQIrAtfv5x8/9rAAA8RCcDF/5+FQAAgHN13ZpvXY+BCaqsVfjmbAAkKCSAX2w52vN6FwAACO0x9QcQJq6hbdf1gwGMRGXzbl549QBWAK7n0KHANkoCZEiZWf+9b9i6AACg92sDGNOThVN5cuzC/MSli1539Qte9ZMCqu0Qwy8ykXlbAMi0ZAHX1d/Waw0AAPcP7A6AHukovvTk0wEASBpX7pcLpqt1hGP7mIBUAhjmX1z/8p9+91IEAJjH1WQxG4DN8HQxPv9a7SgC4Hsd553iME4BputIHrFZbaMGkAAGaNufXj92ogBgLBnJR6a8382seQDAuV5qi68GnuboKNswIAGHAPCDaDdOv9MDALret+JqYGeyOLrwta/PSgkA7KqPDwCC5eBYbgUtgtkQV5NzDAEA1PDjj3cvJAAAePjLnz2NTuB6MQAAAA==" );
+
+         function ouchFx() {
+            ouchAudio.play();
+         }
+
+         function walkSfx() {
+           (new Audio( "data:audio/ogg;base64,T2dnUwACAAAAAAAAAAAER3N7AAAAAKnicT0BHgF2b3JiaXMAAAAAAUAfAAAAAAAAsDYAAAAAAACZAU9nZ1MAAAAAAAAAAAAABEdzewEAAACclrl8Czz///////////+1A3ZvcmJpcywAAABYaXBoLk9yZyBsaWJWb3JiaXMgSSAyMDE1MDEwNSAo4puE4puE4puE4puEKQAAAAABBXZvcmJpcxJCQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBADIAAAYhiGH3knMkFOQSSYpVcw5CKH1DjnlFGTSUsaYYoxRzpBTDDEFMYbQKYUQ1E45pQwiCENInWTOIEs96OBi5zgQGrIiAIgCAACMQYwhxpBzDEoGIXKOScggRM45KZ2UTEoorbSWSQktldYi55yUTkompbQWUsuklNZCKwUAAAQ4AAAEWAiFhqwIAKIAABCDkFJIKcSUYk4xh5RSjinHkFLMOcWYcowx6CBUzDHIHIRIKcUYc0455iBkDCrmHIQMMgEAAAEOAAABFkKhISsCgDgBAIMkaZqlaaJoaZooeqaoqqIoqqrleabpmaaqeqKpqqaquq6pqq5seZ5peqaoqp4pqqqpqq5rqqrriqpqy6ar2rbpqrbsyrJuu7Ks256qyrapurJuqq5tu7Js664s27rkearqmabreqbpuqrr2rLqurLtmabriqor26bryrLryratyrKua6bpuqKr2q6purLtyq5tu7Ks+6br6rbqyrquyrLu27au+7KtC7vourauyq6uq7Ks67It67Zs20LJ81TVM03X9UzTdVXXtW3VdW1bM03XNV1XlkXVdWXVlXVddWVb90zTdU1XlWXTVWVZlWXddmVXl0XXtW1Vln1ddWVfl23d92VZ133TdXVblWXbV2VZ92Vd94VZt33dU1VbN11X103X1X1b131htm3fF11X11XZ1oVVlnXf1n1lmHWdMLqurqu27OuqLOu+ruvGMOu6MKy6bfyurQvDq+vGseu+rty+j2rbvvDqtjG8um4cu7Abv+37xrGpqm2brqvrpivrumzrvm/runGMrqvrqiz7uurKvm/ruvDrvi8Mo+vquirLurDasq/Lui4Mu64bw2rbwu7aunDMsi4Mt+8rx68LQ9W2heHVdaOr28ZvC8PSN3a+AACAAQcAgAATykChISsCgDgBAAYhCBVjECrGIIQQUgohpFQxBiFjDkrGHJQQSkkhlNIqxiBkjknIHJMQSmiplNBKKKWlUEpLoZTWUmotptRaDKG0FEpprZTSWmopttRSbBVjEDLnpGSOSSiltFZKaSlzTErGoKQOQiqlpNJKSa1lzknJoKPSOUippNJSSam1UEproZTWSkqxpdJKba3FGkppLaTSWkmptdRSba21WiPGIGSMQcmck1JKSamU0lrmnJQOOiqZg5JKKamVklKsmJPSQSglg4xKSaW1kkoroZTWSkqxhVJaa63VmFJLNZSSWkmpxVBKa621GlMrNYVQUgultBZKaa21VmtqLbZQQmuhpBZLKjG1FmNtrcUYSmmtpBJbKanFFluNrbVYU0s1lpJibK3V2EotOdZaa0ot1tJSjK21mFtMucVYaw0ltBZKaa2U0lpKrcXWWq2hlNZKKrGVklpsrdXYWow1lNJiKSm1kEpsrbVYW2w1ppZibLHVWFKLMcZYc0u11ZRai621WEsrNcYYa2415VIAAMCAAwBAgAlloNCQlQBAFAAAYAxjjEFoFHLMOSmNUs45JyVzDkIIKWXOQQghpc45CKW01DkHoZSUQikppRRbKCWl1losAACgwAEAIMAGTYnFAQoNWQkARAEAIMYoxRiExiClGIPQGKMUYxAqpRhzDkKlFGPOQcgYc85BKRljzkEnJYQQQimlhBBCKKWUAgAAChwAAAJs0JRYHKDQkBUBQBQAAGAMYgwxhiB0UjopEYRMSielkRJaCylllkqKJcbMWomtxNhICa2F1jJrJcbSYkatxFhiKgAA7MABAOzAQig0ZCUAkAcAQBijFGPOOWcQYsw5CCE0CDHmHIQQKsaccw5CCBVjzjkHIYTOOecghBBC55xzEEIIoYMQQgillNJBCCGEUkrpIIQQQimldBBCCKGUUgoAACpwAAAIsFFkc4KRoEJDVgIAeQAAgDFKOSclpUYpxiCkFFujFGMQUmqtYgxCSq3FWDEGIaXWYuwgpNRajLV2EFJqLcZaQ0qtxVhrziGl1mKsNdfUWoy15tx7ai3GWnPOuQAA3AUHALADG0U2JxgJKjRkJQCQBwBAIKQUY4w5h5RijDHnnENKMcaYc84pxhhzzjnnFGOMOeecc4wx55xzzjnGmHPOOeecc84556CDkDnnnHPQQeicc845CCF0zjnnHIQQCgAAKnAAAAiwUWRzgpGgQkNWAgDhAACAMZRSSimllFJKqKOUUkoppZRSAiGllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimVUkoppZRSSimllFJKKaUAIN8KBwD/BxtnWEk6KxwNLjRkJQAQDgAAGMMYhIw5JyWlhjEIpXROSkklNYxBKKVzElJKKYPQWmqlpNJSShmElGILIZWUWgqltFZrKam1lFIoKcUaS0qppdYy5ySkklpLrbaYOQelpNZaaq3FEEJKsbXWUmuxdVJSSa211lptLaSUWmstxtZibCWlllprqcXWWkyptRZbSy3G1mJLrcXYYosxxhoLAOBucACASLBxhpWks8LR4EJDVgIAIQEABDJKOeecgxBCCCFSijHnoIMQQgghREox5pyDEEIIIYSMMecghBBCCKGUkDHmHIQQQgghhFI65yCEUEoJpZRSSucchBBCCKWUUkoJIYQQQiillFJKKSGEEEoppZRSSiklhBBCKKWUUkoppYQQQiillFJKKaWUEEIopZRSSimllBJCCKGUUkoppZRSQgillFJKKaWUUkooIYRSSimllFJKCSWUUkoppZRSSikhlFJKKaWUUkoppQAAgAMHAIAAI+gko8oibDThwgMQAAAAAgACTACBAYKCUQgChBEIAAAAAAAIAPgAAEgKgIiIaOYMDhASFBYYGhweICIkAAAAAAAAAAAAAAAABE9nZ1MABGwMAAAAAAAABEdzewIAAAAvJcoWDkVCR0k7ODk6PUY/OTkvjhfntxSLIsUAvkvWMq7pu5aVlKh8M6cdc9exWbs/69iOKgiEbB/bON+Er5kRtZRVq9oiIVWC0X+YRmlTMfQS01PxHyYAjhu3H4paJmBwbgrLENRwk9QhETtpxA0WeoZfJzWMB0XUq9Mh/bd1KmFQaZajQUaz09ctLCnw3p6i6LrL2n4ynW0CipySFrVUkS+CALLpje7lkSNFg3Bw3suPf/nxu/hGEQVAECif14UEIhtp5/MXBZ8H3/peHld6oByZR/XteAdFDKS69KeWYQ+uYz5IzaMSN6aVmJ/5rfbjMr9o2sP5HrzZg/Oh2516f9N0zwaQyqX+ZgtP785TcmcN3uzBiUPlgnJR53b3s+43lqShlb2fcSoAgiHSUYAaOio2QSvoWFefN0RVyh6dbdrwyfb05L1uI819GEN8fGThsnruK9q3Okbvd7nAF83XwK93AQCKHkcPRYacxkAf2Kt0zFp2jmDyUw7AcE1QEV0FSvPmtTF0Qr/AdxxN736KvcJb0bImFRHvEdGrAI4d1x8WxlSckHsU6tOH3LkZliZbV3c8AnlSH0fgyZRyoq4jZQcDmAo8l7AeV/Li655rgrmyGqYrAI4dd2+3KCx0gnr3zPl85Ek0zmBFE2FfpheeVnWONEweSOWnIe2+0LnWq5hyg+DIWHcegrFhmtHGHgCKnNY7CiuVY2hRzJJPIEibVYd9w9R7zifeWuvymcyZHUWKXn1VDKieB1aprhRaxibK2cqVNknDbHul5zEApqS4LGrjM/j54tjY3ubTzF6HfewZC344X16f18fLvRdERgIwyMShv5ye58fl4EUSsSSyfTSA3a/qMjdOBP7Y64/NGuUCAIKgbLUAgaRAm5BdneXXq5c6RP3wj8pJgBt9vkw+zO1KTdjuK7Uxm4x3zR8cPTO97m6ocLsVtfkjrwi7hvIkAIody06DQC7DCuW0IX9vLx0a7dSIuTvnOnJzwFXSwuVRHVkjXWyvFalk2x8kk8gs8sxA+u3ZJcydAI4d5xeFRUZjGPnkY0v8jIsV3Exa+BAyjEd+vu7jo5+29xDy2d1bfqqIFAD1Fx6QXR/WZVDnnu03AYoZbwuqQkvBF+COHL0TADiN8QM91km0zPoHe+aEnH5LGZxLqYFu/EBpDDBRfaMA" )).play();
+         }
+
+         function pickupSfx() {
+            pickupAudio.play();
+         }
+
+         function healSfx() {
+            healAudio.play();
+            return 1;
+         }
+
+         var characterBodyDrawData = stringDecoder(23,30,'2;1@0F/L0R0W0}1b1h1o/*~1;|0M|9>:E:M:U8}4Z5a5i6p6v3<3B3J0Q+U1X1^.c7h?j/)~2;|1L|:>;F<M<U:}5Y5`5g6o7v6=9B:I;N:U1V-}(c+g,l/(~2;|3I|5=4D3K1R-W6V7_8g;o?v;:=A>H>N=T1W-})b%i!n/)~2;|1K|4=.Q1J3C*U7W9_<hDmKr;>=C>J@O?U1X,](b)i*o.-~2?|2L|3?3G3N/S*T7X8_9f>kEo7?:F:L:S:Z2]1X0d3j4p.*~1=|2K|6?5F3L2R-X6W3]2c9g?i2;2C2K.P+T5V7]8c:i;n/{~2;|3J|8<9D;L;T:Z4U0Z.`0f2k3<.L2G3?+Q8Y:`=eCiIl.)~1<|2L|;<=B@H@O@V3Y/a*h%p w2?1A1H.N*Q6Y6`8g>jEk/-~1>|2L|8@=C@LASAY1Y-`(h)o*u/;-A+H*O*V/U/}/c0k1r/+~1;|0I|=>>F>N>V<]7V7]8f9n;v0;/A.G-N,U1U1}0d7c=a0*~2:|1J|=:?AAI@Q>X8U8}8c:k<r291?2E1J1P:S:Y:b=h@o0(~29|3F|;<;B:I8Q5X2R.Y*`-e2j4:7?8E;H=M3T.},c)k&r0)~1:|2I|<<;C8J5Q1V9T:Y<_@dFh2=2A4E9H=K2V-})c)j(r0-~2=|2J|<?:F7M4R0W8U:}<bAeFg2;2A2F3K3P8P7W7^;a@c/*~3;|3G|<;=C=K<R;Y2Q2X2_3f7m0:/@.G,L)R2Q1V3^7c9j0{~29|2E|=:?@AFBMBS8P5V2[2c2j/;/@,F*L)R2T3Y5^:d?f0)~2;|2H|><@ACHEMFT7}4e9U1n/x/>.D+I)O{T2V1^2e8e=e/-~2=|2J|==?CBHDODV7^9V3d5u4m.=,D+K,R-X2X2_2f2n3v1+~3<|3L|?=ACBKAR@X;X;_;f:n:u.;-B-I,P-W3U2]2e5b5^1*~3:|3I|?:@A@H@P?W:U;};b:i9p/:.@.E/K1P:S:f:_;Y:l1(~39|4G|>:@@@F?N=T2Y3S0^1d3i/:/@0F1L2Q;S=U<X:}8_2)~4:|4H|?:?A?H=P8W3}3T3l3d3t/=.B/H/M0S:V;_<[:b8e1-~4=|4J|>=@D@K@S<Y2W2d3j2]3p.;-B,J-P-W3T2Z2b3i3p2+~3;|3H|?;@B@I@P?W:T9a;d;[9`>:??>D>J<O3S2_3Y3e3k1(~39|3G|/9.?-F.M0T:S<X=^<d9i=9<I>C>>=N3S1V1Y3[5^2)~39|3G|0:.@/H0O5W:S;[;c;k:t?=>C?I>O<S3W3Z2^3b4e1-~3=|3K|/=-D-L.R1X:W;];e;k:q@9B@CHDODV7U6^6f5n4v4*~6;|7I|1>0F/M1T2[?T?[?b?j=q;;;B;H<M<R<R<Y<`;g8n4*~6:|5G|2:1A0I2Q3X7R7Y6`2c,d>:?@@FBLDQ<Q=W<}7c4i4(~59|5F|2:/?.E,M+T9V7P<}=d;j?;@@BFCKFP<T;Z;a5d/g4)~5:|5I|0<.B,H*M)S5U7];i<p?x?=@CBIDNGS=W=^<e7e1f4-~5=|6L|1>.C,I*O)U5Y7^;d:m9u=<>B@H@NBT=U=}=d8d2`4*~5;|6J|2</C.J.Q/W6U6]5d4k2r;9<><C<J=Q5R4Y4a1i,p4(~49|5F|3:4A3I6Q9W=QAYE`Ae<k=9:=9C5H2M?S@ZBbEiHr5)~6;|6H|3<4B6I:O=U5Q4W4].c(i<=:A9D5H1K>SAZDaFjFq4-~6>|6K|3?5D6L:Q=U6T4Z3a.e{g9<;A=F=L<R;W;];d:i9o2*~3=|4L|2?0F0O2U3]8X8_6f5n4v4>2C0J0R1Y8W9]:c8j6p2*~2<|2K|5>6D8K:R>W5X7]:c4g-j8:8A8I<N@S7S5[3b1h/n2(~3;|3G|3<2C1K1R1Y5S:X=_<f9k8<8A8E;K?P9U2^.e)i!l3)~3;|2J|0<.A,G*O+U4W;^AfFoKw9>8C9H<NAQ:U6]5e.i&k3-~3?|3L|2@.E,K*R*Z5W<^BfBnAv8<9B8I;P?U9W;]<c4g,j2*~3=|3L|3<0D/K/S1[6X6_6g5n4v4;3A1G1O1U9T?[CaBg?l2(~2;|3I|7=7D9K;R>W5V5_3i0p,v2:.?,F-L-R;U>[AaEgJn2)~39|3I|8>8C:J<PAT5U3_.h{n s2>/B,G,M+S;W?}CaBh@o2-~2?|3L|8B9G9K;P@T5W4^1e,j%o,<+C+J,P-V2U2}1c0j/q1+~1<|2K|=>?D@M@T@}:W:]:f:n9v-;-A,G,M-T1S0Z0a/i.p1)~1;|1H|<<<C<J=Q?Y8T:[:a6g2m.9/>3E4J4N7S<Y@]=e;k1(~1:|1G|;=9D9K9R9Y1S1Z/a-i+p/:0?2D4I7L0U.],e{l"t1)~1;|0H|:>7E6L5T5[9U>}BbEgJm/<0A2D4H8M1W0^.f)k$p2-~1=|1K|:A7H5N4V4]9X<]AaBiCp-:,@-E-K/R6S8]7e7m6u1*~1;|/H|:?9F8M7U6}/S1[3b.f)h/:-@,F,M,S0T4X9}:a;e1(~2:|1H|<<=B=I>P?V7U7_6g4o3v/;,A*G*N*U0R4W8}<a@e1(~1;|1H|<==C>H@OAT8T4`3j/p+x/>,C*H)O(U1S3Z6a6g6l1-~2>|1K|:@<D>I?NBR7T8[9b5g0m.=-D+K,R,Y2W2_2g2n3u1+~3;|3L|?<ACAKARAY;W;_;g;n:u.:-A-I-P-W3U2}1d3l2t1)~39|3H|?;@A@I@W@P:U;}<c:f8j.9.>/E0K2Q:S;W;};_;c2(~39|3G|>9??@G?N?U3S2}1e2m2u0:0@0E2J3O9R:U:X:};^2)~39|3G|=:>A>H>N=T1x3R2[2e2n/>/C.H0M1R:U;Y;];a;d2-~4=|3J|>>@D?K?R>Y3U2[1a3g4m.;-B,J-Q-W2V2^1e3h4j2)~3:|3K|>;?B@I@P@V;V;];c:k:t?:???D>J<O2R3V2Z2_2b1(~39|3G|0:.A-H.O/V:R;Z;c;m<u=;=?<D<G;L4S3V3Y2]2_2)~3H|3:|/;/B/H0N0T:T;};e<o<x>=?D?J>O<T3U2Y2]2a1e2-~3>|4K|0=.D.K.S/Y:V<[=a;g:m>;?B@I@N?U:U:[;b<i=p1)~4<|3J|0=-D,L,S,[2W2^2f3m4u?9@?@G?M=R=U:]:b>fCi1*~6:|6I|2?3E4M5T5[7U5]5e6m6u>;@AAH@N@T;T7Y5}2_2e1(~5:|5G|0</B/H/O-U5T5}6f8n:v><@ABHCOAU:S6Y3]/a+e1)~4;|4H|0=/B.I-O*T5S7]9g=p@x2@0D/I-M*R;V9Z6`6g6m1,~5>|4J|>>ACBICODV5U4[4b8g=m?;?@@G@M@S;V;}<b=i>p1)~5<|5J|1=0C0I/P.W4V2}3b7g:m>9>><D;J:M6T0Y,^.d1j1{~59|5G|1=3C3J4Q4X<T<Z<`?hAp>9>?=E=J<N3T0Z,a{g"m1)~5;|5I|1>4D5L7T8[<T>]@eDmIs=;>B=J;O<R;X=^?dDjHo1-~5?|5N|2A5G6M8U8}4X0^,b*i)p' );
+
+         var weaponDrawData = stringDecoder(6,35,'4W$R7#A#K#>a$#-#7#0Z#Q@`?Z-V7#A#K#1}BY2T6#A#K#/[EY5W7#A#K#0Y?_0Z7#@#J#2]0Z$S7#A#K#>_0U$J7#A#K#E[/V#J7#A#K#E^##-#7#/}#YAb##-#7#0Z{MC}5U{Q7#A#K#:]BR0T7#A#K#7[BQ3T7#A#K#5]7V(T7#A#K#@^&#-#7#/W#OFW$#+#7#-W$JLY$#,#7#,Y%KJ[##-#7#2^-WU###-#6#2}2PF[6V.Y7#A#K#BW5W-X7#A#K#=}##-#7#5Y-]A^%#-#7#3[*VD}##-#BV5Y6RU###-#AU:}=RU###-#AY5^9SU###-#J[7_HXU###-#BU8]GUU###-#IV0YBZU###-#KV.Y=ZU###-#KW.[<ZU###-#GZ4}BZU###-#AV=}JSU###-#6RBZLQU###-#6QCZNOU###-#AX7aH[U###-#7]C}MTU###-#EW6^HZU###-#ET/ZA[U###-#FW/_@]U###-#DZ6`F}U###-#5ZC}PRU###-#2WFYMNU###-#0XEYNPU###-#2[E`PVU###-#1XE]JOU###-#;P?^JYU###-#=U:`H[U###-#=V9bF_U###-#3Y;`EYU###-#0XD[KQU###-#/YGYNMU###-#,ZGWNJU#F^FQ0^A#K#U#E[EU1}A#K#U#DZBN5VA#K#U#AYCN9YA#K#U#C^ET6YA#K#U#E[FQ2}A#K#U#BS:L3[A#K#V#?T;N4YA#K#U#AX=R3_A#K#U#DZ4P7#A#K#1_?Z0Q7#A#K#9`DX6Q7#A#K#2ZFZ6T7#A#K#/YH[8V7#A#K#.VEW5P7#A#K#2}=V0L7#A#K#8^>V.L6#A#K#<_=W/N7#A#K#<a##-#7#A#K#U###-#7#A#K#U#');
+
+         var drawDescriptorForWarrior = [[0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+                                         [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+                                         [10],[11],[11,12],[12],
+                                         [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+                                         [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22]];
+
+         var drawDescriptorForWarriorWithWeapon = [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],
+                                                   [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+                                                   [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+                                                   [10],[11],[11,12],[12],
+                                                   [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+                                                   [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+                                                   [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2]];
+
+         var drawDescriptorForWarriorWithShield =
+            [[25,25,0.5,0.5,10],
+             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+             [10],[11],[11,12],[12],
+             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+             [28,28,0.5,0.5,10]];
+
+         var drawDescriptorForWarriorWithWeaponAndShield =
+            [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],[25,25,0.5,0.5,10],
+             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+             [10],[11],[11,12],[12],
+             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+             [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28,28,0.5,0.5,10]];
+
+         var drawDescriptors = [drawDescriptorForWarrior,drawDescriptorForWarriorWithWeapon,drawDescriptorForWarriorWithShield, drawDescriptorForWarriorWithWeaponAndShield];
+
+         var descriptorValueToColor=[2,2,2,2,2,
+                                     3,3,3,3,3,
+                                     0,1,1,
+                                     4,4,4,4,4,
+                                     5,5,5,5,5,
+                                     6,6,7,6,6,7];
+
+         //================================== AVATAR ANIMATION ENDS =================================
+
+         var colorDescription = ["STONEWORLD","SNOWWORLD","FIREWORLD","WATER","CARPET","FAKEDOOR"];
+         var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
+         var wallColors = ["gray","#CDCDCD","darkred","gray","#CDCDCD","#835C3B"];
+
+
+         var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
+         var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
+         var ATTRIBUTES_IRON_BAR       = {name:"iron bar"      ,color:SPECIAL_COLORS.IRON     ,width:30,height:4,value:2,holder:"weapon"};
+         var ATTRIBUTES_STEEL_SWORD    = {name:"steel sword"   ,color:SPECIAL_COLORS.STEEL    ,width:30,height:4,value:3,holder:"weapon"};
+         var ATTRIBUTES_SILVER_SWORD   = {name:"silver sword"  ,color:'silver'                ,width:30,height:4,value:4,holder:"weapon"};
+         var ATTRIBUTES_GOLD_SWORD     = {name:"gold sword"    ,color:'gold'                  ,width:30,height:4,value:5,holder:"weapon"};
+         var ATTRIBUTES_CRISTAL_SWORD  = {name:"cristal sword" ,color:'cyan'                  ,width:30,height:4,value:6,holder:"weapon"};
+
+         var ATTRIBUTES_MINISHIELD     = {name:"minishield"    ,color:"black",width:11,height:12,value:1,size:0.75,holder:"shield"}
+         var ATTRIBUTES_BUCKLER_SHIELD = {name:"buckler"       ,color:"black",width:15,height:12,value:2,size:1.00,holder:"shield"}
+         var ATTRIBUTES_BATTLESHIELD   = {name:"battleshield"  ,color:"black",width:19,height:12,value:3,size:1.25,holder:"shield"}
+         var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
+         var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
+
+         function heroHpIncreaser(percentage) {
+            return ()=>{ var value = Math.floor(characters[0][4].baseHp * percentage);
+                         return isCharacterAlive(0)
+                             && (characters[0][6].hp < characters[0][4].baseHp)
+                             && (characters[0][6].hp=Math.min(characters[0][4].baseHp,characters[0][6].hp+value))
+                             && healSfx(); };
+         }
+
+         function damageInRadius(radius, value) {
+            return ()=>{
+               var characterIndex = createCharacterIndex();
+               iterateOverBucketItemsAroundPos(characters[0][0],
+                                               characterBuckets,
+                                               (i)=>{
+                                                   if ( manhattan(characters[0][0], characters[i][0]) < radius ) {
+                                                      damage(i,value);
+                                                   }
+                                                });
+               return 1;
+            };
+         }
+
+         function winning() {
+            sendMessage("hero won the game");
+         }
+
+         function gameOver() {
+            sendMessage("game over");
+         }
+
+         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"health potion",color:"red"                ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(0.25),effectText:"hero heals"};
+         var ATTRIBUTES_HEALTH_POTION       = {name:"major health potion",color:"red"                ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(0.33),effectText:"hero heals"};
+         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"full health potion",color:"red"                ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(0.5),effectText:"hero heals"};
+         var ATTRIBUTES_MINOR_POISON_GAS    = {name:"minor poison gas"   ,color:SPECIAL_COLORS.POISON,width:5,height:5,value:-1,holder:"potions",effect:damageInRadius(10,10),effectText:"deadly poison gas is released"};
+         var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS.POISON,width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
+         var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS.POISON,width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
+
+         function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
+         function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
+
+         var undeadExHeroColors = ['royalblue','lightgreen','royalblue','green','royalblue','green'];
+         var knightColors = threeColors('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2);
+         var zombieColors = twoColors('mediumseagreen','mediumaquamarine');
+         var tiefColors = ['orange','royalblue','orange','blue','orange','blue'];
+         var evilWoodColors = twoColors(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN);
+         var giantColors = ['orange','limegreen','orange','olive','orange','olive'];
+         var strongZombieColors = twoColors('mediumseagreen','mediumaquamarine');
+         var masterTiefColors = ['orange','tomato','orange','crimson','orange','crimson'];
+         var crazyGiantColors = ['orange','orange','orange','olive','orange','olive'];
+         var stoneGolemColors = twoColors(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0);
+         var superGenieColors = ['yellow','yellow','yellow',"",'yellow',""];
+
+         var ATTRIBUTES_OF_ENEMIES = [
+             {name:"devilguy",scale:0.75,coloring:twoColors('crimson','tomato'),         slowness:10,range:4,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"ogre"    ,scale:0.9,coloring:twoColors('limegreen','olive'),         slowness: 8,range:5,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"zombie"  ,scale:0.95,coloring:zombieColors,                          slowness:10,range:4,level:2,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"thief"   ,scale:1.00,coloring:tiefColors,                            slowness: 6,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1},
+             {name:"ogre warrior",scale:0.9,coloring:twoColors('limegreen','olive'),     slowness: 8,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"dwarf",scale:0.6,coloring:twoColors('orange','mediumblue'),          slowness: 5,range:5,level:3,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"evil wood",scale:0.90,coloring:evilWoodColors,                       slowness: 9,range:5,level:3,weakness:2,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"tough devilguy",scale:0.80,coloring:twoColors('crimson','tomato'),   slowness: 9,range:5,level:3,weakness:3,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"giant"   ,scale:1.30,coloring:giantColors,                           slowness: 6,range:5,level:4,weakness:2,baseAttack:1,baseDefense:1},
+
+             {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:3,baseAttack:3,baseDefense:1},
+             {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1,baseAttack:1,baseDefense:1},
+             {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4,baseAttack:2,baseDefense:2},
+             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 7,range:5,level:5,weakness:2,baseAttack:2,baseDefense:3,transparency:0.5},
+             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 7,range:5,level:5,weakness:1,baseAttack:2,baseDefense:1},
+             {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2,baseAttack:2,baseDefense:3},
+             {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness: 9,range:5,level:6,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,baseAttack:3,baseDefense:4,transparency:0.50},
+             {name:"blue daemon",scale:0.85,coloring:twoColors('blue','blue'),           slowness: 5,range:5,level:7,weakness:2,baseAttack:2,baseDefense:3,transparency:0.25},
+
+             {name:"elite dwarf",scale:0.5,coloring:twoColors('orange','mediumblue'),    slowness: 5,range:5,level:7,weakness:3,baseAttack:3,baseDefense:4,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],   slowness: 7,range:5,level:7,weakness:2,baseAttack:4,baseDefense:4,transparency:0.25},
+             {name:"stone golem",scale:0.95,coloring:stoneGolemColors,                   slowness: 8,range:4,level:8,weakness:2,baseAttack:4,baseDefense:3},
+             {name:"undead ex-hero",scale:1.0,coloring:undeadExHeroColors,               slowness: 5,range:5,level:8,weakness:4,baseAttack:4,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"hell knight",scale:1.00,coloring:knightColors,                       slowness: 8,range:6,level:8,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],              slowness: 8,range:5,level:9,weakness:2,baseAttack:4,baseDefense:5,transparency:0.50},
+             {name:"gold dwarf",scale:0.5,coloring:twoColors('gold','orange'),           slowness: 5,range:5,level:9,weakness:4,baseAttack:5,baseDefense:4,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
+             {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
+
+             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD,deathProcedure:winning},
+         ];
+
+         function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
+
+         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
+
+         var heroStartingLevel = 1;
+         var heroDefaultWeapon = undefined;
+         var heroDefaultShield = undefined;
+
+         function createHero(pos) {
+            var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel,deathProcedure:gameOver},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined]}];
+            hero[4].baseHp = getBaseHp(hero[4].level);
+            hero[6].hp     = hero[4].baseHp;
+            return hero;
+         }
+
+         function createMonster(pos,attributes) {
+            attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
+            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
+         }
+
+         function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
+        
+class MapGenerator {
+   carveRoom(map,world,y,x,yrad,xrad) {
+      if ( yrad >= y || xrad >= x || x + xrad >= map[0].length - 1 || y + yrad >= map.length - 1 ) {
+         return 0;
+      }
+
+      for ( var py = y - yrad - 1; py <= y + yrad + 1; ++py ) {
+         for ( var px = x - xrad - 1; px <= x + xrad + 1; ++px ) {
+            if ( map[py][px] != 0 ) {
+               return 0;
+            }
+         }
+      }
+
+      var area = 0;
+      for ( var py = y - yrad; py <= y + yrad; ++py ) {
+         for ( var px = x - xrad; px <= x + xrad; ++px ) {
+            map[py][px] = world;
+            ++area;
+         }
+      }
+
+      return area;
+   }
+
+   getRandomInt(max) {
+     return Math.floor(Math.random() * Math.floor(max));
+   }
+
+   isInsideRoom(py,px,map,y,x,yrad,xrad) {
+      return px >= x-xrad && px <= x+xrad && py >= y-yrad && py <= y+yrad;
+   }
+
+   extendRetval(retval, num) {
+      for ( var y = 0; y < retval.length; ++y ) {
+         for ( var i = 0; i < num; ++i ) {
+            retval[y].push(0);
+         }
+      }
+   }
+
+   generateBasicRoomStructure(sizeY,sizeX,world,lshift) {
+      var retval = [];
+      for ( var y = 0; y < sizeY; ++y ) {
+         var row = [];
+         for ( var x = 0; x < sizeX+lshift; ++x ) {
+            row.push(0);
+         }
+         retval.push(row);
+      }
+      var rooms = [];
+      rooms.push([2,2+lshift,1,1]);
+      var sarea = this.carveRoom(retval,world,...rooms[0]);
+      for ( var i = 0; i < 1000; ++i ) {
+         var room = [this.getRandomInt(sizeY),this.getRandomInt(sizeX)+lshift,this.getRandomInt(5)+1,this.getRandomInt(5)+1];
+         if ( room[1] - lshift <= room[3] ) {
+            continue;
+         }
+         var aarea = this.carveRoom(retval,world,...room);
+         if ( aarea ) {
+            sarea += aarea;
+            rooms.push(room);
+         }
+      }
+      return [retval,rooms,sarea];
+   }
+
+   getMapCell(map,y,x) {
+      if ( y < 0 || y >= map.length || x < 0 || x >= map[y].length ) {
+         return 0;
+      }
+      return map[y][x];
+   }
+
+   bfsMap(map, source, goods) {
+      if ( goods.indexOf(this.getMapCell(map, source.y,source.x)) == -1 ) {
+         return [];
+      }
+      var retval = [];
+      for ( var y = 0; y < map.length; ++y ) {
+         var row = [];
+         for ( var x = 0; x < map[y].length; ++x ) {
+            row.push(0);
+         }
+         retval.push(row);
+      }
+      var hops = {};
+      var findings = [[source.y,source.x]];
+      hops[findings[0]]=false;
+      var level = 1;
+      retval[source.y][source.x] = level;
+      var dirs = [[0,1],[-1,0],[0,-1],[1,0]];
+      while ( findings.length > 0 ) {
+         ++level;
+         var nfindings = [];
+         for ( var i = 0; i < findings.length; ++i ) {
+            for ( var j = 0; j < dirs.length; ++j ) {
+               var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
+               if ( goods.indexOf(this.getMapCell(map,nextp[0],nextp[1])) >= 0
+                 && hops[nextp] === undefined ) {
+                  nfindings.push(nextp);
+                  hops[nextp] = findings[i];
+                  retval[nextp[0]][nextp[1]] = level;
+               }
+            }
+         }
+         findings = nfindings;
+      }
+      return [retval, level];
+   }
+
+   countMap(map,low,hi) {
+      var retval = 0;
+      for ( var y = 0; y < map.length; ++y ) {
+         for ( var x = 0; x < map[y].length; ++x ) {
+            if ( map[y][x] >= low && map[y][x] < hi ) {
+               ++retval;
+            }
+         }
+      }
+      return retval;
+   }
+
+   getNthCell(map,low,hi,n) {
+      var counter = 0;
+      for ( var y = 0; y < map.length; ++y ) {
+         for ( var x = 0; x < map[y].length; ++x ) {
+            if ( map[y][x] >= low && map[y][x] < hi ) {
+               if ( counter == n ) {
+                  return [y,x];
+               }
+               ++counter;
+            }
+         }
+      }
+      return false;
+   }
+
+   generateMap(sizeY,sizeX,world,ept,spt,wpt,createEnemy,createStuff,lshift) {
+      var retval = [];
+      var rooms = [];
+      var sarea = 0;
+      if ( !lshift ) {
+         lshift = 0;
+      }
+
+      for ( var i = 0; i < 10; ++i ) {
+         var [nretval, nrooms, nsarea] = this.generateBasicRoomStructure(sizeY,sizeX,world,lshift);
+         if ( nsarea > sarea ) {
+            retval = nretval;
+            rooms = nrooms;
+            sarea = nsarea;
+         }
+      }
+
+      rooms.sort(function (rooma,roomb) {return (rooma[0] > roomb[0] || rooma[0] == roomb[0] && rooma[1] > roomb[1])
+                                               -(roomb[0] > rooma[0] || roomb[0] == rooma[0] && roomb[1] > rooma[1]) });
+      var throneRoom = rooms.length - 1;
+
+      var tset = [0];
+      var tdic = {0:1};
+      var oset = [];
+      for ( var i = 1; i < rooms.length; ++i ) {
+         oset.push(i);
+      }
+      while ( oset.length > 0 ) {
+         var source = tset[this.getRandomInt(tset.length)];
+         var target = oset[this.getRandomInt(oset.length)];
+         var type = this.getRandomInt(2);
+         for ( var ty = Math.min(rooms[source][0],rooms[target][0]); ty <= Math.max(rooms[source][0],rooms[target][0]); ++ty ) {
+            var py = ty;
+            var px = rooms[type?source:target][1];
+            retval[py][px] = world;
+            for ( var i = 0; i < rooms.length; ++i ) {
+               if ( this.isInsideRoom(py,px,retval,...rooms[i]) && !(tdic[i]) ) {
+                  oset = oset.filter(x=>x!=i);
+                  tset.push(i);
+                  tdic[i] = world;
+               }
+            }
+         }
+         for ( var tx = Math.min(rooms[source][1],rooms[target][1]); tx <= Math.max(rooms[source][1],rooms[target][1]); ++tx ) {
+            var py = rooms[type?target:source][0];
+            var px = tx;
+            retval[py][px] = world;
+            for ( var i = 0; i < rooms.length; ++i ) {
+               if ( this.isInsideRoom(py,px,retval,...rooms[i]) && !(tdic[i]) ) {
+                  oset = oset.filter(x=>x!=i);
+                  tset.push(i);
+                  tdic[i] = world;
+               }
+            }
+         }
+      }
+      // decorating rooms
+      {
+         if ( world == 1 ) {
+            retval[rooms[0][0]][rooms[0][1]-rooms[0][3]] = 6;
+         }
+
+         for ( var i = 1; i < rooms.length; ++i ) {
+            if ( i == throneRoom ) {
+               continue;
+            }
+            if ( i % 3 ) {
+               if ( rooms[i][2] == 1 && rooms[i][3] == 1 ) {
+                  retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+               } else if ( rooms[i][2] == 1 && rooms[i][3] >= 2 )  {
+                  retval[rooms[i][0]][rooms[i][1]-1] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]+1] = 6 + world;
+               } else if ( rooms[i][2] >= 2 && rooms[i][3] == 1 )  {
+                  retval[rooms[i][0]-1][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]] = 6 + world;
+               } else if ( rooms[i][2] == 2 && rooms[i][3] >= 2 || rooms[i][2] >= 2 && rooms[i][3] == 2 ) {
+                  var type = this.getRandomInt(2);
+                  retval[rooms[i][0]-1][rooms[i][1]-1] = 12 + world;
+                  retval[rooms[i][0]+1][rooms[i][1]-1] = 12 + world;
+                  if ( type ) {
+                     retval[rooms[i][0]][rooms[i][1]-1] = 6 + world;
+                     retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                     retval[rooms[i][0]][rooms[i][1]+1] = 6 + world;
+                  } else {
+                     retval[rooms[i][0]-1][rooms[i][1]] = 6 + world;
+                     retval[rooms[i][0]][rooms[i][1]] = 6 + world;
+                     retval[rooms[i][0]+1][rooms[i][1]] = 6 + world;
+                  }
+               } else {
+                  var type = this.getRandomInt(2);
+                  if ( type ) {
+                     for ( var px = -1; px <= 1; ++px ) {
+                        for ( var py = -1; py <= 1; ++py ) {
+                           if ( !px && !py || px == 1 && !py ) {
+                              continue;
+                           }
+                           retval[rooms[i][0]+py][rooms[i][1]+px] = 6 + world;
+                        }
+                     }
+                     retval[rooms[i][0]-1][rooms[i][1]-2] = 12 + world;
+                     retval[rooms[i][0]][rooms[i][1]-2] = 12 + world;
+                     retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
+                  } else {
+                     retval[rooms[i][0]-1][rooms[i][1]-2] = 6 + world;
+                     retval[rooms[i][0]-1][rooms[i][1]]   = 6 + world;
+                     retval[rooms[i][0]+1][rooms[i][1]-2] = 12 + world;
+                     retval[rooms[i][0]+1][rooms[i][1]] = 12 + world;
+                  }
+               }
+            }
+         }
+
+         retval[rooms[throneRoom][0]][rooms[throneRoom][1]] = 17;
+         for ( var i = 1; i <= rooms[throneRoom][3]; ++i ) {
+            retval[rooms[throneRoom][0]][rooms[throneRoom][1]+i] = 5;
+         }
+      }
+
+      // console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
+
+      if ( createStuff !== undefined && createEnemy !== undefined ) {
+         var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,5]);
+         var helper = [10,Math.floor(hlev/3),Math.floor(2*hlev/3),hlev-2];
+         var numbers= [];
+         for ( var i = 0; i < 3; ++i ) {
+            numbers.push(this.countMap(hmap,helper[i],helper[i+1]));
+         }
+         var placedict = {};
+         var enemies = [];
+         var stuffs  = [];
+         for ( var i = 0; i < 3; ++i ) {
+            {
+               var ecounter = 0;
+               var disti = Math.floor((helper[i+1] - helper[i])/3.0);
+               var subhelper = [helper[i],helper[i]+disti,helper[i]+2*disti,helper[i+1],helper[i+1]];
+               while ( ecounter < ept ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var order = ecounter % 3;
+                  var pos = this.getNthCell(hmap,subhelper[order],subhelper[order+2],rnum);
+                  if ( pos && !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     enemies.push( createEnemy( pos, (i*3+order+9*(world-1)) ) );
+                     ++ecounter;
+                  }
+               }
+            }
+            {
+               var scounter = 0;
+               while ( scounter < spt ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  if ( pos && !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     stuffs.push( createStuff( pos, 0 ) ); // healing potion
+                     ++scounter;
+                  }
+               }
+            }
+
+            {
+               var scounter = 0;
+               while ( scounter < 1 ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  if ( pos && !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     stuffs.push( createStuff( pos, 1 ) ); // poison gas
+                     ++scounter;
+                  }
+               }
+            }
+            
+            if ( i != 1 ) {
+               var scounter = 0;
+               while ( scounter < wpt ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var wlow = helper[i];
+                  var wup = helper[i+1];
+                  if ( scounter == 0 && i == 0 && world == 1 ) {
+                     wup = wlow + Math.floor((wup - wlow)/3);
+                  }
+                  var pos = this.getNthCell(hmap,wlow,wup,rnum);
+                  if ( pos && !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     stuffs.push( createStuff( pos, 4*world-2+(i>1)*2 ) ); // sword
+                     ++scounter;
+                  }
+               }
+            }
+            if ( i != 0 ) {
+               var scounter = 0;
+               while ( scounter < wpt ) {
+                  var rnum = this.getRandomInt(numbers[i]);
+                  var pos  = this.getNthCell(hmap,helper[i],helper[i+1],rnum);
+                  if ( pos && !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     stuffs.push( createStuff( pos, 4*world-1+(i>1)*2 ) ); // shield
+                     ++scounter;
+                  }
+               }
+            }
+         }
+         this.extendRetval(retval, 3);
+
+         if ( world < 3 ) {
+            // river
+            var riverColor = 3 + world;
+            var [ty,tx] = rooms[throneRoom];
+            --tx;
+            while ( retval[ty][tx] == world ) {
+              --tx;
+            }
+            ++tx;
+            var tx2 = tx-1;
+            while ( tx2 > 0 && retval[ty][tx2] == 0 ) {
+              --tx2;
+            }
+            if ( tx2 > 0 ) {
+               tx = tx2;
+               while ( tx2 > 0 && retval[ty][tx2] != 0 ) {
+                 --tx2;
+               }
+               ++tx2;
+               if ( tx2 > 0 ) {
+                  tx = tx2;
+               }
+            }
+            retval[ty][tx] = riverColor;
+            var s = 0;
+            for ( var x = tx; x < retval[ty].length-2; ++x ) {
+               retval[ty-s][x] = riverColor;
+               retval[ty-s][x+1] = riverColor;
+               ++s;
+            }
+            while (ty-s > 1) {
+               retval[ty-s][x] = riverColor;
+               ++s;
+            }
+         }
+
+         if ( world == 3 ) {
+            // Diabolito
+            var [ty,tx,ry,rx] = rooms[throneRoom];
+            var xit = false;
+            for ( var y = ty-ry; y <= ty+ry && !xit; ++y ) {
+               for ( var x = tx-rx; x <= tx+rx && !xit; ++x ) {
+                  var pos = [y,x];
+                  if ( !placedict[pos] ) {
+                     placedict[pos] = 1;
+                     enemies.push( createEnemy( pos, 27 ) );
+                     xit = true;
+                  }
+               }
+            }
+         }
+
+         return [retval,enemies,stuffs];
+      } else {
+         return [retval,undefined,undefined];
+      }
+   }
+
+   mergeMaps(map1,map2) {
+      var retval = [];
+      for ( var y = 0; y < Math.max(map1.length,map2.length); ++y ) {
+         var width1 = ( y < map1.length ? map1[y].length : 0 );
+         var width2 = ( y < map2.length ? map2[y].length : 0 );
+         var row = [];
+         for ( var x = 0; x < Math.max(width1,width2); ++x ) {
+            var val1 = this.getMapCell(map1,y,x);
+            var val2 = this.getMapCell(map2,y,x);
+            row.push((val1 || val2));
+         }
+         retval.push(row);
+      }
+      return retval;
+   }
+
+   generateThreeInOneMap(sizeY,sizeX,ept,spt,wpt,enemyGenerator,stuffGenerator) {
+      var [map1,enemies1,stuffs1] = generator.generateMap(sizeY,sizeX,1,ept,spt,wpt,enemyGenerator,stuffGenerator);
+      var [map2,enemies2,stuffs2] = generator.generateMap(sizeY,sizeX,2,ept,spt,wpt,enemyGenerator,stuffGenerator,sizeX+2);
+      var [map3,enemies3,stuffs3] = generator.generateMap(sizeY,sizeX,3,ept,spt,wpt,enemyGenerator,stuffGenerator,2*sizeX+4);
+      var fullMap = this.mergeMaps(this.mergeMaps(map1,map2),map3);
+      fullMap[2][sizeX+2]   = 4;
+      fullMap[2][2*sizeX+4] = 5;
+      return [fullMap,enemies1.concat(enemies2).concat(enemies3),stuffs1.concat(stuffs2).concat(stuffs3)];
+   }
+
+   drawPack(pack) {
+      var [map,enemies,stuffs] = pack;
+      var retval = "";
+      for ( var y = 0; y < map.length; ++y ) {
+         var row = "";
+         for ( var x = 0; x < map[y].length; ++x ) {
+            if ( enemies !== undefined ) {
+               var enemyHere = enemies.filter(([pos,code])=>pos[0]==y&&pos[1]==x);
+               if ( enemyHere.length ) {
+                  var [pos,enemy] = enemyHere[0];
+                  row += enemy;
+
+                  continue;
+               }
+            }
+            if ( stuffs !== undefined ) {
+               var stuffHere = stuffs.filter(([pos,code])=>pos[0]==y&&pos[1]==x);
+               if ( stuffHere.length ) {
+                  var [pos,stuff] = stuffHere[0];
+                  row += stuff;
+                  continue;
+               }
+            }
+            if ( map[y][x] == 0 ) {
+               row += "#";
+            } else if ( map[y][x] == 5 ) {
+               row += "=";
+            } else if ( map[y][x] == 4 ) {
+               row += "~";
+            } else if ( map[y][x] == 17 ) {
+               row += "h";
+            } else {
+               row += " ";
+            }
+         }
+         row += "\n";
+         retval += row;
+      }
+      return retval;
+   }
+}
+
+var generator = new MapGenerator();
+
+function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
+
+function enemyGenerator(pos, code) {
+   return createMonster(posAdjustment(pos),ATTRIBUTES_OF_ENEMIES[code]);
+}
+
+function stuffGenerator(pos, code) {
+   if ( code == 0 ) {
+      return createStuff(posAdjustment(pos),ATTRIBUTES_MINOR_HEALTH_POTION);
+   } else if ( code == 1 ) {
+      return createStuff(posAdjustment(pos),ATTRIBUTES_MINOR_POISON_GAS);
+   } else if ( code % 2 == 0 ) {
+      var weapon = [ATTRIBUTES_WOODEN_STICK,
+                   ATTRIBUTES_IRON_BAR,
+                   ATTRIBUTES_STEEL_SWORD,
+                   ATTRIBUTES_SILVER_SWORD,
+                   ATTRIBUTES_GOLD_SWORD,
+                   ATTRIBUTES_CRISTAL_SWORD][(code-2)/2];
+      return createStuff(posAdjustment(pos),weapon);
+   } else {
+      var shield = [ATTRIBUTES_MINISHIELD,
+                   ATTRIBUTES_BUCKLER_SHIELD,
+                   ATTRIBUTES_BATTLESHIELD,
+                   ATTRIBUTES_KITE_SHIELD,
+                   ATTRIBUTES_TOWER_SHIELD,  
+                   ATTRIBUTES_TOWER_SHIELD][(code-3)/2];
+      return createStuff(posAdjustment(pos),shield);
+   }
+}
+
+         var [levelMap,characters,stuffs] = generator.generateThreeInOneMap(210,70,45,30,4,enemyGenerator,stuffGenerator);
+         characters[0] = createHero([2.5,2.5]);
+
+         var characterBuckets;
+         var stuffBuckets;
+         var bucketGridSize = 15;
+         var keyMaxRowSize = 10000;
+         var bucketMaxRowSize = 10000;
+         var multipleObjectCapacity = 5;
+
+         function manhattan(p1,p2) {
+            return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
+         }
+
+         function drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
+            context.beginPath();
+            context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize2*exists));
+            context.fillStyle = boxColor;
+            context.fill();
+         }
+
+         function drawRectangle(boxX,boxY,boxSize1,boxSize2,boxColor) {
+            context.beginPath();
+            context.rect(boxX, boxY, boxSize1, boxSize2);
+            context.fillStyle = boxColor;
+            context.fill();
+         }
+
+         function drawCircle( pnt, radius, strokeColor, fillColor ) {
+            context.strokeStyle = strokeColor;
+            context.fillStyle   = fillColor;
+            context.beginPath();
+            context.arc( pnt.x, pnt.y, radius, 0, 2 * Math.PI, false );
+            context.closePath();
+            context.lineWidth = 2;
+            context.stroke();
+            context.fill();
+         }
+
+         function drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
+            var phaseKey = getKey(characters[i][1], characters[i][2]);
+            var rimage = characterBodyDrawData[phaseKey];
+            var wimage = weaponDrawData[phaseKey];
+            var scale = characters[i][4].scale;
+            var characterColors = characters[i][4].coloring;
+            if ( characters[i][5] ) { // drawing in red because of damage
+               characterColors = characterColors.map(x=>x?"red":"");
+            }
+            var exists = characters[i][6].exists;
+            var shieldrad   = getCharacterHoldedObjectAttribute(i,"shield","size");
+            var weaponcolor = getCharacterHoldedObjectAttribute(i,"weapon","color");
+
+            var simage = rimage;
+            var cind = ind1;
+            if ( w1 === undefined ) {
+               w1 = 0.5;
+            }
+            if ( w2 === undefined ) {
+               w2 = 0.5;
+            }
+            var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > errorTolerance);
+            if ( ind1 > 22 ) {
+               simage = wimage;
+               ind1 -= 23;
+               if ( ind2 !== undefined ) {
+                  ind2 -= 23;
+               }
+               if ( simage[ind1][1] < 3 ) {
+                  return;
+               }
+            }
+            var colorIndex = descriptorValueToColor[cind];
+            var color = characterColors[colorIndex];
+            if ( color === "" ) {
+               return;
+            }
+            if ( colorIndex > 5 ) {
+               if ( colorIndex === 6 ) {
+                  color = weaponcolor;
+               }
+               if ( colorIndex === 7 ) {
+                  color = "black";
+               }
+            }
+
+            var percentage = tileSize / 50;
+            if ( ind2 === undefined ) {
+               drawBox(ux+simage[ind1][0]*percentage,
+                       uy+simage[ind1][1]*percentage*scale,
+                       simage[ind1][2]*percentage,
+                       simage[ind1][2]*percentage,
+                       color,
+                       exists);
+            } else {
+               var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
+               drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
+                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
+                       orad,
+                       orad*(isShield?shieldrad:1),
+                       color,
+                       exists);
+            }
+         }
+
+         function drawCharacter(y,x,i) {
+            var drawDescriptor = drawDescriptors[(getCharacterHoldedObjectAttribute(i,"weapon","value") != 0)
+                                               + (getCharacterHoldedObjectAttribute(i,"shield","value") != 0)*2];
+            var scale = characters[i][4].scale;
+            var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
+            var cy = (x - y) * tileSize + screenHeight / 2;
+            var percentage = tileSize / 50;
+            var ymax = 100 * percentage * scale;
+            var xmax = 54  * percentage;
+            var ux = Math.floor(cx - xmax/2);
+            var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
+            if  ( characters[i][4].transparency ) {
+               context.globalAlpha = characters[i][4].transparency;
+            }
+            drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
+            context.globalAlpha = 1.0;
+            characters[i][5] = 0;
+         }
+
+         function drawBackground() {
+            context.fillStyle = "black";
+            context.fillRect(0,0,screenWidth,screenHeight);
+         }
+
+         function contextPathForObjectDraw(obj) {
+            context.beginPath();
+            for ( var i = 0; i < obj.ps.length; ++i ) {
+               ( i == 0 ? context.moveTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) : context.lineTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) );
+            }
+            context.closePath();
+         }
+
+         function drawFloor(tile, color,tick) {
+            context.fillStyle = color;
+            context.strokeStyle = color;
+            contextPathForObjectDraw(tile);
+            context.lineWidth = tick ? 2 : 1;
+            context.fill();
+            context.stroke();
+         }
+
+         function drawTile(tile,color) {
+            context.strokeStyle = color;
+            context.lineWidth = 1;
+            contextPathForObjectDraw(tile);
+            context.stroke();
+         }
+
+         function getTileCenter(y,x) {
+            return [(x + y) * Math.sqrt(3) * tileSize + screenWidth / 2,
+                    (x - y) * tileSize + screenHeight / 2];
+         }
+
+         function getFloorTile(y,x,obi) {
+            var [px,py] = getTileCenter(y,x);
+            obi.ps = [{x:px,y:py-tileSize},{x:px + Math.sqrt(3) * tileSize,y:py},{x:px,y:py+tileSize},{x:px - Math.sqrt(3) * tileSize,y:py}];
+            return obi;
+         }
+
+         function getFloorTileScale(y,x,obi,scale) {
+            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
+            var py = (x - y) * tileSize + screenHeight / 2;
+            obi.ps = [{x:px,y:py-tileSize*scale},{x:px + Math.sqrt(3) * tileSize*scale,y:py},{x:px,y:py+tileSize*scale},{x:px - Math.sqrt(3) * tileSize*scale,y:py}];
+            return obi;
+         }
+
+         function getKey(diri,phi) {
+            return (1+diri*2)*9 + phi;
+         }
+
+         function drawCursor(x,y) {
+            context.fillStyle = "red";
+            contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
+            context.fill();
+         }
+
+         function drawWall(y,x,num, color) {
+            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
+            var py = (x - y) * tileSize + screenHeight / 2;
+
+            var bit1 = (num % 2) * 2 - 1;
+            var bit2 = (num >= 2) * 2 - 1;
+
+            if ( num < 2 ) {
+               context.globalAlpha = 1.0;
+               context.fillStyle   = color;
+            } else {
+               context.globalAlpha = 0.75;
+               context.fillStyle   = "#000000";
+            }
+            var sy = 1;
+            contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * tileSize+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py - 2 * tileSize+sy},{x:px, y:py + bit2 * tileSize - 2 * tileSize+sy}]} );
+            context.fill();
+            context.globalAlpha = 1.0;
+         }
+
+         function getMapCell(y,x) {
+            return ( y < levelMap.length && y >= 0 && x < levelMap[y].length && x >= 0 ? levelMap[y][x] : 0 );
+         }
+
+         function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
+            var dirY  = y - oy;
+            var dirX  = x - ox;
+            var dirL  = Math.hypot(dirX,dirY);
+            dirY /= dirL;
+            dirX /= dirL;
+
+            var celly   = cy;
+            var cellx   = cx;
+
+            var dist    = 0;
+            var arrived = 0;
+            var limit   = 50;
+            var err     = 1e-6;
+
+            while ( limit && getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
+               --limit;
+               var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
+                                     Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
+               dist += jump;
+               sx = sx + dirX * jump;
+               sy = sy + dirY * jump;
+               var pcellx = cellx;
+               var pcelly = celly;
+               if ( Math.abs(sx) < err && dirX < 0) {
+                  sx = 1;
+                  cellx -= 1;
+                  arrived = 1;
+               } else if ( Math.abs(1-sx) < err && dirX > 0 ) {
+                  sx = 0;
+                  cellx += 1;
+                  arrived = 2;
+               }
+               if ( Math.abs(sy) < err && dirY < 0 ) {
+                  sy = 1;
+                  celly -= 1;
+                  arrived = 3;
+               } else if ( Math.abs(1-sy) < err && dirY > 0 ) {
+                  sy = 0;
+                  celly += 1;
+                  arrived = 4;
+               }
+               if ( pcellx != cellx && pcelly != celly ) {
+                  if ( !getMapCell( celly, pcellx ) && !getMapCell( pcelly, cellx ) ) {
+                     [celly,cellx] = [pcelly,pcellx];
+                     break;
+                  }
+               }
+            }
+
+            return ( celly == cy + y && cellx == cx + x );
+         }
+
+         function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
+            var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
+            var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+            drawFloor(tile, color, getMapCell(cy+y+1,cx+x)&&getMapCell(cy+y,cx+x+1));
+
+            tiles.push(tile);
+         }
+
+         function scaledValue(value) { return Math.round((value/35)*tileSize); }
+
+         function drawCell(y,x,cy,cx,oy,ox,characterIndexer,stuffIndexer) {
+            var color = wallColors[ (getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
+            if ( !getMapCell(cy+y,cx+x-1) ) {
+               drawWall(-y+oy,x-ox,0,color);
+            }
+            if ( !getMapCell(cy+y-1,cx+x) ) {
+               drawWall(-y+oy,x-ox,1,color);
+            }
+
+            var mapval = getMapCell(cy+y,cx+x);
+            var speciality = Math.floor((mapval-1) / wallColors.length);
+            var sworld = (mapval-1) % wallColors.length;
+
+            {
+               var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
+               if ( i !== undefined ) {
+                  var attribs = stuffs[i][1];
+                  if ( stuffs[i][2] !== undefined && stuffs[i][2].exists ) {
+                     var [px,py] = getTileCenter(-y+oy,x-ox);
+                     drawRectangle(Math.round(px-scaledValue(attribs.width/2)),
+                                   Math.round(py-scaledValue(attribs.height/2)),
+                                   scaledValue(attribs.width),
+                                   scaledValue(attribs.height),
+                                   attribs.color);
+                  }
+               }
+            }
+
+            if ( speciality == 1 ) {
+               if ( sworld == 1 ) {
+                  // christmas tree
+                  var [px,py] = getTileCenter(-y+oy,x-ox);
+                  context.fillStyle = SPECIAL_COLORS.TABLEBROWN;
+                  contextPathForObjectDraw({ps:[{x:px-scaledValue(3),y:py},
+                                                {x:px+scaledValue(3),y:py},
+                                                {x:px+scaledValue(3),y:py-scaledValue(10)},
+                                                {x:px-scaledValue(3),y:py-scaledValue(10)}]});
+                  context.fill();
+                  context.fillStyle = 'green';
+                  contextPathForObjectDraw({ps:[{x:px-scaledValue(30),y:py-scaledValue(10)},
+                                                {x:px+scaledValue(30),y:py-scaledValue(10)},
+                                                {x:px                ,y:py-scaledValue(100)}]});
+                  context.fill();
+                  drawCircle({x:px+scaledValue(12),y:py-scaledValue(30)},scaledValue(2),'yellow','yellow');
+                  drawCircle({x:px-scaledValue(8),y:py-scaledValue(45)},scaledValue(2),'yellow','yellow');
+                  drawCircle({x:px+scaledValue(8),y:py-scaledValue(52)},scaledValue(2),'magenta','magenta');
+                  drawCircle({x:px-scaledValue(1),y:py-scaledValue(65)},scaledValue(2),'yellow','yellow');
+               } else {
+                  // table
+                  var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
+                  var tableColor = !sworld ? SPECIAL_COLORS.TABLEBROWN : SPECIAL_COLORS.STEEL;
+                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y,               scaledValue(5),scaledValue(35),tableColor);
+                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(35),tableColor);
+                  drawRectangle(tile.ps[3].x,               tile.ps[3].y,               scaledValue(5),scaledValue(35),tableColor);
+                  drawFloor(tile,tableColor);
+               }
+            }
+
+            if ( speciality == 2 ) {
+               if ( sworld == 1 ) {
+                  // snowman
+                  var [px,py] = getTileCenter(-y+oy,x-ox);
+                  drawCircle({x:px,               y:py-scaledValue(20)},scaledValue(20),'black','white');
+                  drawCircle({x:px,               y:py-scaledValue(37)},scaledValue(15),'black','white');
+                  drawCircle({x:px,               y:py-scaledValue(53)},scaledValue(10),'black','white');
+                  drawCircle({x:px-scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px+scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(28)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(33)},scaledValue(1) ,'black','black');
+                  drawCircle({x:px,               y:py-scaledValue(38)},scaledValue(1) ,'black','black');
+               } else {
+                  // chair
+                  var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
+                  var chairColor = sworld == 2 ? 'silver' : SPECIAL_COLORS.CHAIRBROWN; 
+                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y               ,scaledValue(5),scaledValue(18),chairColor);
+                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(18),chairColor);
+                  drawRectangle(tile.ps[3].x               ,tile.ps[3].y               ,scaledValue(5),scaledValue(18),chairColor);
+                  drawFloor(tile,chairColor);
+                  
+                  drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-scaledValue(35)},{x:tile.ps[0].x,y:tile.ps[0].y-scaledValue(35)}]}, chairColor);
+               }
+            }
+
+            var i = characterIndexer[getIndexKey([cy+y,cx+x])];
+            if ( i !== undefined ) {
+               drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
+            }
+
+            if ( !getMapCell(cy+y+1,cx+x) ) {
+               drawWall(-y+oy,x-ox,2,color);
+            }
+            if ( !getMapCell(cy+y,cx+x+1) ) {
+               drawWall(-y+oy,x-ox,3,color);
+            }
+         }
+
+         function getIndexKey(ps) {
+            return Math.floor(ps[0])*keyMaxRowSize+Math.floor(ps[1]);
+         }
+
+         function getBucketIndex(pos) {
+            return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketMaxRowSize+Math.floor(pos[1] / bucketGridSize)).toString();
+         }
+
+         function iterateOverBucketItemsAroundPos(pos, buckets, func1, func2) {
+            var distr = {};
+            for ( var y = -1; y <= 1; ++y ) {
+               for ( var x = -1; x <= 1; ++x ) {
+                  var psel = getBucketIndex([(bucketGridSize-1)*y+pos[0],(bucketGridSize-1)*x+pos[1]]);
+                  if ( !(psel in distr) && (psel in buckets) ) {
+                     distr[psel] = 1;
+                     var bucket = buckets[psel];
+                     if ( func1 ) {
+                        for ( var j = 0; j < bucket.length; ++j ) {
+                           func1(bucket[j]);
+                        }
+                     }
+                     if ( func2 ) {
+                        func2(buckets, psel);
+                        delete buckets[psel];
+                     }
+                  }
+               }
+            }
+         }
+
+         function generateBuckets(buckets,objs) {
+            for ( var i = 0; i < objs.length; ++i ) {
+               var psel = getBucketIndex(objs[i][0]);
+               if ( !(psel in buckets) ) {
+                  buckets[psel] = [];
+               }
+               buckets[psel].push(i);
+            }
+         }
+
+         function partiallyRegenerateBuckets(pos,buckets,objs) {
+            var affectedBuckets = {};
+            iterateOverBucketItemsAroundPos(pos,
+                                            buckets,
+                                            undefined,
+                                            (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
+
+            iterateOverBucketItemsAroundPos(pos,
+                                            affectedBuckets,
+                                            (i)=>{ var psel = getBucketIndex(objs[i][0]);
+                                                   (buckets[psel] = buckets[psel] || []).push(i); });
+         }
+
+         function createIndexFromBuckets(buckets,objs,cleaner,condition,pos) {
+            if ( buckets == undefined ) {
+               buckets = cleaner();
+               generateBuckets(buckets,objs);
+            } else {
+               partiallyRegenerateBuckets(pos,buckets,objs);
+            }
+
+            var index = {};
+            iterateOverBucketItemsAroundPos(pos,
+                                            buckets,
+                                            (i)=>{ condition(i) && ( index[ getIndexKey(objs[i][0]) ] = i ) });
+
+            return index;
+         }
+         
+         function createCharacterIndex() {
+            return createIndexFromBuckets(characterBuckets, characters, ()=>{ return (characterBuckets = {}); }, (i)=>{return !isCharacterFullyDead(i)}, characters[0][0]);
+         }
+
+         function createStuffIndex() {
+            return createIndexFromBuckets(stuffBuckets, stuffs, ()=>{ return (stuffBuckets = {}); }, (i)=>{return 1;}, characters[0][0]);
+         }
+
+         function drawForeground( camCenter, characterIndex, visibleTiles ) {
+            var cy = Math.floor(camCenter[0]);
+            var cx = Math.floor(camCenter[1]);
+            var oy = camCenter[0] - cy - 0.5;
+            var ox = camCenter[1] - cx - 0.5;
+
+            var cellsy = [];
+            var cellsx = [];
+
+            for ( var y = -mapRadius; y < mapRadius; ++y ) {
+               for ( var x = -mapRadius; x < mapRadius; ++x ) {
+                  if ( isMapCellVisible(y,x,cy,cx,oy,ox) 
+                       || isMapCellVisible(y,x,cy,cx,oy,ox,0,0) 
+                       || isMapCellVisible(y,x,cy,cx,oy,ox,0,1) 
+                       || isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
+                       || isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
+                  {
+                     if ( getMapCell(cy+y,cx+x) ) {
+                        cellsy.push(y);
+                        cellsx.push(x);
+                     }
+                  }
+               }
+            }
+
+            var stuffIndexer = createStuffIndex();
+
+            for ( var i = 0; i < cellsx.length; ++i ) {
+               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
+            }
+
+            for ( var i = 0; i < cellsx.length; ++i ) {
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,characterIndex,stuffIndexer);
+            }
+         }
+
+         function getPointSide(p1,p2,p3) {
+            return Math.sign( (p1.y-p2.y) * (p3.x-p1.x) + (p2.x-p1.x) * (p3.y-p1.y) );
+         }
+
+         function isPointInTriangle(p1,p2,p3,pt) {
+            var retval = ( getPointSide(p1,p2,p3) * getPointSide(p1,p2,pt) >= 0 )
+                      && ( getPointSide(p2,p3,p1) * getPointSide(p2,p3,pt) >= 0 )
+                      && ( getPointSide(p3,p1,p2) * getPointSide(p3,p1,pt) >= 0 );
+            return retval;
+         }
+
+         function bfs(source,target,characterIndex) {
+            if ( !getMapCell(source.y,source.x) ) {
+               return [];
+            }
+            var hops = {};
+            var findings = [[source.y,source.x]];
+            hops[findings[0]]=false;
+            var level = 0;
+            var dirs = [[0,1],[-1,0],[0,-1],[1,0]];
+            while ( level < 10 && findings.length > 0 ) {
+               ++level;
+               var nfindings = [];
+               for ( var i = 0; i < findings.length; ++i ) {
+                  for ( var j = 0; j < dirs.length; ++j ) {
+                     var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
+                     if ( getMapCell(nextp[0],nextp[1]) && getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
+                       && hops[nextp] === undefined
+                       && (nextp[0] === target.y && nextp[1] === target.x || characterIndex[getIndexKey([nextp[0],nextp[1]])] === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
+                        nfindings.push(nextp);
+                        hops[nextp] = findings[i];
+                     }
+                  }
+               }
+               findings = nfindings;
+            }
+            var tara = [target.y,target.x];
+            var way = [];
+            if ( hops[tara] !== undefined ) {
+               way.push(tara);
+               var maxi = 100;
+               while(hops[tara] && maxi-- ) {
+                  way.push(hops[tara]);
+                  tara = hops[tara];
+               }
+            }
+            way.reverse();
+            return way;
+         }
+
+         function getCursorsTile(tiles, cx, cy) {
+            for ( var i = 0; i < tiles.length; ++i ) {
+               if ( isPointInTriangle( tiles[i].ps[0], tiles[i].ps[1], tiles[i].ps[3], {x:cx,y:cy} )
+                 || isPointInTriangle( tiles[i].ps[1], tiles[i].ps[2], tiles[i].ps[3], {x:cx,y:cy} ) ) {
+                  return tiles[i];
+               }
+            }
+         }
+
+         function destroying(index) {
+            characters[index][6].exists -= deathSpeed;
+            if ( isCharacterFullyDead(index) && characters[index][4].deathProcedure ) {
+               characters[index][4].deathProcedure();
+            }
+         }
+
+         function kill(index) {
+            sendMessage(characters[index][4].name+" dies");
+            destroying(index);
+         }
+
+         function capitalize(text) {
+            return text[0].toUpperCase() + text.substring(1);
+         }
+
+         function sendMessage(text) {
+            console.log(capitalize(text)+".");
+         }
+
+         function getWorldName() {
+            if ( characters[0][0][1] < 73 ) return "catacombs";
+            if ( characters[0][0][1] < 145 ) return "iceworld";
+            return "hellworld";
+         } 
+
+         function getCharacterHoldedObjectAttribute(i,holder,attribute) {
+            return (characters[i][6][holder]||ATTRIBUTES_BAREFIST)[attribute];
+         }
+
+         function damage(attacked, value) {
+            if ( value <= 0 ) {
+               return;
+            }
+            if ( !isCharacterAlive(attacked) ) {
+               return;
+            }
+            ouchFx();
+            characters[attacked][6].hp -= value;
+            if ( characters[attacked][6].hp <= 0 ) {
+               characters[attacked][6].hp = 0;
+               kill(attacked);
+               return 1;
+            }
+            characters[attacked][5] = 1;
+            return 0;
+         }
+
+         function usePotion(number) {
+            if ( characters[0][6].potions === undefined
+              || number >= characters[0][6].potions.length
+              || characters[0][6].potions[number] === undefined ) {
+               return;
+            }
+            var exec = characters[0][6].potions[number];
+            characters[0][6].potions[number] = undefined;
+            if ( exec.effect() ) {
+               sendMessage('Hero uses '+exec.name+', '+exec.effectText);
+            } else {
+               sendMessage('Hero uses '+exec.name+', but nothing happens');
+            }
+            pickupAttempt(0,1);
+         }
+
+         function magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
+
+         function getBaseAttack(i) {
+            return magicFunction(characters[i][4].level)+(characters[i][4].baseAttack?characters[i][4].baseAttack:0);
+         }
+
+         function getBaseDefense(i) {
+            return Math.max(0,magicFunction(characters[i][4].level)-2+(characters[i][4].baseDefense?characters[i][4].baseDefense:0));
+         }
+         
+         function levelingOneLevelUp(i) {
+            healSfx();
+            ++characters[i][4].level;
+            characters[i][4].baseHp = getBaseHp(characters[i][4].level);
+            characters[i][6].hp = characters[i][4].baseHp;
+         }
+
+         function levelingUp(i) {
+            if ( characters[i][6].xp !== undefined ) {
+               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
+                  levelingOneLevelUp(i);
+               }
+            }
+         }
+
+         function awardXp(i, enemyLevel) {
+            if ( characters[i][6].xp !== undefined ) {
+               var rndPart = (0.75+Math.random()/4);
+               characters[i][6].xp += Math.floor( ((minimalLevelXp(enemyLevel+1)-minimalLevelXp(enemyLevel)) / monsterKillingPerLevelFactor) * rndPart );
+               levelingUp(i);
+            }
+         }
+
+         function attack(attacker, attacked) {
+            var attackValueMax  = getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value");
+            var attackValueMin  = Math.floor(attackValueMax / 2);
+            var defenseValueMax = getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value");
+            var defenseValueMin = Math.floor(defenseValueMax / 2);
+            var attackValue  =  attackValueMin  + Math.round( (attackValueMax - attackValueMin)*Math.random() );
+            var defenseValue =  defenseValueMin + Math.round( (defenseValueMax-defenseValueMin)*Math.random() );
+            var damageValue = Math.max(attackValue - defenseValue,0);
+            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
+            if ( damage(attacked,damageValue) ) {
+               awardXp(attacker,characters[attacked][4].level);
+            }
+         }
+
+         function pickupAttempt(index,forgiving) {
+            var stuffIndexer = createStuffIndex();
+            if ( (characters[index][2] != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
+               var stuff = stuffIndexer[getIndexKey(characters[index][0])];
+               if ( stuff !== undefined && stuffs[stuff][2].exists ) {
+                  pickup(index,stuff);
+               }
+            }
+         }
+
+         function pickup(index,stuff) {
+            var holder = stuffs[stuff][1].holder;
+            var current = getCharacterHoldedObjectAttribute(index,holder,"value")
+            var whatif  = stuffs[stuff][1].value;
+            if (whatif >= 0 ) {
+               // hero hold can only once from it at a time, value decides
+               if ( whatif > current ) {
+                  if ( current ) {
+                     sendMessage(characters[index][4].name + " drops " + characters[index][6][holder].name + " and picks up " + stuffs[stuff][1].name);
+                     pickupSfx();
+                     var tmp = stuffs[stuff][1];
+                     stuffs[stuff][1] = characters[index][6][holder];
+                     characters[index][6][holder] = tmp;
+                  } else {
+                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name);
+                     pickupSfx();
+                     characters[index][6][holder] = stuffs[stuff][1];
+                     stuffs[stuff][2].exists = 0;
+                  }
+               }
+            } else {
+               // hero can hold multiple from it, and there is no precedence between objects
+               if ( characters[index][6][holder] !== undefined && characters[index][6][holder].filter(x=>x===undefined).length ) {
+                  for ( var i = 0; i < characters[index][6][holder].length; ++i ) {
+                     if ( characters[index][6][holder][i] !== undefined ) {
+                        continue;
+                     }
+                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name + " and puts it into slot "+(i+1)+" of "+holder);
+                     pickupSfx();
+                     characters[index][6][holder][i] = stuffs[stuff][1]
+                     stuffs[stuff][2].exists = 0;
+                     return;
+                  }
+               }
+            }
+         }
+
+         function isCharacterAtCellCenter(index) {
+            return Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
+                && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance;
+         }
+
+         function moveCharacter(index) {
+            pickupAttempt(index,0);
+
+            if ( characters[index][3].length == 0 ) {
+               characters[index][2] = 0;
+               return; 
+            }
+            var characterIndex = createCharacterIndex(); 
+
+            characters[index][2] = ( (characters[index][2]) % 8 + 1 );
+
+            var ctar = characters[index][3][0];
+           
+            for ( var i = 0; i < 2; ++i ) {
+               var targetDistance = Math.abs(ctar[i] + 0.5 - characters[index][0][i]);
+               if ( targetDistance > errorTolerance ) {
+                  var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
+                  var incred = [characters[index][0][0],characters[index][0][1]];
+                  incred[i] += (0.5/characters[index][4].slowness) * sgn;
+                  if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== index ) { // attack
+                     attack(index, characterIndex[getIndexKey(incred)]);
+                     characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
+                     return;
+                  }
+                  characters[index][0] = incred;
+                  if ( characters[index][3].length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
+                     characters[index][1] = 2 * ( sgn < 0 ) + i;
+                  }
+                  return;
+               } else {
+                  characters[index][0][i] = ctar[i] + 0.5;
+               }
+            }
+
+            characters[index][3].reverse();
+            characters[index][3].pop();
+            characters[index][3].reverse();
+         }
+
+         function isCharacterAlive(index) {
+            return ( characters[index][6].exists > 1 - errorTolerance );
+         }
+
+         function isCharacterFullyDead(index) {
+            return ( characters[index][6].exists < errorTolerance );
+         }
+
+         function moveCharacters() {
+            iterateOverBucketItemsAroundPos(characters[0][0],
+                                            characterBuckets,
+                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
+         }
+
+         function handleWalkSfx() {
+            if ( walkSfxCounter < walkSfxFrequency) {
+               ++walkSfxCounter;
+            } else {
+               walkSfxCounter = 0;
+               var disti = characters[0][3].length ? manhattan( characters[0][0], characters[0][3][characters[0][3].length-1] ) > 0.1 : 0;
+               if( characters[0][2] && disti && isCharacterAlive(0) ) {
+                  walkSfx();
+               }
+            }
+         }
+
+         function giveInstructionsToNPCsWithAI() {
+            if ( aiCounter < aiFrequencyDecreaseRatio ) {
+               ++aiCounter;
+            } else {
+               aiCounter = 0;
+               var characterIndex = createCharacterIndex();
+               iterateOverBucketItemsAroundPos(characters[0][0],
+                                               characterBuckets,
+                                               (i)=>{ i != 0
+                                                   && isCharacterAlive(i)
+                                                   && isCharacterAlive(0) 
+                                                   && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
+                                                   && isCharacterAtCellCenter(i)
+                                                   && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
+                                                                              {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
+                                                                              characterIndex));
+                                              });
+            }
+         }
+
+         // common functions 
+         function drawScene() {
+            setTimeout( function() {
+               ANIMATION = requestAnimationFrame(drawScene);
+
+               var characterIndex = createCharacterIndex();
+               drawBackground();
+               var visibleTiles = [];
+               drawForeground(characters[0][0], characterIndex, visibleTiles);
+               drawCursor(curX,curY);
+               currentTarget = getCursorsTile(visibleTiles,curX,curY);
+               if ( isCharacterAlive(0) && currentTarget !== undefined && getMapCell(currentTarget.y,currentTarget.x) <= floorColors.length ) {
+                  var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
+                  drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
+               }
+               moveCharacters();
+               handleWalkSfx();
+               if ( characters[0][6].setUsePotion !== undefined ) {
+                  usePotion(characters[0][6].setUsePotion);
+                  characters[0][6].setUsePotion = undefined;
+               }
+               giveInstructionsToNPCsWithAI();
+            }, 1000 / fps );
+         }
+
+         function initCanvas() {
+            screenWidth  = mainItem.width  = window.innerWidth  - 20;
+            screenHeight = mainItem.height = window.innerHeight - 20;
+            screenScale  = Math.min( screenWidth, screenHeight ) / 2;
+            mapRadiusX = screenWidth/4/tileSize/Math.sqrt(3);
+            mapRadiusY = screenHeight/4/tileSize;
+            mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
+
+            // starting the engine only if it is not running
+            if ( !ANIMATION ) {
+               drawScene();
+            }
+         }
+
+         mainItem.onmousedown = function(event) {
+            if ( currentTarget === undefined ) {
+               return;
+            }
+            var source = {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])};
+            if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
+               return;
+            }
+            if ( characters[0][3].length
+              && characters[0][3][characters[0][3].length-1][1] == currentTarget.x 
+              && characters[0][3][characters[0][3].length-1][0] == currentTarget.y ) {
+               return;
+            }
+            var newtarget = bfs(source,currentTarget,createCharacterIndex());
+            if ( newtarget.length == 0 ) {
+               return;
+            }
+            characters[0][3] = newtarget;
+         };
+
+         mainItem.onmouseup = function(event) {};
+
+         mainItem.onmousemove = function(event) { [curX,curY] = [event.clientX,event.clientY]; };
+
+         //init
+         (function() {
+            initCanvas();
+            addEventListener('resize', initCanvas, false);
+            addEventListener('keydown', (event)=>{
+               if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
+               if ( event.key == "s" ) { sendMessage("HP is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", XP is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level requires "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
+               if ( event.key == "p" ) { sendMessage("Position is "+characters[0][0].toString()); }
+               if ( event.key == "w" ) { sendMessage("World is "+getWorldName()); }
+            });
+         })();
+      </script>
+   </body>
+</html>
