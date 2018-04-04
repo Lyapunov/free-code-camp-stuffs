@@ -11,3 +11,4 @@
 4. Fix a bug with lineWidth, snowman! [DONE]
 5. Changing the name minor health potion to health potion. [DONE]
 6. Adding naming the world (catacombs, iceworld, hellworld). Iceworld is x >= 73. Hellworld >= 145. [DONE]
+7. Bug in the MapGenerator? High level enemies sometimes are too early.
