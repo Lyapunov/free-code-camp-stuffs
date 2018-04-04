@@ -259,7 +259,7 @@ class MapGenerator {
       // console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
 
       if ( createStuff !== undefined && createEnemy !== undefined ) {
-         var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,5]);
+         var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,4,5]);
          var helper = [10,Math.floor(hlev/3),Math.floor(2*hlev/3),hlev-2];
          var numbers= [];
          for ( var i = 0; i < 3; ++i ) {
