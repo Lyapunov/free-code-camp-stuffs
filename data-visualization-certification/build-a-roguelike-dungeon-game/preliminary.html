@@ -161,114 +161,92 @@
          var ATTRIBUTES_KITE_SHIELD    = {name:"kite shield"   ,color:"black",width:24,height:12,value:4,size:1.50,holder:"shield"}
          var ATTRIBUTES_TOWER_SHIELD   = {name:"tower shield"  ,color:"black",width:30,height:12,value:5,size:2.00,holder:"shield"}
 
-         function heroHpIncreaser(percentage) {
-            return ()=>{ var value = Math.floor(characters[0][4].baseHp * percentage);
-                         return isCharacterAlive(0)
-                             && (characters[0][6].hp < characters[0][4].baseHp)
-                             && (characters[0][6].hp=Math.min(characters[0][4].baseHp,characters[0][6].hp+value))
-                             && healSfx(); };
+class CacheIndexerBuckets {
+   getIndexKey(ps) {
+      return Math.floor(ps[0])*this.keyMaxRowSize+Math.floor(ps[1]);
+   }
+
+   getBucketIndex(pos) {
+      return "x" + (Math.floor(pos[0] / this.bucketGridSize)*this.bucketMaxRowSize+Math.floor(pos[1] / this.bucketGridSize)).toString();
+   }
+
+   iterateOverBucketItemsAroundPos(pos, func1, func2) {
+      this.iterateOverBucketItemsAroundPosInternal(pos, this.buckets, func1, func2)
+   }
+
+   iterateOverBucketItemsAroundPosInternal(pos, sbuckets, func1, func2) {
+      var distr = {};
+      for ( var y = -1; y <= 1; ++y ) {
+         for ( var x = -1; x <= 1; ++x ) {
+            var psel = this.getBucketIndex([(this.bucketGridSize-1)*y+pos[0],(this.bucketGridSize-1)*x+pos[1]]);
+            if ( !(psel in distr) && (psel in sbuckets) ) {
+               distr[psel] = 1;
+               var bucket = sbuckets[psel];
+               if ( func1 ) {
+                  for ( var j = 0; j < bucket.length; ++j ) {
+                     func1(bucket[j]);
+                  }
+               }
+               if ( func2 ) {
+                  func2(sbuckets, psel);
+                  delete sbuckets[psel];
+               }
+            }
          }
+      }
+   }
 
-         function damageInRadius(radius, value) {
-            return ()=>{
-               var characterIndex = createCharacterIndex();
-               iterateOverBucketItemsAroundPos(characters[0][0],
-                                               characterBuckets,
-                                               (i)=>{
-                                                   if ( manhattan(characters[0][0], characters[i][0]) < radius ) {
-                                                      damage(i,value);
-                                                   }
-                                                });
-               return 1;
-            };
+   generateBuckets(objs) {
+      for ( var i = 0; i < objs.length; ++i ) {
+         var psel = this.getBucketIndex(objs[i][0]);
+         if ( !(psel in this.buckets) ) {
+            this.buckets[psel] = [];
          }
+         this.buckets[psel].push(i);
+      }
+   }
 
-         function winning() {
-            sendMessage("hero won the game");
-         }
+   partiallyRegenerateBuckets(pos,objs) {
+      var affectedBuckets = {};
+      this.iterateOverBucketItemsAroundPosInternal(pos,
+                                                   this.buckets,
+                                                   undefined,
+                                                   (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
 
-         function gameOver() {
-            sendMessage("game over");
-         }
+      this.iterateOverBucketItemsAroundPosInternal(pos,
+                                                   affectedBuckets,
+                                                   (i)=>{ var psel = this.getBucketIndex(objs[i][0]);
+                                                          (this.buckets[psel] = this.buckets[psel] || []).push(i); });
+   }
 
-         var ATTRIBUTES_MINOR_HEALTH_POTION = {name:"health potion",color:"red"                ,width:5,height:5,value:-1,holder:"potions",effect:heroHpIncreaser(0.25),effectText:"hero heals"};
-         var ATTRIBUTES_HEALTH_POTION       = {name:"major health potion",color:"red"                ,width:7,height:7,value:-1,holder:"potions",effect:heroHpIncreaser(0.33),effectText:"hero heals"};
-         var ATTRIBUTES_MAJOR_HEALTH_POTION = {name:"full health potion",color:"red"                ,width:9,height:9,value:-1,holder:"potions",effect:heroHpIncreaser(0.5),effectText:"hero heals"};
-         var ATTRIBUTES_MINOR_POISON_GAS    = {name:"minor poison gas"   ,color:SPECIAL_COLORS.POISON,width:5,height:5,value:-1,holder:"potions",effect:damageInRadius(10,10),effectText:"deadly poison gas is released"};
-         var ATTRIBUTES_POISON_GAS          = {name:"poison gas"         ,color:SPECIAL_COLORS.POISON,width:7,height:7,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
-         var ATTRIBUTES_MAJOR_POISON_GAS    = {name:"major poison gas"   ,color:SPECIAL_COLORS.POISON,width:0,height:9,value:-1,holder:"potions",effect:damageInRadius(10,30),effectText:"deadly poison gas is released"}
+   cleaner() {
+      return (this.buckets = {});
+   }
 
-         function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
-         function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
+   createIndexFromBuckets(objs,condition,pos) {
+      if ( this.buckets == undefined ) {
+         this.buckets = this.cleaner();
+         this.generateBuckets(objs);
+      } else {
+         this.partiallyRegenerateBuckets(pos,objs);
+      }
 
-         var undeadExHeroColors = ['royalblue','lightgreen','royalblue','green','royalblue','green'];
-         var knightColors = threeColors('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2);
-         var zombieColors = twoColors('mediumseagreen','mediumaquamarine');
-         var tiefColors = ['orange','royalblue','orange','blue','orange','blue'];
-         var evilWoodColors = twoColors(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN);
-         var giantColors = ['orange','limegreen','orange','olive','orange','olive'];
-         var strongZombieColors = twoColors('mediumseagreen','mediumaquamarine');
-         var masterTiefColors = ['orange','tomato','orange','crimson','orange','crimson'];
-         var crazyGiantColors = ['orange','orange','orange','olive','orange','olive'];
-         var stoneGolemColors = twoColors(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0);
-         var superGenieColors = ['yellow','yellow','yellow',"",'yellow',""];
+      var index = {};
+      this.iterateOverBucketItemsAroundPosInternal(pos,
+                                                   this.buckets,
+                                                   (i)=>{ condition(i) && ( index[ this.getIndexKey(objs[i][0]) ] = i ) });
 
-         var ATTRIBUTES_OF_ENEMIES = [
-             {name:"devilguy",scale:0.75,coloring:twoColors('crimson','tomato'),         slowness:10,range:4,level:1,weakness:2,baseAttack:0,baseDefense:0},
-             {name:"ogre"    ,scale:0.9,coloring:twoColors('limegreen','olive'),         slowness: 8,range:5,level:1,weakness:2,baseAttack:0,baseDefense:0},
-             {name:"zombie"  ,scale:0.95,coloring:zombieColors,                          slowness:10,range:4,level:2,weakness:2,baseAttack:1,baseDefense:0},
-             {name:"thief"   ,scale:1.00,coloring:tiefColors,                            slowness: 6,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1},
-             {name:"ogre warrior",scale:0.9,coloring:twoColors('limegreen','olive'),     slowness: 8,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"dwarf",scale:0.6,coloring:twoColors('orange','mediumblue'),          slowness: 5,range:5,level:3,weakness:2,baseAttack:1,baseDefense:0},
-             {name:"evil wood",scale:0.90,coloring:evilWoodColors,                       slowness: 9,range:5,level:3,weakness:2,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"tough devilguy",scale:0.80,coloring:twoColors('crimson','tomato'),   slowness: 9,range:5,level:3,weakness:3,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_IRON_BAR},
-             {name:"giant"   ,scale:1.30,coloring:giantColors,                           slowness: 6,range:5,level:4,weakness:2,baseAttack:1,baseDefense:1},
+      return index;
+   }
 
-             {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:3,baseAttack:3,baseDefense:1},
-             {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1,baseAttack:1,baseDefense:1},
-             {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4,baseAttack:2,baseDefense:2},
-             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 7,range:5,level:5,weakness:2,baseAttack:2,baseDefense:3,transparency:0.5},
-             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 7,range:5,level:5,weakness:1,baseAttack:2,baseDefense:1},
-             {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2,baseAttack:2,baseDefense:3},
-             {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness: 9,range:5,level:6,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,baseAttack:3,baseDefense:4,transparency:0.50},
-             {name:"blue daemon",scale:0.85,coloring:twoColors('blue','blue'),           slowness: 5,range:5,level:7,weakness:2,baseAttack:2,baseDefense:3,transparency:0.25},
+   constructor() {
+      this.buckets = undefined;
+      this.bucketGridSize = 15;
+      this.bucketMaxRowSize = 10000;
+      this.keyMaxRowSize = 10000;
+   }
+}
 
-             {name:"elite dwarf",scale:0.5,coloring:twoColors('orange','mediumblue'),    slowness: 5,range:5,level:7,weakness:3,baseAttack:3,baseDefense:4,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
-             {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],   slowness: 7,range:5,level:7,weakness:2,baseAttack:4,baseDefense:4,transparency:0.25},
-             {name:"stone golem",scale:0.95,coloring:stoneGolemColors,                   slowness: 8,range:4,level:8,weakness:2,baseAttack:4,baseDefense:3},
-             {name:"undead ex-hero",scale:1.0,coloring:undeadExHeroColors,               slowness: 5,range:5,level:8,weakness:4,baseAttack:4,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD},
-             {name:"hell knight",scale:1.00,coloring:knightColors,                       slowness: 8,range:6,level:8,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD},
-             {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],              slowness: 8,range:5,level:9,weakness:2,baseAttack:4,baseDefense:5,transparency:0.50},
-             {name:"gold dwarf",scale:0.5,coloring:twoColors('gold','orange'),           slowness: 5,range:5,level:9,weakness:4,baseAttack:5,baseDefense:4,defaultWeapon:ATTRIBUTES_IRON_BAR},
-             {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
-             {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
-
-             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD,deathProcedure:winning},
-         ];
-
-         function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
-
-         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
-
-         var heroStartingLevel = 1;
-         var heroDefaultWeapon = undefined;
-         var heroDefaultShield = undefined;
-
-         function createHero(pos) {
-            var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel,deathProcedure:gameOver},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined]}];
-            hero[4].baseHp = getBaseHp(hero[4].level);
-            hero[6].hp     = hero[4].baseHp;
-            return hero;
-         }
-
-         function createMonster(pos,attributes) {
-            attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
-            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
-         }
-
-         function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
-        
 class MapGenerator {
    carveRoom(map,world,y,x,yrad,xrad) {
       if ( yrad >= y || xrad >= x || x + xrad >= map[0].length - 1 || y + yrad >= map.length - 1 ) {
@@ -688,9 +666,9 @@ class MapGenerator {
    }
 
    generateThreeInOneMap(sizeY,sizeX,ept,spt,wpt,enemyGenerator,stuffGenerator) {
-      var [map1,enemies1,stuffs1] = generator.generateMap(sizeY,sizeX,1,ept,spt,wpt,enemyGenerator,stuffGenerator);
-      var [map2,enemies2,stuffs2] = generator.generateMap(sizeY,sizeX,2,ept,spt,wpt,enemyGenerator,stuffGenerator,sizeX+2);
-      var [map3,enemies3,stuffs3] = generator.generateMap(sizeY,sizeX,3,ept,spt,wpt,enemyGenerator,stuffGenerator,2*sizeX+4);
+      var [map1,enemies1,stuffs1] = this.generateMap(sizeY,sizeX,1,ept,spt,wpt,enemyGenerator,stuffGenerator);
+      var [map2,enemies2,stuffs2] = this.generateMap(sizeY,sizeX,2,ept,spt,wpt,enemyGenerator,stuffGenerator,sizeX+2);
+      var [map3,enemies3,stuffs3] = this.generateMap(sizeY,sizeX,3,ept,spt,wpt,enemyGenerator,stuffGenerator,2*sizeX+4);
       var fullMap = this.mergeMaps(this.mergeMaps(map1,map2),map3);
       fullMap[2][sizeX+2]   = 4;
       fullMap[2][2*sizeX+4] = 5;
@@ -739,46 +717,219 @@ class MapGenerator {
    }
 }
 
-var generator = new MapGenerator();
+class GameWorld {
+   constructor() {
+      function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
+      function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
+
+      var undeadExHeroColors = ['royalblue','lightgreen','royalblue','green','royalblue','green'];
+      var knightColors = threeColors('tomato',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY2);
+      var zombieColors = twoColors('mediumseagreen','mediumaquamarine');
+      var tiefColors = ['orange','royalblue','orange','blue','orange','blue'];
+      var evilWoodColors = twoColors(SPECIAL_COLORS.WOODBROWN,SPECIAL_COLORS.WOODBROWN);
+      var giantColors = ['orange','limegreen','orange','olive','orange','olive'];
+      var strongZombieColors = twoColors('mediumseagreen','mediumaquamarine');
+      var masterTiefColors = ['orange','tomato','orange','crimson','orange','crimson'];
+      var crazyGiantColors = ['orange','orange','orange','olive','orange','olive'];
+      var stoneGolemColors = twoColors(SPECIAL_COLORS.DARKGRAY0,SPECIAL_COLORS.DARKGRAY0);
+      var superGenieColors = ['yellow','yellow','yellow',"",'yellow',""];
+      this.ATTRIBUTES_OF_ENEMIES = [
+             {name:"devilguy",scale:0.75,coloring:twoColors('crimson','tomato'),         slowness:10,range:4,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"ogre"    ,scale:0.9,coloring:twoColors('limegreen','olive'),         slowness: 8,range:5,level:1,weakness:2,baseAttack:0,baseDefense:0},
+             {name:"zombie"  ,scale:0.95,coloring:zombieColors,                          slowness:10,range:4,level:2,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"thief"   ,scale:1.00,coloring:tiefColors,                            slowness: 6,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1},
+             {name:"ogre warrior",scale:0.9,coloring:twoColors('limegreen','olive'),     slowness: 8,range:5,level:2,weakness:2,baseAttack:0,baseDefense:1,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"dwarf",scale:0.6,coloring:twoColors('orange','mediumblue'),          slowness: 5,range:5,level:3,weakness:2,baseAttack:1,baseDefense:0},
+             {name:"evil wood",scale:0.90,coloring:evilWoodColors,                       slowness: 9,range:5,level:3,weakness:2,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"tough devilguy",scale:0.80,coloring:twoColors('crimson','tomato'),   slowness: 9,range:5,level:3,weakness:3,baseAttack:1,baseDefense:2,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"giant"   ,scale:1.30,coloring:giantColors,                           slowness: 6,range:5,level:4,weakness:2,baseAttack:1,baseDefense:1},
+
+             {name:"ice golem",scale:0.95,coloring:twoColors('mediumblue','mediumblue'), slowness: 8,range:4,level:4,weakness:3,baseAttack:3,baseDefense:1},
+             {name:"strong zombie",scale:1.10,coloring:strongZombieColors,               slowness:10,range:5,level:4,weakness:1,baseAttack:1,baseDefense:1},
+             {name:"master thief" ,scale:1.00,coloring:masterTiefColors,                 slowness: 5,range:5,level:5,weakness:4,baseAttack:2,baseDefense:2},
+             {name:"ghost"        ,scale:0.90,coloring:twoColors('gray','gray'),         slowness: 7,range:5,level:5,weakness:2,baseAttack:2,baseDefense:3,transparency:0.5},
+             {name:"fire elemental",scale:0.95,coloring:twoColors('yellow','yellow'),    slowness: 7,range:5,level:5,weakness:1,baseAttack:2,baseDefense:1},
+             {name:"crazy giant"   ,scale:1.30,coloring:crazyGiantColors,                slowness: 8,range:5,level:6,weakness:2,baseAttack:2,baseDefense:3},
+             {name:"undead ogre",scale:0.9,coloring:twoColors('royalblue','olive'),      slowness: 9,range:5,level:6,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"blue orb",scale:0.7,coloring:['blue',"","","","",""],                slowness: 8,range:5,level:6,weakness:2,baseAttack:3,baseDefense:4,transparency:0.50},
+             {name:"blue daemon",scale:0.85,coloring:twoColors('blue','blue'),           slowness: 5,range:5,level:7,weakness:2,baseAttack:2,baseDefense:3,transparency:0.25},
+
+             {name:"elite dwarf",scale:0.5,coloring:twoColors('orange','mediumblue'),    slowness: 5,range:5,level:7,weakness:3,baseAttack:3,baseDefense:4,defaultWeapon:ATTRIBUTES_WOODEN_STICK},
+             {name:"genie",scale:1.1,coloring:['green','green','green',"",'green',""],   slowness: 7,range:5,level:7,weakness:2,baseAttack:4,baseDefense:4,transparency:0.25},
+             {name:"stone golem",scale:0.95,coloring:stoneGolemColors,                   slowness: 8,range:4,level:8,weakness:2,baseAttack:4,baseDefense:3},
+             {name:"undead ex-hero",scale:1.0,coloring:undeadExHeroColors,               slowness: 5,range:5,level:8,weakness:4,baseAttack:4,baseDefense:3,defaultWeapon:ATTRIBUTES_WOODEN_STICK,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"hell knight",scale:1.00,coloring:knightColors,                       slowness: 8,range:6,level:8,weakness:2,baseAttack:3,baseDefense:3,defaultWeapon:ATTRIBUTES_IRON_BAR,defaultShield:ATTRIBUTES_MINISHIELD},
+             {name:"fire orb",scale:0.7,coloring:['yellow',"","","","",""],              slowness: 8,range:5,level:9,weakness:2,baseAttack:4,baseDefense:5,transparency:0.50},
+             {name:"gold dwarf",scale:0.5,coloring:twoColors('gold','orange'),           slowness: 5,range:5,level:9,weakness:4,baseAttack:5,baseDefense:4,defaultWeapon:ATTRIBUTES_IRON_BAR},
+             {name:"mercury golem",scale:0.95,coloring:twoColors('silver','silver'),     slowness: 4,range:5,level:9,weakness:3,baseAttack:4,baseDefense:5},
+             {name:"super genie",scale:1.1,coloring:superGenieColors,                    slowness: 5,range:5,level:10,weakness:3,baseAttack:4,baseDefense:4,transparency:0.50},
+
+             {name:"diabolito",scale:1.25,coloring:threeColors('crimson',SPECIAL_COLORS.DARKGRAY1,SPECIAL_COLORS.DARKGRAY0),slowness:4,range:6,level:10,weakness:0.5,defaultWeapon:ATTRIBUTES_SILVER_SWORD,defaultShield:ATTRIBUTES_BATTLESHIELD,deathProcedure:winning},
+         ];
+
+      this.ATTRIBUTES_OF_STUFFS = [
+         {name:"health potion",color:"red"                ,width:5,height:5,value:-1,holder:"potions",effect:this.heroHpIncreaser(0.25),effectText:"hero heals"},
+         {name:"major health potion",color:"red"                ,width:7,height:7,value:-1,holder:"potions",effect:this.heroHpIncreaser(0.33),effectText:"hero heals"},
+         {name:"full health potion",color:"red"                ,width:9,height:9,value:-1,holder:"potions",effect:this.heroHpIncreaser(0.5),effectText:"hero heals"},
+         {name:"minor poison gas"   ,color:SPECIAL_COLORS.POISON,width:5,height:5,value:-1,holder:"potions",effect:this.damageInRadius(10,10),effectText:"deadly poison gas is released"},
+         {name:"poison gas"         ,color:SPECIAL_COLORS.POISON,width:7,height:7,value:-1,holder:"potions",effect:this.damageInRadius(10,30),effectText:"deadly poison gas is released"},
+         {name:"major poison gas"   ,color:SPECIAL_COLORS.POISON,width:0,height:9,value:-1,holder:"potions",effect:this.damageInRadius(10,30),effectText:"deadly poison gas is released"}
+      ];
+
+      this.enemyGenerator  = this.enemyGenerator.bind(this);
+      this.stuffGenerator  = this.stuffGenerator.bind(this);
+      this.heroHpIncreaser = this.stuffGenerator.bind(this);
+      this.damageInRadius  = this.damageInRadius.bind(this);
+
+      [this.gameMap,this.characters,this.stuffs] = (new MapGenerator()).generateThreeInOneMap(210,70,45,30,4,this.enemyGenerator,this.stuffGenerator);
+
+      // all characters on the map - 0th is the player
+      //[[y,x], faceDir (0=S, 1=E, 2=N, 3=W), phase, path, shared_attributes_in_class, attackbit, non_shared_attributes]
+      this.characters[0] = this.createHero([2.5,2.5]);
+      this.errorTolerance = 0.01;
+   }
+
+   createHero(pos) {
+      var heroStartingLevel = 1;
+      var heroDefaultWeapon = undefined;
+      var heroDefaultShield = undefined;
+      var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel,deathProcedure:gameOver},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined]}];
+      hero[4].baseHp = getBaseHp(hero[4].level);
+      hero[6].hp     = hero[4].baseHp;
+      return hero;
+   }
+
+   heroHpIncreaser(percentage) {
+      return ()=>{ var value = Math.floor(this.getCharacterSharedAttributes(0).baseHp * percentage);
+                   return this.isCharacterAlive(0)
+                       && (this.getCharacterUniqueAttributes(0).hp < this.getCharacterSharedAttributes(0).baseHp)
+                       && (this.getCharacterUniqueAttributes(0).hp=Math.min(this.getCharacterSharedAttributes(0).baseHp,this.getCharacterUniqueAttributes(0).hp+value))
+                       && healSfx(); };
+   }
+
+   damageInRadius(radius, value) {
+      return ()=>{
+         var characterIndex = this.createCharacterIndex(characterBuckets);
+         characterBuckets.iterateOverBucketItemsAroundPos(this.getCharacterPosition(0),
+                                                          (i)=>{
+                                                              if ( manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) < radius ) {
+                                                                 damage(i,value);
+                                                              }
+                                                          });
+         return 1;
+      };
+   }
+
+   enemyGenerator(pos, code) {
+      return createMonster(posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
+   }
+
+   stuffGenerator(pos, code) {
+      if ( code == 0 ) {
+         return createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[0]);
+      } else if ( code == 1 ) {
+         return createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[3]);
+      } else if ( code % 2 == 0 ) {
+         var weapon = [ATTRIBUTES_WOODEN_STICK,
+                      ATTRIBUTES_IRON_BAR,
+                      ATTRIBUTES_STEEL_SWORD,
+                      ATTRIBUTES_SILVER_SWORD,
+                      ATTRIBUTES_GOLD_SWORD,
+                      ATTRIBUTES_CRISTAL_SWORD][(code-2)/2];
+         return createStuff(posAdjustment(pos),weapon);
+      } else {
+         var shield = [ATTRIBUTES_MINISHIELD,
+                      ATTRIBUTES_BUCKLER_SHIELD,
+                      ATTRIBUTES_BATTLESHIELD,
+                      ATTRIBUTES_KITE_SHIELD,
+                      ATTRIBUTES_TOWER_SHIELD,  
+                      ATTRIBUTES_TOWER_SHIELD][(code-3)/2];
+         return createStuff(posAdjustment(pos),shield);
+      }
+   }
+
+   getKey(diri,phi) { return (1+diri*2)*9 + phi; }
+   magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
+
+   getCharacterPosition(i)         { return this.characters[i][0]; }
+   setCharacterPosition(i,pos)     { this.characters[i][0] = pos; }
+   setCharacterPositionCoord(i,c,val) { this.characters[i][0][c] = val; }
+   getCharacterFaceDir(i)          { return this.characters[i][1]; }
+   getCharacterPhase(i)            { return this.characters[i][2]; }
+   resetCharacterPhase(i)          { this.characters[i][2] = 0; }
+   setCharacterFaceDir(i,a,b)      { this.characters[i][1] = 2 * ( a < 0 ) + b };
+   increaseCharacterPhase(i)       { this.characters[i][2] = (this.characters[i][2] % 8 ) + 1; }
+   getCharacterPath(i)             { return this.characters[i][3]; }
+   removeCharacterFirstPathChain(i) { this.characters[i][3].reverse();this.characters[i][3].pop();this.characters[i][3].reverse(); }
+   setCharacterPath(i,path)        { this.characters[i][3] = path; }
+   getCharacterAnimationKey(i)     { return this.getKey(this.getCharacterFaceDir(i), this.getCharacterPhase(i)); }
+   getCharacterSharedAttributes(i) { return this.characters[i][4]; }
+   getCharacterAttackBit(i)        { return this.characters[i][5]; }
+   eraseCharacterAttackBit(i)      { this.characters[i][5] = 0; }
+   setCharacterAttackBit(i)        { this.characters[i][5] = 1; }
+   getCharacterUniqueAttributes(i) { return this.characters[i][6]; }
+
+   getCharacterBaseAttack(i)  { return this.magicFunction(this.getCharacterSharedAttributes(i).level)+(this.getCharacterSharedAttributes(i).baseAttack?this.getCharacterSharedAttributes(i).baseAttack:0); }
+   getCharacterBaseDefense(i) {
+   
+   return Math.max(0,this.magicFunction(this.getCharacterSharedAttributes(i).level)-2+(this.getCharacterSharedAttributes(i).baseDefense?this.getCharacterSharedAttributes(i).baseDefense:0));
+   }
+ 
+   getCharacterHoldedObjectAttribute(i,holder,attribute) { return (this.getCharacterUniqueAttributes(i)[holder]||ATTRIBUTES_BAREFIST)[attribute]; }
+
+   getCharacterAnimationWeaponShieldValue(i) {
+      return (this.getCharacterHoldedObjectAttribute(i,"weapon","value") != 0)
+           + (this.getCharacterHoldedObjectAttribute(i,"shield","value") != 0)*2;
+   }
+
+   getMapCell(y,x) {
+      return ( y < this.gameMap.length && y >= 0 && x < this.gameMap[y].length && x >= 0 ? this.gameMap[y][x] : 0 );
+   }
+
+   isCharacterAlive(index) {
+      return ( this.getCharacterUniqueAttributes(index).exists > 1 - this.errorTolerance );
+   }
+
+   isCharacterFullyDead(index) {
+      return ( this.getCharacterUniqueAttributes(index).exists < this.errorTolerance );
+   }
+
+   createCharacterIndex(characterBuckets) {
+      var retval = characterBuckets.createIndexFromBuckets(this.characters, (i)=>{return !this.isCharacterFullyDead(i)}, this.getCharacterPosition(0));
+      return retval;
+   }
+
+   createStuffIndex(stuffBuckets) {
+      return stuffBuckets.createIndexFromBuckets(this.stuffs, (i)=>{return 1;}, this.getCharacterPosition(0));
+   }
+};
+
+         var gameWorld = new GameWorld();
+         var characterBuckets = new CacheIndexerBuckets();
+         var stuffBuckets = new CacheIndexerBuckets();
+
+         function winning() {
+            sendMessage("hero won the game");
+         }
+
+         function gameOver() {
+            sendMessage("game over");
+         }
+
+         function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
+
+         function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
+
+         function createMonster(pos,attributes) {
+            attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
+            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
+         }
+
+         function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
+        
 
 function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
 
-function enemyGenerator(pos, code) {
-   return createMonster(posAdjustment(pos),ATTRIBUTES_OF_ENEMIES[code]);
-}
-
-function stuffGenerator(pos, code) {
-   if ( code == 0 ) {
-      return createStuff(posAdjustment(pos),ATTRIBUTES_MINOR_HEALTH_POTION);
-   } else if ( code == 1 ) {
-      return createStuff(posAdjustment(pos),ATTRIBUTES_MINOR_POISON_GAS);
-   } else if ( code % 2 == 0 ) {
-      var weapon = [ATTRIBUTES_WOODEN_STICK,
-                   ATTRIBUTES_IRON_BAR,
-                   ATTRIBUTES_STEEL_SWORD,
-                   ATTRIBUTES_SILVER_SWORD,
-                   ATTRIBUTES_GOLD_SWORD,
-                   ATTRIBUTES_CRISTAL_SWORD][(code-2)/2];
-      return createStuff(posAdjustment(pos),weapon);
-   } else {
-      var shield = [ATTRIBUTES_MINISHIELD,
-                   ATTRIBUTES_BUCKLER_SHIELD,
-                   ATTRIBUTES_BATTLESHIELD,
-                   ATTRIBUTES_KITE_SHIELD,
-                   ATTRIBUTES_TOWER_SHIELD,  
-                   ATTRIBUTES_TOWER_SHIELD][(code-3)/2];
-      return createStuff(posAdjustment(pos),shield);
-   }
-}
-
-         var [gameMap,characters,stuffs] = generator.generateThreeInOneMap(210,70,45,30,4,enemyGenerator,stuffGenerator);
-         characters[0] = createHero([2.5,2.5]);
-
-         var characterBuckets;
-         var stuffBuckets;
-         var bucketGridSize = 15;
-         var keyMaxRowSize = 10000;
-         var bucketMaxRowSize = 10000;
          var multipleObjectCapacity = 5;
 
          function manhattan(p1,p2) {
@@ -811,17 +962,17 @@ function stuffGenerator(pos, code) {
          }
 
          function drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
-            var phaseKey = getKey(characters[i][1], characters[i][2]);
+            var phaseKey = gameWorld.getCharacterAnimationKey(i);
             var rimage = characterBodyDrawData[phaseKey];
             var wimage = weaponDrawData[phaseKey];
-            var scale = characters[i][4].scale;
-            var characterColors = characters[i][4].coloring;
-            if ( characters[i][5] ) { // drawing in red because of damage
+            var scale = gameWorld.getCharacterSharedAttributes(i).scale;
+            var characterColors = gameWorld.getCharacterSharedAttributes(i).coloring;
+            if ( gameWorld.getCharacterAttackBit(i) ) { // drawing in red because of damage
                characterColors = characterColors.map(x=>x?"red":"");
             }
-            var exists = characters[i][6].exists;
-            var shieldrad   = getCharacterHoldedObjectAttribute(i,"shield","size");
-            var weaponcolor = getCharacterHoldedObjectAttribute(i,"weapon","color");
+            var exists      = gameWorld.getCharacterUniqueAttributes(i).exists;
+            var shieldrad   = gameWorld.getCharacterHoldedObjectAttribute(i,"shield","size");
+            var weaponcolor = gameWorld.getCharacterHoldedObjectAttribute(i,"weapon","color");
 
             var simage = rimage;
             var cind = ind1;
@@ -876,9 +1027,8 @@ function stuffGenerator(pos, code) {
          }
 
          function drawCharacter(y,x,i) {
-            var drawDescriptor = drawDescriptors[(getCharacterHoldedObjectAttribute(i,"weapon","value") != 0)
-                                               + (getCharacterHoldedObjectAttribute(i,"shield","value") != 0)*2];
-            var scale = characters[i][4].scale;
+            var drawDescriptor = drawDescriptors[gameWorld.getCharacterAnimationWeaponShieldValue(i)];
+            var scale = gameWorld.getCharacterSharedAttributes(i).scale;
             var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
             var cy = (x - y) * tileSize + screenHeight / 2;
             var percentage = tileSize / 50;
@@ -886,12 +1036,12 @@ function stuffGenerator(pos, code) {
             var xmax = 54  * percentage;
             var ux = Math.floor(cx - xmax/2);
             var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
-            if  ( characters[i][4].transparency ) {
-               context.globalAlpha = characters[i][4].transparency;
+            if  ( gameWorld.getCharacterSharedAttributes(i).transparency ) {
+               context.globalAlpha = gameWorld.getCharacterSharedAttributes(i).transparency;
             }
             drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
             context.globalAlpha = 1.0;
-            characters[i][5] = 0;
+            gameWorld.eraseCharacterAttackBit(i);
          }
 
          function drawBackground() {
@@ -941,10 +1091,6 @@ function stuffGenerator(pos, code) {
             return obi;
          }
 
-         function getKey(diri,phi) {
-            return (1+diri*2)*9 + phi;
-         }
-
          function drawCursor(x,y) {
             context.fillStyle = "red";
             contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
@@ -971,10 +1117,6 @@ function stuffGenerator(pos, code) {
             context.globalAlpha = 1.0;
          }
 
-         function getMapCell(y,x) {
-            return ( y < gameMap.length && y >= 0 && x < gameMap[y].length && x >= 0 ? gameMap[y][x] : 0 );
-         }
-
          function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
             var dirY  = y - oy;
             var dirX  = x - ox;
@@ -990,7 +1132,7 @@ function stuffGenerator(pos, code) {
             var limit   = 50;
             var err     = 1e-6;
 
-            while ( limit && getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
+            while ( limit && gameWorld.getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
                --limit;
                var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
                                      Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
@@ -1018,7 +1160,7 @@ function stuffGenerator(pos, code) {
                   arrived = 4;
                }
                if ( pcellx != cellx && pcelly != celly ) {
-                  if ( !getMapCell( celly, pcellx ) && !getMapCell( pcelly, cellx ) ) {
+                  if ( !gameWorld.getMapCell( celly, pcellx ) && !gameWorld.getMapCell( pcelly, cellx ) ) {
                      [celly,cellx] = [pcelly,pcellx];
                      break;
                   }
@@ -1029,9 +1171,9 @@ function stuffGenerator(pos, code) {
          }
 
          function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
-            var color = floorColors[ (getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
+            var color = floorColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
             var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-            drawFloor(tile, color, getMapCell(cy+y+1,cx+x)&&getMapCell(cy+y,cx+x+1));
+            drawFloor(tile, color, gameWorld.getMapCell(cy+y+1,cx+x)&&gameWorld.getMapCell(cy+y,cx+x+1));
 
             tiles.push(tile);
          }
@@ -1039,23 +1181,23 @@ function stuffGenerator(pos, code) {
          function scaledValue(value) { return Math.round((value/35)*tileSize); }
 
          function drawCell(y,x,cy,cx,oy,ox,characterIndexer,stuffIndexer) {
-            var color = wallColors[ (getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
-            if ( !getMapCell(cy+y,cx+x-1) ) {
+            var color = wallColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
+            if ( !gameWorld.getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0,color);
             }
-            if ( !getMapCell(cy+y-1,cx+x) ) {
+            if ( !gameWorld.getMapCell(cy+y-1,cx+x) ) {
                drawWall(-y+oy,x-ox,1,color);
             }
 
-            var mapval = getMapCell(cy+y,cx+x);
+            var mapval = gameWorld.getMapCell(cy+y,cx+x);
             var speciality = Math.floor((mapval-1) / wallColors.length);
             var sworld = (mapval-1) % wallColors.length;
 
             {
-               var i = stuffIndexer[getIndexKey([cy+y,cx+x])];
+               var i = stuffIndexer[stuffBuckets.getIndexKey([cy+y,cx+x])];
                if ( i !== undefined ) {
-                  var attribs = stuffs[i][1];
-                  if ( stuffs[i][2] !== undefined && stuffs[i][2].exists ) {
+                  var attribs = gameWorld.stuffs[i][1];
+                  if ( gameWorld.stuffs[i][2] !== undefined && gameWorld.stuffs[i][2].exists ) {
                      var [px,py] = getTileCenter(-y+oy,x-ox);
                      drawRectangle(Math.round(px-scaledValue(attribs.width/2)),
                                    Math.round(py-scaledValue(attribs.height/2)),
@@ -1121,96 +1263,22 @@ function stuffGenerator(pos, code) {
                }
             }
 
-            var i = characterIndexer[getIndexKey([cy+y,cx+x])];
+            var i = characterIndexer[characterBuckets.getIndexKey([cy+y,cx+x])];
             if ( i !== undefined ) {
-               drawCharacter((oy+cy+0.5)-(characters[i][0][0]),-(ox+cx+0.5)+(characters[i][0][1]),i);
+               var pos = gameWorld.getCharacterPosition(i);
+               drawCharacter((oy+cy+0.5)-(pos[0]),-(ox+cx+0.5)+(pos[1]),i);
             }
 
-            if ( !getMapCell(cy+y+1,cx+x) ) {
+            if ( !gameWorld.getMapCell(cy+y+1,cx+x) ) {
                drawWall(-y+oy,x-ox,2,color);
             }
-            if ( !getMapCell(cy+y,cx+x+1) ) {
+            if ( !gameWorld.getMapCell(cy+y,cx+x+1) ) {
                drawWall(-y+oy,x-ox,3,color);
             }
          }
 
-         function getIndexKey(ps) {
-            return Math.floor(ps[0])*keyMaxRowSize+Math.floor(ps[1]);
-         }
 
-         function getBucketIndex(pos) {
-            return "x" + (Math.floor(pos[0] / bucketGridSize)*bucketMaxRowSize+Math.floor(pos[1] / bucketGridSize)).toString();
-         }
-
-         function iterateOverBucketItemsAroundPos(pos, buckets, func1, func2) {
-            var distr = {};
-            for ( var y = -1; y <= 1; ++y ) {
-               for ( var x = -1; x <= 1; ++x ) {
-                  var psel = getBucketIndex([(bucketGridSize-1)*y+pos[0],(bucketGridSize-1)*x+pos[1]]);
-                  if ( !(psel in distr) && (psel in buckets) ) {
-                     distr[psel] = 1;
-                     var bucket = buckets[psel];
-                     if ( func1 ) {
-                        for ( var j = 0; j < bucket.length; ++j ) {
-                           func1(bucket[j]);
-                        }
-                     }
-                     if ( func2 ) {
-                        func2(buckets, psel);
-                        delete buckets[psel];
-                     }
-                  }
-               }
-            }
-         }
-
-         function generateBuckets(buckets,objs) {
-            for ( var i = 0; i < objs.length; ++i ) {
-               var psel = getBucketIndex(objs[i][0]);
-               if ( !(psel in buckets) ) {
-                  buckets[psel] = [];
-               }
-               buckets[psel].push(i);
-            }
-         }
-
-         function partiallyRegenerateBuckets(pos,buckets,objs) {
-            var affectedBuckets = {};
-            iterateOverBucketItemsAroundPos(pos,
-                                            buckets,
-                                            undefined,
-                                            (buckets,psel)=>{affectedBuckets[psel]=buckets[psel];});
-
-            iterateOverBucketItemsAroundPos(pos,
-                                            affectedBuckets,
-                                            (i)=>{ var psel = getBucketIndex(objs[i][0]);
-                                                   (buckets[psel] = buckets[psel] || []).push(i); });
-         }
-
-         function createIndexFromBuckets(buckets,objs,cleaner,condition,pos) {
-            if ( buckets == undefined ) {
-               buckets = cleaner();
-               generateBuckets(buckets,objs);
-            } else {
-               partiallyRegenerateBuckets(pos,buckets,objs);
-            }
-
-            var index = {};
-            iterateOverBucketItemsAroundPos(pos,
-                                            buckets,
-                                            (i)=>{ condition(i) && ( index[ getIndexKey(objs[i][0]) ] = i ) });
-
-            return index;
-         }
          
-         function createCharacterIndex() {
-            return createIndexFromBuckets(characterBuckets, characters, ()=>{ return (characterBuckets = {}); }, (i)=>{return !isCharacterFullyDead(i)}, characters[0][0]);
-         }
-
-         function createStuffIndex() {
-            return createIndexFromBuckets(stuffBuckets, stuffs, ()=>{ return (stuffBuckets = {}); }, (i)=>{return 1;}, characters[0][0]);
-         }
-
          function drawForeground( camCenter, characterIndex, visibleTiles ) {
             var cy = Math.floor(camCenter[0]);
             var cx = Math.floor(camCenter[1]);
@@ -1228,7 +1296,7 @@ function stuffGenerator(pos, code) {
                        || isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
                        || isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
                   {
-                     if ( getMapCell(cy+y,cx+x) ) {
+                     if ( gameWorld.getMapCell(cy+y,cx+x) ) {
                         cellsy.push(y);
                         cellsx.push(x);
                      }
@@ -1236,7 +1304,7 @@ function stuffGenerator(pos, code) {
                }
             }
 
-            var stuffIndexer = createStuffIndex();
+            var stuffIndexer = gameWorld.createStuffIndex(stuffBuckets);
 
             for ( var i = 0; i < cellsx.length; ++i ) {
                drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
@@ -1259,7 +1327,7 @@ function stuffGenerator(pos, code) {
          }
 
          function bfs(source,target,characterIndex) {
-            if ( !getMapCell(source.y,source.x) ) {
+            if ( !gameWorld.getMapCell(source.y,source.x) ) {
                return [];
             }
             var hops = {};
@@ -1273,9 +1341,9 @@ function stuffGenerator(pos, code) {
                for ( var i = 0; i < findings.length; ++i ) {
                   for ( var j = 0; j < dirs.length; ++j ) {
                      var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-                     if ( getMapCell(nextp[0],nextp[1]) && getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
+                     if ( gameWorld.getMapCell(nextp[0],nextp[1]) && gameWorld.getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
                        && hops[nextp] === undefined
-                       && (nextp[0] === target.y && nextp[1] === target.x || characterIndex[getIndexKey([nextp[0],nextp[1]])] === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
+                       && (nextp[0] === target.y && nextp[1] === target.x || characterIndex[characterBuckets.getIndexKey([nextp[0],nextp[1]])] === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
                         nfindings.push(nextp);
                         hops[nextp] = findings[i];
                      }
@@ -1307,14 +1375,14 @@ function stuffGenerator(pos, code) {
          }
 
          function destroying(index) {
-            characters[index][6].exists -= deathSpeed;
-            if ( isCharacterFullyDead(index) && characters[index][4].deathProcedure ) {
-               characters[index][4].deathProcedure();
+            gameWorld.getCharacterUniqueAttributes(index).exists -= deathSpeed;
+            if ( gameWorld.isCharacterFullyDead(index) && gameWorld.getCharacterSharedAttributes(index).deathProcedure ) {
+               gameWorld.getCharacterSharedAttributes(index).deathProcedure();
             }
          }
 
          function kill(index) {
-            sendMessage(characters[index][4].name+" dies");
+            sendMessage(gameWorld.getCharacterSharedAttributes(index).name+" dies");
             destroying(index);
          }
 
@@ -1327,41 +1395,37 @@ function stuffGenerator(pos, code) {
          }
 
          function getWorldName() {
-            if ( characters[0][0][1] < 73 ) return "catacombs";
-            if ( characters[0][0][1] < 145 ) return "iceworld";
+            if ( gameWorld.getCharacterPosition(0)[1] < 73 ) return "catacombs";
+            if ( gameWorld.getCharacterPosition(0)[1] < 145 ) return "iceworld";
             return "hellworld";
          } 
-
-         function getCharacterHoldedObjectAttribute(i,holder,attribute) {
-            return (characters[i][6][holder]||ATTRIBUTES_BAREFIST)[attribute];
-         }
 
          function damage(attacked, value) {
             if ( value <= 0 ) {
                return;
             }
-            if ( !isCharacterAlive(attacked) ) {
+            if ( !gameWorld.isCharacterAlive(attacked) ) {
                return;
             }
             ouchFx();
-            characters[attacked][6].hp -= value;
-            if ( characters[attacked][6].hp <= 0 ) {
-               characters[attacked][6].hp = 0;
+            gameWorld.getCharacterUniqueAttributes(attacked).hp -= value;
+            if ( gameWorld.getCharacterUniqueAttributes(attacked).hp <= 0 ) {
+               gameWorld.getCharacterUniqueAttributes(attacked).hp = 0;
                kill(attacked);
                return 1;
             }
-            characters[attacked][5] = 1;
+            gameWorld.setCharacterAttackBit(attacked);
             return 0;
          }
 
          function usePotion(number) {
-            if ( characters[0][6].potions === undefined
-              || number >= characters[0][6].potions.length
-              || characters[0][6].potions[number] === undefined ) {
+            if ( gameWorld.getCharacterUniqueAttributes(0).potions === undefined
+              || number >= gameWorld.getCharacterUniqueAttributes(0).potions.length
+              || gameWorld.getCharacterUniqueAttributes(0).potions[number] === undefined ) {
                return;
             }
-            var exec = characters[0][6].potions[number];
-            characters[0][6].potions[number] = undefined;
+            var exec = gameWorld.getCharacterUniqueAttributes(0).potions[number];
+            gameWorld.getCharacterUniqueAttributes(0).potions[number] = undefined;
             if ( exec.effect() ) {
                sendMessage('Hero uses '+exec.name+', '+exec.effectText);
             } else {
@@ -1370,94 +1434,85 @@ function stuffGenerator(pos, code) {
             pickupAttempt(0,1);
          }
 
-         function magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
-
-         function getBaseAttack(i) {
-            return magicFunction(characters[i][4].level)+(characters[i][4].baseAttack?characters[i][4].baseAttack:0);
-         }
-
-         function getBaseDefense(i) {
-            return Math.max(0,magicFunction(characters[i][4].level)-2+(characters[i][4].baseDefense?characters[i][4].baseDefense:0));
-         }
-         
+        
          function levelingOneLevelUp(i) {
             healSfx();
-            ++characters[i][4].level;
-            characters[i][4].baseHp = getBaseHp(characters[i][4].level);
-            characters[i][6].hp = characters[i][4].baseHp;
+            ++gameWorld.getCharacterSharedAttributes(i).level;
+            gameWorld.getCharacterSharedAttributes(i).baseHp = getBaseHp(gameWorld.getCharacterSharedAttributes(i).level);
+            gameWorld.getCharacterUniqueAttributes(i).hp = gameWorld.getCharacterSharedAttributes(i).baseHp;
          }
 
          function levelingUp(i) {
-            if ( characters[i][6].xp !== undefined ) {
-               while ( minimalLevelXp(characters[i][4].level+1) <= characters[i][6].xp ) {
+            if ( gameWorld.getCharacterUniqueAttributes(i).xp !== undefined ) {
+               while ( minimalLevelXp(gameWorld.getCharacterSharedAttributes(i).level+1) <= gameWorld.getCharacterUniqueAttributes(i).xp ) {
                   levelingOneLevelUp(i);
                }
             }
          }
 
          function awardXp(i, enemyLevel) {
-            if ( characters[i][6].xp !== undefined ) {
+            if ( gameWorld.getCharacterUniqueAttributes(i).xp !== undefined ) {
                var rndPart = (0.75+Math.random()/4);
-               characters[i][6].xp += Math.floor( ((minimalLevelXp(enemyLevel+1)-minimalLevelXp(enemyLevel)) / monsterKillingPerLevelFactor) * rndPart );
+               gameWorld.getCharacterUniqueAttributes(i).xp += Math.floor( ((minimalLevelXp(enemyLevel+1)-minimalLevelXp(enemyLevel)) / monsterKillingPerLevelFactor) * rndPart );
                levelingUp(i);
             }
          }
 
          function attack(attacker, attacked) {
-            var attackValueMax  = getBaseAttack(attacker)  + getCharacterHoldedObjectAttribute(attacker,"weapon","value");
+            var attackValueMax  = gameWorld.getCharacterBaseAttack(attacker)  + gameWorld.getCharacterHoldedObjectAttribute(attacker,"weapon","value");
             var attackValueMin  = Math.floor(attackValueMax / 2);
-            var defenseValueMax = getBaseDefense(attacked) + getCharacterHoldedObjectAttribute(attacked,"shield","value");
+            var defenseValueMax = gameWorld.getCharacterBaseDefense(attacked) + gameWorld.getCharacterHoldedObjectAttribute(attacked,"shield","value");
             var defenseValueMin = Math.floor(defenseValueMax / 2);
             var attackValue  =  attackValueMin  + Math.round( (attackValueMax - attackValueMin)*Math.random() );
             var defenseValue =  defenseValueMin + Math.round( (defenseValueMax-defenseValueMin)*Math.random() );
             var damageValue = Math.max(attackValue - defenseValue,0);
-            sendMessage(characters[attacker][4].name + " attacks " + characters[attacked][4].name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
+            sendMessage(gameWorld.getCharacterSharedAttributes(attacker).name + " attacks " + gameWorld.getCharacterSharedAttributes(attacked).name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
             if ( damage(attacked,damageValue) ) {
-               awardXp(attacker,characters[attacked][4].level);
+               awardXp(attacker,gameWorld.getCharacterSharedAttributes(attacked).level);
             }
          }
 
          function pickupAttempt(index,forgiving) {
-            var stuffIndexer = createStuffIndex();
-            if ( (characters[index][2] != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
-               var stuff = stuffIndexer[getIndexKey(characters[index][0])];
-               if ( stuff !== undefined && stuffs[stuff][2].exists ) {
+            var stuffIndexer = gameWorld.createStuffIndex(stuffBuckets);
+            if ( (gameWorld.getCharacterPhase(index) != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
+               var stuff = stuffIndexer[stuffBuckets.getIndexKey(gameWorld.getCharacterPosition(index))];
+               if ( stuff !== undefined && gameWorld.stuffs[stuff][2].exists ) {
                   pickup(index,stuff);
                }
             }
          }
 
          function pickup(index,stuff) {
-            var holder = stuffs[stuff][1].holder;
-            var current = getCharacterHoldedObjectAttribute(index,holder,"value")
-            var whatif  = stuffs[stuff][1].value;
+            var holder = gameWorld.stuffs[stuff][1].holder;
+            var current = gameWorld.getCharacterHoldedObjectAttribute(index,holder,"value");
+            var whatif  = gameWorld.stuffs[stuff][1].value;
             if (whatif >= 0 ) {
                // hero hold can only once from it at a time, value decides
                if ( whatif > current ) {
                   if ( current ) {
-                     sendMessage(characters[index][4].name + " drops " + characters[index][6][holder].name + " and picks up " + stuffs[stuff][1].name);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " drops " + gameWorld.getCharacterUniqueAttributes(index)[holder].name + " and picks up " + gameWorld.stuffs[stuff][1].name);
                      pickupSfx();
-                     var tmp = stuffs[stuff][1];
-                     stuffs[stuff][1] = characters[index][6][holder];
-                     characters[index][6][holder] = tmp;
+                     var tmp = gameWorld.stuffs[stuff][1];
+                     gameWorld.stuffs[stuff][1] = gameWorld.getCharacterUniqueAttributes(index)[holder];
+                     gameWorld.getCharacterUniqueAttributes(index)[holder] = tmp;
                   } else {
-                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.stuffs[stuff][1].name);
                      pickupSfx();
-                     characters[index][6][holder] = stuffs[stuff][1];
-                     stuffs[stuff][2].exists = 0;
+                     gameWorld.getCharacterUniqueAttributes(index)[holder] = gameWorld.stuffs[stuff][1];
+                     gameWorld.stuffs[stuff][2].exists = 0;
                   }
                }
             } else {
                // hero can hold multiple from it, and there is no precedence between objects
-               if ( characters[index][6][holder] !== undefined && characters[index][6][holder].filter(x=>x===undefined).length ) {
-                  for ( var i = 0; i < characters[index][6][holder].length; ++i ) {
-                     if ( characters[index][6][holder][i] !== undefined ) {
+               if ( gameWorld.getCharacterUniqueAttributes(index)[holder] !== undefined && gameWorld.getCharacterUniqueAttributes(index)[holder].filter(x=>x===undefined).length ) {
+                  for ( var i = 0; i < gameWorld.getCharacterUniqueAttributes(index)[holder].length; ++i ) {
+                     if ( gameWorld.getCharacterUniqueAttributes(index)[holder][i] !== undefined ) {
                         continue;
                      }
-                     sendMessage(characters[index][4].name + " picks up " + stuffs[stuff][1].name + " and puts it into slot "+(i+1)+" of "+holder);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.stuffs[stuff][1].name + " and puts it into slot "+(i+1)+" of "+holder);
                      pickupSfx();
-                     characters[index][6][holder][i] = stuffs[stuff][1]
-                     stuffs[stuff][2].exists = 0;
+                     gameWorld.getCharacterUniqueAttributes(index)[holder][i] = gameWorld.stuffs[stuff][1]
+                     gameWorld.stuffs[stuff][2].exists = 0;
                      return;
                   }
                }
@@ -1465,61 +1520,50 @@ function stuffGenerator(pos, code) {
          }
 
          function isCharacterAtCellCenter(index) {
-            return Math.abs(characters[index][0][0] - Math.floor(characters[index][0][0]) - 0.5) < errorTolerance
-                && Math.abs(characters[index][0][1] - Math.floor(characters[index][0][1]) - 0.5) < errorTolerance;
+            return Math.abs(gameWorld.getCharacterPosition(index)[0] - Math.floor(gameWorld.getCharacterPosition(index)[0]) - 0.5) < errorTolerance
+                && Math.abs(gameWorld.getCharacterPosition(index)[1] - Math.floor(gameWorld.getCharacterPosition(index)[1]) - 0.5) < errorTolerance;
          }
 
          function moveCharacter(index) {
             pickupAttempt(index,0);
 
-            if ( characters[index][3].length == 0 ) {
-               characters[index][2] = 0;
+            if ( gameWorld.getCharacterPath(index).length == 0 ) {
+               gameWorld.resetCharacterPhase(index);
                return; 
             }
-            var characterIndex = createCharacterIndex(); 
+            var characterIndex = gameWorld.createCharacterIndex(characterBuckets); 
 
-            characters[index][2] = ( (characters[index][2]) % 8 + 1 );
+            gameWorld.increaseCharacterPhase(index);
 
-            var ctar = characters[index][3][0];
+            var ctar = gameWorld.getCharacterPath(index)[0];
            
             for ( var i = 0; i < 2; ++i ) {
-               var targetDistance = Math.abs(ctar[i] + 0.5 - characters[index][0][i]);
+               var targetDistance = Math.abs(ctar[i] + 0.5 - gameWorld.getCharacterPosition(index)[i]);
                if ( targetDistance > errorTolerance ) {
-                  var sgn = Math.sign( ctar[i] + 0.5 - characters[index][0][i] );
-                  var incred = [characters[index][0][0],characters[index][0][1]];
-                  incred[i] += (0.5/characters[index][4].slowness) * sgn;
-                  if ( characterIndex[getIndexKey(incred)] !== undefined && characterIndex[getIndexKey(incred)] !== index ) { // attack
-                     attack(index, characterIndex[getIndexKey(incred)]);
-                     characters[index][3] = [[Math.floor(characters[index][0][0]),Math.floor(characters[index][0][1])]];
+                  var sgn = Math.sign( ctar[i] + 0.5 - gameWorld.getCharacterPosition(index)[i] );
+                  var posx = gameWorld.getCharacterPosition(index);
+                  var incred = [posx[0],posx[1]];
+                  incred[i] += (0.5/gameWorld.getCharacterSharedAttributes(index).slowness) * sgn;
+                  if ( characterIndex[characterBuckets.getIndexKey(incred)] !== undefined && characterIndex[characterBuckets.getIndexKey(incred)] !== index ) { // attack
+                     attack(index, characterIndex[characterBuckets.getIndexKey(incred)]);
+                     gameWorld.setCharacterPath(index,[[Math.floor(gameWorld.getCharacterPosition(index)[0]),Math.floor(gameWorld.getCharacterPosition(index)[1])]]);
                      return;
                   }
-                  characters[index][0] = incred;
-                  if ( characters[index][3].length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
-                     characters[index][1] = 2 * ( sgn < 0 ) + i;
+                  gameWorld.setCharacterPosition(index,incred);
+                  if ( gameWorld.getCharacterPath(index).length > 1 || targetDistance > 0.5 ) { // not adjusting direction after attack
+                     gameWorld.setCharacterFaceDir(index,sgn,i);
                   }
                   return;
                } else {
-                  characters[index][0][i] = ctar[i] + 0.5;
+                  gameWorld.setCharacterPositionCoord(index,i,ctar[i] + 0.5);
                }
             }
-
-            characters[index][3].reverse();
-            characters[index][3].pop();
-            characters[index][3].reverse();
-         }
-
-         function isCharacterAlive(index) {
-            return ( characters[index][6].exists > 1 - errorTolerance );
-         }
-
-         function isCharacterFullyDead(index) {
-            return ( characters[index][6].exists < errorTolerance );
+            gameWorld.removeCharacterFirstPathChain(index);
          }
 
          function moveCharacters() {
-            iterateOverBucketItemsAroundPos(characters[0][0],
-                                            characterBuckets,
-                                            (i)=>{ isCharacterAlive(i) && (moveCharacter(i) || 1) || isCharacterFullyDead(i) || destroying(i) });
+            characterBuckets.iterateOverBucketItemsAroundPos(gameWorld.getCharacterPosition(0),
+                                                             (i)=>{ gameWorld.isCharacterAlive(i) && (moveCharacter(i) || 1) || gameWorld.isCharacterFullyDead(i) || destroying(i) });
          }
 
          function handleWalkSfx() {
@@ -1527,8 +1571,8 @@ function stuffGenerator(pos, code) {
                ++walkSfxCounter;
             } else {
                walkSfxCounter = 0;
-               var disti = characters[0][3].length ? manhattan( characters[0][0], characters[0][3][characters[0][3].length-1] ) > 0.1 : 0;
-               if( characters[0][2] && disti && isCharacterAlive(0) ) {
+               var disti = gameWorld.getCharacterPath(0).length ? manhattan( gameWorld.getCharacterPosition(0), gameWorld.getCharacterPath(0)[gameWorld.getCharacterPath(0).length-1] ) > 0.1 : 0;
+               if( gameWorld.getCharacterPhase(0) && disti && gameWorld.isCharacterAlive(0) ) {
                   walkSfx();
                }
             }
@@ -1539,18 +1583,17 @@ function stuffGenerator(pos, code) {
                ++aiCounter;
             } else {
                aiCounter = 0;
-               var characterIndex = createCharacterIndex();
-               iterateOverBucketItemsAroundPos(characters[0][0],
-                                               characterBuckets,
-                                               (i)=>{ i != 0
-                                                   && isCharacterAlive(i)
-                                                   && isCharacterAlive(0) 
-                                                   && manhattan(characters[0][0], characters[i][0]) <= characters[i][4].range
-                                                   && isCharacterAtCellCenter(i)
-                                                   && (characters[i][3] = bfs({x:Math.floor(characters[i][0][1]),y:Math.floor(characters[i][0][0])},
-                                                                              {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])},
-                                                                              characterIndex));
-                                              });
+               var characterIndex = gameWorld.createCharacterIndex(characterBuckets);
+               characterBuckets.iterateOverBucketItemsAroundPos(gameWorld.getCharacterPosition(0),
+                                                                 (i)=>{ i != 0
+                                                                     && gameWorld.isCharacterAlive(i)
+                                                                     && gameWorld.isCharacterAlive(0) 
+                                                                     && manhattan(gameWorld.getCharacterPosition(0), gameWorld.getCharacterPosition(i)) <= gameWorld.getCharacterSharedAttributes(i).range
+                                                                     && isCharacterAtCellCenter(i)
+                                                                     && (gameWorld.setCharacterPath(i, bfs({x:Math.floor(gameWorld.getCharacterPosition(i)[1]),y:Math.floor(gameWorld.getCharacterPosition(i)[0])},
+                                                                                                {x:Math.floor(gameWorld.getCharacterPosition(0)[1]),y:Math.floor(gameWorld.getCharacterPosition(0)[0])},
+                                                                                                characterIndex)));
+                                                                });
             }
          }
 
@@ -1559,21 +1602,21 @@ function stuffGenerator(pos, code) {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
 
-               var characterIndex = createCharacterIndex();
+               var characterIndex = gameWorld.createCharacterIndex(characterBuckets);
                drawBackground();
                var visibleTiles = [];
-               drawForeground(characters[0][0], characterIndex, visibleTiles);
+               drawForeground(gameWorld.getCharacterPosition(0), characterIndex, visibleTiles);
                drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
-               if ( isCharacterAlive(0) && currentTarget !== undefined && getMapCell(currentTarget.y,currentTarget.x) <= floorColors.length ) {
-                  var characterIndexOnSelectedCell = characterIndex[getIndexKey([currentTarget.y,currentTarget.x])];
+               if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.getMapCell(currentTarget.y,currentTarget.x) <= floorColors.length ) {
+                  var characterIndexOnSelectedCell = characterIndex[characterBuckets.getIndexKey([currentTarget.y,currentTarget.x])];
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
                moveCharacters();
                handleWalkSfx();
-               if ( characters[0][6].setUsePotion !== undefined ) {
-                  usePotion(characters[0][6].setUsePotion);
-                  characters[0][6].setUsePotion = undefined;
+               if ( gameWorld.getCharacterUniqueAttributes(0).setUsePotion !== undefined ) {
+                  usePotion(gameWorld.getCharacterUniqueAttributes(0).setUsePotion);
+                  gameWorld.getCharacterUniqueAttributes(0).setUsePotion = undefined;
                }
                giveInstructionsToNPCsWithAI();
             }, 1000 / fps );
@@ -1597,20 +1640,20 @@ function stuffGenerator(pos, code) {
             if ( currentTarget === undefined ) {
                return;
             }
-            var source = {x:Math.floor(characters[0][0][1]),y:Math.floor(characters[0][0][0])};
+            var source = {x:Math.floor(gameWorld.getCharacterPosition(0)[1]),y:Math.floor(gameWorld.getCharacterPosition(0)[0])};
             if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
                return;
             }
-            if ( characters[0][3].length
-              && characters[0][3][characters[0][3].length-1][1] == currentTarget.x 
-              && characters[0][3][characters[0][3].length-1][0] == currentTarget.y ) {
+            if ( gameWorld.getCharacterPath(0).length
+              && gameWorld.getCharacterPath(0)[gameWorld.getCharacterPath(0).length-1][1] == currentTarget.x 
+              && gameWorld.getCharacterPath(0)[gameWorld.getCharacterPath(0).length-1][0] == currentTarget.y ) {
                return;
             }
-            var newtarget = bfs(source,currentTarget,createCharacterIndex());
+            var newtarget = bfs(source,currentTarget,gameWorld.createCharacterIndex(characterBuckets));
             if ( newtarget.length == 0 ) {
                return;
             }
-            characters[0][3] = newtarget;
+            gameWorld.setCharacterPath(0, newtarget);
          };
 
          mainItem.onmouseup = function(event) {};
@@ -1622,9 +1665,9 @@ function stuffGenerator(pos, code) {
             initCanvas();
             addEventListener('resize', initCanvas, false);
             addEventListener('keydown', (event)=>{
-               if ( parseInt(event.key).toString() == event.key ) { characters[0][6].setUsePotion = parseInt(event.key)-1; }
-               if ( event.key == "s" ) { sendMessage("HP is "+characters[0][6].hp+"/"+characters[0][4].baseHp+", XP is "+characters[0][6].xp+", level "+characters[0][4].level+" (next level requires "+minimalLevelXp(characters[0][4].level+1)+" xp)"); }
-               if ( event.key == "p" ) { sendMessage("Position is "+characters[0][0].toString()); }
+               if ( parseInt(event.key).toString() == event.key ) { gameWorld.getCharacterUniqueAttributes(0).setUsePotion = parseInt(event.key)-1; }
+               if ( event.key == "s" ) { sendMessage("HP is "+gameWorld.getCharacterUniqueAttributes(0).hp+"/"+gameWorld.getCharacterSharedAttributes(0).baseHp+", XP is "+gameWorld.getCharacterUniqueAttributes(0).xp+", level "+gameWorld.getCharacterSharedAttributes(0).level+" (next level requires "+minimalLevelXp(gameWorld.getCharacterSharedAttributes(0).level+1)+" xp)"); }
+               if ( event.key == "p" ) { sendMessage("Position is "+gameWorld.getCharacterPosition(0).toString()); }
                if ( event.key == "w" ) { sendMessage("World is "+getWorldName()); }
             });
          })();
