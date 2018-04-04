@@ -820,15 +820,22 @@ class GameWorld {
       };
    }
 
+   createMonster(pos,attributes) {
+      attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
+      return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
+   }
+
+   createStuff(pos,attributes) { return [pos,attributes,{exists:1}]; }
+
    enemyGenerator(pos, code) {
-      return createMonster(posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
+      return this.createMonster(posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
    }
 
    stuffGenerator(pos, code) {
       if ( code == 0 ) {
-         return createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[0]);
+         return this.createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[0]);
       } else if ( code == 1 ) {
-         return createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[3]);
+         return this.createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[3]);
       } else if ( code % 2 == 0 ) {
          var weapon = [ATTRIBUTES_WOODEN_STICK,
                       ATTRIBUTES_IRON_BAR,
@@ -836,7 +843,7 @@ class GameWorld {
                       ATTRIBUTES_SILVER_SWORD,
                       ATTRIBUTES_GOLD_SWORD,
                       ATTRIBUTES_CRISTAL_SWORD][(code-2)/2];
-         return createStuff(posAdjustment(pos),weapon);
+         return this.createStuff(posAdjustment(pos),weapon);
       } else {
          var shield = [ATTRIBUTES_MINISHIELD,
                       ATTRIBUTES_BUCKLER_SHIELD,
@@ -844,7 +851,7 @@ class GameWorld {
                       ATTRIBUTES_KITE_SHIELD,
                       ATTRIBUTES_TOWER_SHIELD,  
                       ATTRIBUTES_TOWER_SHIELD][(code-3)/2];
-         return createStuff(posAdjustment(pos),shield);
+         return this.createStuff(posAdjustment(pos),shield);
       }
    }
 
@@ -924,14 +931,6 @@ class GameWorld {
          function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
          function minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
-
-         function createMonster(pos,attributes) {
-            attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
-            return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
-         }
-
-         function createStuff(pos,attributes)   { return [pos,attributes,{exists:1}]; }
-        
 
 function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
 
