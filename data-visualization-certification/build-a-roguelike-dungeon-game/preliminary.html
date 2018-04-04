@@ -234,7 +234,7 @@ class CacheIndexerBuckets {
       var index = {};
       this.iterateOverBucketItemsAroundPosInternal(pos,
                                                    this.buckets,
-                                                   (i)=>{ condition(i) && ( index[ this.getIndexKey(objs[i][0]) ] = i ) });
+                                                   (i)=>{ condition(objs[i]) && ( index[ this.getIndexKey(objs[i][0]) ] = i ) });
 
       return index;
    }
@@ -906,13 +906,17 @@ class GameWorld {
       return ( this.getCharacterUniqueAttributes(index).exists < this.errorTolerance );
    }
 
+   isObjectFullyDead(obi) {
+      return ( obi[6].exists < this.errorTolerance );
+   }
+
    createCharacterIndex(characterBuckets) {
-      var retval = characterBuckets.createIndexFromBuckets(this.characters, (i)=>{return !this.isCharacterFullyDead(i)}, this.getCharacterPosition(0));
+      var retval = characterBuckets.createIndexFromBuckets(this.characters, (obi)=>{return !this.isObjectFullyDead(obi);}, this.getCharacterPosition(0));
       return retval;
    }
 
    createStuffIndex(stuffBuckets) {
-      return stuffBuckets.createIndexFromBuckets(this.stuffs, (i)=>{return 1;}, this.getCharacterPosition(0));
+      return stuffBuckets.createIndexFromBuckets(this.stuffs, (obi)=>{return !this.isObjectFullyDead(obi);}, this.getCharacterPosition(0));
    }
 };
 
