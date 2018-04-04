@@ -780,6 +780,7 @@ class GameWorld {
       this.stuffGenerator  = this.stuffGenerator.bind(this);
       this.heroHpIncreaser = this.stuffGenerator.bind(this);
       this.damageInRadius  = this.damageInRadius.bind(this);
+      this.isObjectNotFullyDead = this.isObjectNotFullyDead.bind(this);
 
       [this.gameMap,this.characters,this.stuffs] = (new MapGenerator()).generateThreeInOneMap(210,70,45,30,4,this.enemyGenerator,this.stuffGenerator);
 
@@ -906,17 +907,16 @@ class GameWorld {
       return ( this.getCharacterUniqueAttributes(index).exists < this.errorTolerance );
    }
 
-   isObjectFullyDead(obi) {
-      return ( obi[6].exists < this.errorTolerance );
+   isObjectNotFullyDead(obi) {
+      return !( obi[6].exists < this.errorTolerance );
    }
 
    createCharacterIndex(characterBuckets) {
-      var retval = characterBuckets.createIndexFromBuckets(this.characters, (obi)=>{return !this.isObjectFullyDead(obi);}, this.getCharacterPosition(0));
-      return retval;
+      return characterBuckets.createIndexFromBuckets(this.characters, this.isObjectNotFullyDead, this.getCharacterPosition(0));
    }
 
    createStuffIndex(stuffBuckets) {
-      return stuffBuckets.createIndexFromBuckets(this.stuffs, (obi)=>{return !this.isObjectFullyDead(obi);}, this.getCharacterPosition(0));
+      return stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
    }
 };
 
