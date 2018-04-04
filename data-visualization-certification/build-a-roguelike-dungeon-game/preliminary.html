@@ -869,6 +869,11 @@ class GameWorld {
    setCharacterAttackBit(i)        { this.characters[i][5] = 1; }
    getCharacterUniqueAttributes(i) { return this.characters[i][6]; }
 
+   getStuffPosition(i)             { return this.stuffs[i][0]; }
+   getStuffSharedAttributes(i)     { return this.stuffs[i][1]; }
+   setStuffSharedAttributes(i,val) { this.stuffs[i][1] = val; }
+   getStuffUniqueAttributes(i)     { return this.stuffs[i][2]; }
+
    getCharacterBaseAttack(i)  { return this.magicFunction(this.getCharacterSharedAttributes(i).level)+(this.getCharacterSharedAttributes(i).baseAttack?this.getCharacterSharedAttributes(i).baseAttack:0); }
    getCharacterBaseDefense(i) {
    
@@ -1196,8 +1201,8 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             {
                var i = stuffIndexer[stuffBuckets.getIndexKey([cy+y,cx+x])];
                if ( i !== undefined ) {
-                  var attribs = gameWorld.stuffs[i][1];
-                  if ( gameWorld.stuffs[i][2] !== undefined && gameWorld.stuffs[i][2].exists ) {
+                  var attribs = gameWorld.getStuffSharedAttributes(i);
+                  if ( gameWorld.getStuffUniqueAttributes(i) !== undefined && gameWorld.getStuffUniqueAttributes(i).exists ) {
                      var [px,py] = getTileCenter(-y+oy,x-ox);
                      drawRectangle(Math.round(px-scaledValue(attribs.width/2)),
                                    Math.round(py-scaledValue(attribs.height/2)),
@@ -1476,30 +1481,30 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             var stuffIndexer = gameWorld.createStuffIndex(stuffBuckets);
             if ( (gameWorld.getCharacterPhase(index) != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
                var stuff = stuffIndexer[stuffBuckets.getIndexKey(gameWorld.getCharacterPosition(index))];
-               if ( stuff !== undefined && gameWorld.stuffs[stuff][2].exists ) {
+               if ( stuff !== undefined && gameWorld.getStuffUniqueAttributes(stuff).exists ) {
                   pickup(index,stuff);
                }
-            }
+           }
          }
 
          function pickup(index,stuff) {
-            var holder = gameWorld.stuffs[stuff][1].holder;
+            var holder = gameWorld.getStuffSharedAttributes(stuff).holder;
             var current = gameWorld.getCharacterHoldedObjectAttribute(index,holder,"value");
-            var whatif  = gameWorld.stuffs[stuff][1].value;
+            var whatif  = gameWorld.getStuffSharedAttributes(stuff).value;
             if (whatif >= 0 ) {
                // hero hold can only once from it at a time, value decides
                if ( whatif > current ) {
                   if ( current ) {
-                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " drops " + gameWorld.getCharacterUniqueAttributes(index)[holder].name + " and picks up " + gameWorld.stuffs[stuff][1].name);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " drops " + gameWorld.getCharacterUniqueAttributes(index)[holder].name + " and picks up " + gameWorld.getStuffSharedAttributes(stuff).name);
                      pickupSfx();
-                     var tmp = gameWorld.stuffs[stuff][1];
-                     gameWorld.stuffs[stuff][1] = gameWorld.getCharacterUniqueAttributes(index)[holder];
+                     var tmp = gameWorld.getStuffSharedAttributes(stuff);
+                     gameWorld.setStuffSharedAttributes(stuff,gameWorld.getCharacterUniqueAttributes(index)[holder]);
                      gameWorld.getCharacterUniqueAttributes(index)[holder] = tmp;
                   } else {
-                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.stuffs[stuff][1].name);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.getStuffSharedAttributes(stuff).name);
                      pickupSfx();
-                     gameWorld.getCharacterUniqueAttributes(index)[holder] = gameWorld.stuffs[stuff][1];
-                     gameWorld.stuffs[stuff][2].exists = 0;
+                     gameWorld.getCharacterUniqueAttributes(index)[holder] = gameWorld.getStuffSharedAttributes(stuff);
+                     gameWorld.getStuffUniqueAttributes(stuff).exists = 0;
                   }
                }
             } else {
@@ -1509,10 +1514,10 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                      if ( gameWorld.getCharacterUniqueAttributes(index)[holder][i] !== undefined ) {
                         continue;
                      }
-                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.stuffs[stuff][1].name + " and puts it into slot "+(i+1)+" of "+holder);
+                     sendMessage(gameWorld.getCharacterSharedAttributes(index).name + " picks up " + gameWorld.getStuffSharedAttributes(stuff).name + " and puts it into slot "+(i+1)+" of "+holder);
                      pickupSfx();
-                     gameWorld.getCharacterUniqueAttributes(index)[holder][i] = gameWorld.stuffs[stuff][1]
-                     gameWorld.stuffs[stuff][2].exists = 0;
+                     gameWorld.getCharacterUniqueAttributes(index)[holder][i] = gameWorld.getStuffSharedAttributes(stuff);
+                     gameWorld.getStuffUniqueAttributes(stuff).exists = 0;
                      return;
                   }
                }
