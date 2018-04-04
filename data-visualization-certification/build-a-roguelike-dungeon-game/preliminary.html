@@ -825,7 +825,7 @@ class GameWorld {
       return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
    }
 
-   createStuff(pos,attributes) { return [pos,attributes,{exists:1}]; }
+   createStuff(pos,attributes) { return [pos,0,0,[],attributes,0,{exists:1}]; }
 
    enemyGenerator(pos, code) {
       return this.createMonster(posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
@@ -877,9 +877,9 @@ class GameWorld {
    getCharacterUniqueAttributes(i) { return this.characters[i][6]; }
 
    getStuffPosition(i)             { return this.stuffs[i][0]; }
-   getStuffSharedAttributes(i)     { return this.stuffs[i][1]; }
-   setStuffSharedAttributes(i,val) { this.stuffs[i][1] = val; }
-   getStuffUniqueAttributes(i)     { return this.stuffs[i][2]; }
+   getStuffSharedAttributes(i)     { return this.stuffs[i][4]; }
+   setStuffSharedAttributes(i,val) { this.stuffs[i][4] = val; }
+   getStuffUniqueAttributes(i)     { return this.stuffs[i][6]; }
 
    getCharacterBaseAttack(i)  { return this.magicFunction(this.getCharacterSharedAttributes(i).level)+(this.getCharacterSharedAttributes(i).baseAttack?this.getCharacterSharedAttributes(i).baseAttack:0); }
    getCharacterBaseDefense(i) {
