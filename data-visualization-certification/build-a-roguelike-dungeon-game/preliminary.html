@@ -790,8 +790,9 @@ class GameWorld {
       this.errorTolerance = 0.01;
 
       this.characterBuckets = new CacheIndexerBuckets();
-      this.characterIndex = undefined;
-      this.stuffIndex     = undefined;
+      this.characterIndex   = undefined;
+      this.stuffBuckets     = new CacheIndexerBuckets();
+      this.stuffIndex       = undefined;
    }
 
    createHero(pos) {
@@ -934,24 +935,19 @@ class GameWorld {
       this.characterBuckets.iterateOverBucketItemsAroundPos(this.getCharacterPosition(0), func);
    }
 
-   createStuffIndex(stuffBuckets) {
-      return stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
-   }
-
    refreshStuffIndex() {
-      this.stuffIndex = stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
+      this.stuffIndex = this.stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
    }
 
    getStuffIndexFromPosition(pos) {
       if ( this.stuffIndex === undefined ) {
          refreshStuffIndex();
       }
-      return this.stuffIndex[this.characterBuckets.getIndexKey(pos)];
+      return this.stuffIndex[this.stuffBuckets.getIndexKey(pos)];
    }
 };
 
          var gameWorld = new GameWorld();
-         var stuffBuckets = new CacheIndexerBuckets();
 
          function winning() {
             sendMessage("hero won the game");
