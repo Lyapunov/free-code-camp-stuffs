@@ -791,6 +791,7 @@ class GameWorld {
 
       this.characterBuckets = new CacheIndexerBuckets();
       this.characterIndex = undefined;
+      this.stuffIndex     = undefined;
    }
 
    createHero(pos) {
@@ -871,7 +872,12 @@ class GameWorld {
    increaseCharacterPhase(i)       { this.characters[i][2] = (this.characters[i][2] % 8 ) + 1; }
    getCharacterPath(i)             { return this.characters[i][3]; }
    removeCharacterFirstPathChain(i) { this.characters[i][3].reverse();this.characters[i][3].pop();this.characters[i][3].reverse(); }
-   setCharacterPath(i,path)        { this.characters[i][3] = path; }
+   setCharacterPath(i,path) {
+      if ( path === undefined || path.length == 0 ) {
+         return;
+      }
+      this.characters[i][3] = path;
+   }
    getCharacterAnimationKey(i)     { return this.getKey(this.getCharacterFaceDir(i), this.getCharacterPhase(i)); }
    getCharacterSharedAttributes(i) { return this.characters[i][4]; }
    getCharacterAttackBit(i)        { return this.characters[i][5]; }
@@ -930,6 +936,17 @@ class GameWorld {
 
    createStuffIndex(stuffBuckets) {
       return stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
+   }
+
+   refreshStuffIndex() {
+      this.stuffIndex = stuffBuckets.createIndexFromBuckets(this.stuffs, this.isObjectNotFullyDead, this.getCharacterPosition(0));
+   }
+
+   getStuffIndexFromPosition(pos) {
+      if ( this.stuffIndex === undefined ) {
+         refreshStuffIndex();
+      }
+      return this.stuffIndex[this.characterBuckets.getIndexKey(pos)];
    }
 };
 
@@ -1200,7 +1217,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
 
          function scaledValue(value) { return Math.round((value/35)*tileSize); }
 
-         function drawCell(y,x,cy,cx,oy,ox,stuffIndexer) {
+         function drawCell(y,x,cy,cx,oy,ox) {
             var color = wallColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
             if ( !gameWorld.getMapCell(cy+y,cx+x-1) ) {
                drawWall(-y+oy,x-ox,0,color);
@@ -1214,7 +1231,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             var sworld = (mapval-1) % wallColors.length;
 
             {
-               var i = stuffIndexer[stuffBuckets.getIndexKey([cy+y,cx+x])];
+               var i = gameWorld.getStuffIndexFromPosition([cy+y,cx+x]);
                if ( i !== undefined ) {
                   var attribs = gameWorld.getStuffSharedAttributes(i);
                   if ( gameWorld.getStuffUniqueAttributes(i) !== undefined && gameWorld.getStuffUniqueAttributes(i).exists ) {
@@ -1324,14 +1341,14 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                }
             }
 
-            var stuffIndexer = gameWorld.createStuffIndex(stuffBuckets);
+            gameWorld.refreshStuffIndex();
 
             for ( var i = 0; i < cellsx.length; ++i ) {
                drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
             }
 
             for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox,stuffIndexer);
+               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox);
             }
          }
 
@@ -1493,9 +1510,9 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
          }
 
          function pickupAttempt(index,forgiving) {
-            var stuffIndexer = gameWorld.createStuffIndex(stuffBuckets);
+            gameWorld.refreshStuffIndex();
             if ( (gameWorld.getCharacterPhase(index) != 0 || forgiving) && isCharacterAtCellCenter(index) ) {
-               var stuff = stuffIndexer[stuffBuckets.getIndexKey(gameWorld.getCharacterPosition(index))];
+               var stuff = gameWorld.getStuffIndexFromPosition(gameWorld.getCharacterPosition(index));
                if ( stuff !== undefined && gameWorld.getStuffUniqueAttributes(stuff).exists ) {
                   pickup(index,stuff);
                }
@@ -1669,11 +1686,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                return;
             }
             gameWorld.refreshCharacterIndex();
-            var newtarget = bfs(source,currentTarget);
-            if ( newtarget.length == 0 ) {
-               return;
-            }
-            gameWorld.setCharacterPath(0, newtarget);
+            gameWorld.setCharacterPath(0, bfs(source,currentTarget));
          };
 
          mainItem.onmouseup = function(event) {};
