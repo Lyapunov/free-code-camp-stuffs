@@ -864,6 +864,7 @@ class GameWorld {
    magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
 
    getCharacterPosition(i)         { return this.characters[i][0]; }
+   getCharacterPositionFloorObj(i) { return {y:Math.floor(this.characters[i][0][0]),x:Math.floor(this.characters[i][0][1])}; }
    setCharacterPosition(i,pos)     { this.characters[i][0] = pos; }
    setCharacterPositionCoord(i,c,val) { this.characters[i][0][c] = val; }
    getCharacterFaceDir(i)          { return this.characters[i][1]; }
@@ -1623,8 +1624,8 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                                                       && gameWorld.isCharacterAlive(0) 
                                                       && manhattan(gameWorld.getCharacterPosition(0), gameWorld.getCharacterPosition(i)) <= gameWorld.getCharacterSharedAttributes(i).range
                                                       && isCharacterAtCellCenter(i)
-                                                      && (gameWorld.setCharacterPath(i, bfs({x:Math.floor(gameWorld.getCharacterPosition(i)[1]),y:Math.floor(gameWorld.getCharacterPosition(i)[0])},
-                                                                                            {x:Math.floor(gameWorld.getCharacterPosition(0)[1]),y:Math.floor(gameWorld.getCharacterPosition(0)[0])})));
+                                                      && (gameWorld.setCharacterPath(i, bfs( gameWorld.getCharacterPositionFloorObj(i),
+                                                                                             gameWorld.getCharacterPositionFloorObj(0) )));
                                                                 });
             }
          }
