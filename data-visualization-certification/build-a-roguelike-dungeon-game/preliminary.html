@@ -864,6 +864,7 @@ class GameWorld {
    magicFunction(x) { return Math.floor((Math.pow(1.11,x)-1)*10); }
 
    getCharacterPosition(i)         { return this.characters[i][0]; }
+   getCharacterPositionFloor(i)    { return [Math.floor(this.characters[i][0][0]),Math.floor(this.characters[i][0][1])]; }
    getCharacterPositionFloorObj(i) { return {y:Math.floor(this.characters[i][0][0]),x:Math.floor(this.characters[i][0][1])}; }
    setCharacterPosition(i,pos)     { this.characters[i][0] = pos; }
    setCharacterPositionCoord(i,c,val) { this.characters[i][0][c] = val; }
@@ -880,6 +881,7 @@ class GameWorld {
       }
       this.characters[i][3] = path;
    }
+   setCharacterPathWithBfs(i, source, target) { this.setCharacterPath(i, this.bfs(source, target)); }
    getCharacterAnimationKey(i)     { return this.getKey(this.getCharacterFaceDir(i), this.getCharacterPhase(i)); }
    getCharacterSharedAttributes(i) { return this.characters[i][4]; }
    getCharacterAttackBit(i)        { return this.characters[i][5]; }
@@ -945,6 +947,45 @@ class GameWorld {
          refreshStuffIndex();
       }
       return this.stuffIndex[this.stuffBuckets.getIndexKey(pos)];
+   }
+
+   bfs(source,target) {
+      if ( !this.getMapCell(source.y,source.x) ) {
+         return [];
+      }
+      var hops = {};
+      var findings = [[source.y,source.x]];
+      hops[findings[0]]=false;
+      var level = 0;
+      var dirs = [[0,1],[-1,0],[0,-1],[1,0]];
+      while ( level < 10 && findings.length > 0 ) {
+         ++level;
+         var nfindings = [];
+         for ( var i = 0; i < findings.length; ++i ) {
+            for ( var j = 0; j < dirs.length; ++j ) {
+               var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
+               if ( this.getMapCell(nextp[0],nextp[1]) && this.getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
+                 && hops[nextp] === undefined
+                 && ( nextp[0] === target.y && nextp[1] === target.x || this.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
+                  nfindings.push(nextp);
+                  hops[nextp] = findings[i];
+               }
+            }
+         }
+         findings = nfindings;
+      }
+      var tara = [target.y,target.x];
+      var way = [];
+      if ( hops[tara] !== undefined ) {
+         way.push(tara);
+         var maxi = 100;
+         while(hops[tara] && maxi--) {
+            way.push(hops[tara]);
+            tara = hops[tara];
+         }
+      }
+      way.reverse();
+      return way;
    }
 };
 
@@ -1360,45 +1401,6 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             return retval;
          }
 
-         function bfs(source,target) {
-            if ( !gameWorld.getMapCell(source.y,source.x) ) {
-               return [];
-            }
-            var hops = {};
-            var findings = [[source.y,source.x]];
-            hops[findings[0]]=false;
-            var level = 0;
-            var dirs = [[0,1],[-1,0],[0,-1],[1,0]];
-            while ( level < 10 && findings.length > 0 ) {
-               ++level;
-               var nfindings = [];
-               for ( var i = 0; i < findings.length; ++i ) {
-                  for ( var j = 0; j < dirs.length; ++j ) {
-                     var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-                     if ( gameWorld.getMapCell(nextp[0],nextp[1]) && gameWorld.getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
-                       && hops[nextp] === undefined
-                       && (nextp[0] === target.y && nextp[1] === target.x || gameWorld.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
-                        nfindings.push(nextp);
-                        hops[nextp] = findings[i];
-                     }
-                  }
-               }
-               findings = nfindings;
-            }
-            var tara = [target.y,target.x];
-            var way = [];
-            if ( hops[tara] !== undefined ) {
-               way.push(tara);
-               var maxi = 100;
-               while(hops[tara] && maxi-- ) {
-                  way.push(hops[tara]);
-                  tara = hops[tara];
-               }
-            }
-            way.reverse();
-            return way;
-         }
-
          function getCursorsTile(tiles, cx, cy) {
             for ( var i = 0; i < tiles.length; ++i ) {
                if ( isPointInTriangle( tiles[i].ps[0], tiles[i].ps[1], tiles[i].ps[3], {x:cx,y:cy} )
@@ -1582,7 +1584,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                   if ( gameWorld.getCharacterIndexFromPosition(incred) !== undefined
                     && gameWorld.getCharacterIndexFromPosition(incred) !== index ) { // attack
                      attack(index, gameWorld.getCharacterIndexFromPosition(incred));
-                     gameWorld.setCharacterPath(index,[[Math.floor(gameWorld.getCharacterPosition(index)[0]),Math.floor(gameWorld.getCharacterPosition(index)[1])]]);
+                     gameWorld.setCharacterPath(index,[gameWorld.getCharacterPositionFloor(index)]);
                      return;
                   }
                   gameWorld.setCharacterPosition(index,incred);
@@ -1619,14 +1621,14 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             } else {
                aiCounter = 0;
                gameWorld.refreshCharacterIndex();
-               gameWorld.iterateOverCharactersAroundHero((i)=>{ i != 0
-                                                      && gameWorld.isCharacterAlive(i)
-                                                      && gameWorld.isCharacterAlive(0) 
-                                                      && manhattan(gameWorld.getCharacterPosition(0), gameWorld.getCharacterPosition(i)) <= gameWorld.getCharacterSharedAttributes(i).range
-                                                      && isCharacterAtCellCenter(i)
-                                                      && (gameWorld.setCharacterPath(i, bfs( gameWorld.getCharacterPositionFloorObj(i),
-                                                                                             gameWorld.getCharacterPositionFloorObj(0) )));
-                                                                });
+               gameWorld.iterateOverCharactersAroundHero(
+                  (i)=>{ i != 0
+                      && gameWorld.isCharacterAlive(i)
+                      && gameWorld.isCharacterAlive(0) 
+                      && manhattan(gameWorld.getCharacterPosition(0), gameWorld.getCharacterPosition(i)) <= gameWorld.getCharacterSharedAttributes(i).range
+                      && isCharacterAtCellCenter(i)
+                      && gameWorld.setCharacterPathWithBfs(i, gameWorld.getCharacterPositionFloorObj(i), gameWorld.getCharacterPositionFloorObj(0));
+                         });
             }
          }
 
@@ -1683,7 +1685,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                return;
             }
             gameWorld.refreshCharacterIndex();
-            gameWorld.setCharacterPath(0, bfs(source,currentTarget));
+            gameWorld.setCharacterPathWithBfs(0, source, currentTarget);
          };
 
          mainItem.onmouseup = function(event) {};
