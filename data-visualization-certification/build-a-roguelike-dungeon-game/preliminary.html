@@ -839,7 +839,7 @@ class GameWorld {
       return ()=>{
          this.characterBuckets.iterateOverBucketItemsAroundPos(this.getCharacterPosition(0),
                                                                (i)=>{
-                                                                   if ( manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) < radius ) {
+                                                                   if ( this.manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) < radius ) {
                                                                       damage(i,value);
                                                                    }
                                                                });
@@ -1143,7 +1143,7 @@ class GameWorld {
          ++this.walkSfxCounter;
       } else {
          this.walkSfxCounter = 0;
-         var disti = this.getCharacterPath(0).length ? manhattan( this.getCharacterPosition(0), this.getCharacterPath(0)[this.getCharacterPath(0).length-1] ) > 0.1 : 0;
+         var disti = this.getCharacterPath(0).length ? this.manhattan( this.getCharacterPosition(0), this.getCharacterPath(0)[this.getCharacterPath(0).length-1] ) > 0.1 : 0;
          if( this.getCharacterPhase(0) && disti && this.isCharacterAlive(0) ) {
             this.sounds.walkSfx();
          }
@@ -1212,6 +1212,27 @@ class GameWorld {
          this.awardXp(attacker,this.getCharacterSharedAttributes(attacked).level);
       }
    }
+
+   giveInstructionsToNPCsWithAI() {
+      if ( aiCounter < aiFrequencyDecreaseRatio ) {
+         ++aiCounter;
+      } else {
+         aiCounter = 0;
+         this.refreshCharacterIndex();
+         this.iterateOverCharactersAroundHero(
+            (i)=>{ i != 0
+                && this.isCharacterAlive(i)
+                && this.isCharacterAlive(0) 
+                && this.manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) <= this.getCharacterSharedAttributes(i).range
+                && this.isCharacterAtCellCenter(i)
+                && this.setCharacterPathWithBfs(i, this.getCharacterPositionFloorObj(i), this.getCharacterPositionFloorObj(0));
+                   });
+      }
+   }
+
+   manhattan(p1,p2) {
+      return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
+   }
 };
 
          var sounds    = new Sounds();
@@ -1224,10 +1245,6 @@ class GameWorld {
 function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
 
          var multipleObjectCapacity = 5;
-
-         function manhattan(p1,p2) {
-            return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
-         }
 
          function drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
             context.beginPath();
@@ -1628,23 +1645,6 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
             }
          }
 
-         function giveInstructionsToNPCsWithAI() {
-            if ( aiCounter < aiFrequencyDecreaseRatio ) {
-               ++aiCounter;
-            } else {
-               aiCounter = 0;
-               gameWorld.refreshCharacterIndex();
-               gameWorld.iterateOverCharactersAroundHero(
-                  (i)=>{ i != 0
-                      && gameWorld.isCharacterAlive(i)
-                      && gameWorld.isCharacterAlive(0) 
-                      && manhattan(gameWorld.getCharacterPosition(0), gameWorld.getCharacterPosition(i)) <= gameWorld.getCharacterSharedAttributes(i).range
-                      && gameWorld.isCharacterAtCellCenter(i)
-                      && gameWorld.setCharacterPathWithBfs(i, gameWorld.getCharacterPositionFloorObj(i), gameWorld.getCharacterPositionFloorObj(0));
-                         });
-            }
-         }
-
          // common functions 
          function drawScene() {
             setTimeout( function() {
@@ -1661,7 +1661,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                   drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
                gameWorld.moveCharacters();
-               giveInstructionsToNPCsWithAI();
+               gameWorld.giveInstructionsToNPCsWithAI();
             }, 1000 / fps );
          }
 
