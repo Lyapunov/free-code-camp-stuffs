@@ -19,9 +19,9 @@
 
          var fps = 25;
          var ANIMATION;
+         var currentTarget = 0;
          var curX = 0;
          var curY = 0;
-         var currentTarget = 0;
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
@@ -635,6 +635,10 @@ class GameWorld {
 
       this.gameOver = this.gameOver.bind(this);
       this.winning  = this.winning.bind(this);
+      this.heroHpIncreaser = this.heroHpIncreaser.bind(this);
+      this.damageInRadius  = this.damageInRadius.bind(this);
+      this.enemyGenerator  = this.enemyGenerator.bind(this);
+      this.stuffGenerator  = this.stuffGenerator.bind(this);
 
       function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
       function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
@@ -696,10 +700,6 @@ class GameWorld {
       this.unitBaseHp = 20;
       this.unitHpPerLevelIncrease = 5;
 
-      this.enemyGenerator  = this.enemyGenerator.bind(this);
-      this.stuffGenerator  = this.stuffGenerator.bind(this);
-      this.heroHpIncreaser = this.stuffGenerator.bind(this);
-      this.damageInRadius  = this.damageInRadius.bind(this);
       this.isObjectNotFullyDead = this.isObjectNotFullyDead.bind(this);
 
       [this.gameMap,this.characters,this.stuffs] = (new MapGenerator()).generateThreeInOneMap(210,70,45,30,4,this.enemyGenerator,this.stuffGenerator);
@@ -752,7 +752,7 @@ class GameWorld {
          this.characterBuckets.iterateOverBucketItemsAroundPos(this.getCharacterPosition(0),
                                                                (i)=>{
                                                                    if ( this.manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) < radius ) {
-                                                                      damage(i,value);
+                                                                      this.damage(i,value);
                                                                    }
                                                                });
          return 1;
@@ -1623,7 +1623,32 @@ class DrawCanvas {
       this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
    }
 
+   draw(visibleTiles) {
+      this.drawBackground();
+      this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
+      this.drawCursor(curX,curY);
+      return this.getCursorsTile(visibleTiles,curX,curY);
+   }
 
+   getPointSide(p1,p2,p3) {
+      return Math.sign( (p1.y-p2.y) * (p3.x-p1.x) + (p2.x-p1.x) * (p3.y-p1.y) );
+   }
+
+   isPointInTriangle(p1,p2,p3,pt) {
+      var retval = ( this.getPointSide(p1,p2,p3) * this.getPointSide(p1,p2,pt) >= 0 )
+                && ( this.getPointSide(p2,p3,p1) * this.getPointSide(p2,p3,pt) >= 0 )
+                && ( this.getPointSide(p3,p1,p2) * this.getPointSide(p3,p1,pt) >= 0 );
+      return retval;
+   }
+
+   getCursorsTile(tiles, cx, cy) {
+      for ( var i = 0; i < tiles.length; ++i ) {
+         if ( this.isPointInTriangle( tiles[i].ps[0], tiles[i].ps[1], tiles[i].ps[3], {x:cx,y:cy} )
+           || this.isPointInTriangle( tiles[i].ps[1], tiles[i].ps[2], tiles[i].ps[3], {x:cx,y:cy} ) ) {
+            return tiles[i];
+         }
+      }
+   }
 }
 
          var sounds     = new Sounds();
@@ -1633,43 +1658,14 @@ class DrawCanvas {
 
          var mainItem = document.getElementById('canvas');
 
-
-      
-
-
-
-         
-         function getPointSide(p1,p2,p3) {
-            return Math.sign( (p1.y-p2.y) * (p3.x-p1.x) + (p2.x-p1.x) * (p3.y-p1.y) );
-         }
-
-         function isPointInTriangle(p1,p2,p3,pt) {
-            var retval = ( getPointSide(p1,p2,p3) * getPointSide(p1,p2,pt) >= 0 )
-                      && ( getPointSide(p2,p3,p1) * getPointSide(p2,p3,pt) >= 0 )
-                      && ( getPointSide(p3,p1,p2) * getPointSide(p3,p1,pt) >= 0 );
-            return retval;
-         }
-
-         function getCursorsTile(tiles, cx, cy) {
-            for ( var i = 0; i < tiles.length; ++i ) {
-               if ( isPointInTriangle( tiles[i].ps[0], tiles[i].ps[1], tiles[i].ps[3], {x:cx,y:cy} )
-                 || isPointInTriangle( tiles[i].ps[1], tiles[i].ps[2], tiles[i].ps[3], {x:cx,y:cy} ) ) {
-                  return tiles[i];
-               }
-            }
-         }
-
          // common functions 
          function drawScene() {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
 
                gameWorld.refreshCharacterIndex();
-               drawCanvas.drawBackground();
                var visibleTiles = [];
-               drawCanvas.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
-               drawCanvas.drawCursor(curX,curY);
-               currentTarget = getCursorsTile(visibleTiles,curX,curY);
+               currentTarget = drawCanvas.draw(visibleTiles);
                if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
                   var characterIndexOnSelectedCell = gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
                   drawCanvas.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
