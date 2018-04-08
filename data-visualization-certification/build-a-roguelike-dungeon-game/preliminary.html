@@ -633,6 +633,9 @@ class GameWorld {
       this.messenger = messenger;
       this.sounds    = sounds;
 
+      this.gameOver = this.gameOver.bind(this);
+      this.winning  = this.winning.bind(this);
+
       function twoColors(colorA, colorB) { return [colorA,colorB,colorA,colorB,colorA,colorB]; }
       function threeColors(colorC, colorA, colorB) { return [colorC,colorB,colorA,colorB,colorA,colorB]; }
 
