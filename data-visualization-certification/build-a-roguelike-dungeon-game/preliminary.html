@@ -814,7 +814,7 @@ class GameWorld {
       var heroDefaultWeapon = undefined;
       var heroDefaultShield = undefined;
       var hero = [pos,0,0,[],{name:"hero",scale:1.00,coloring:['orange','lightgreen','orange','green','orange','green'],slowness:5,range:50,level:heroStartingLevel,deathProcedure:this.gameOver},0,{xp:0,exists:1,weapon:heroDefaultWeapon,shield:heroDefaultShield,potions:[undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined]}];
-      hero[4].baseHp = getBaseHp(hero[4].level);
+      hero[4].baseHp = this.getBaseHp(hero[4].level);
       hero[6].hp     = hero[4].baseHp;
       return hero;
    }
@@ -848,7 +848,7 @@ class GameWorld {
    }
 
    createMonster(pos,attributes) {
-      attributes.baseHp = Math.floor(getBaseHp(attributes.level)/attributes.weakness/2);
+      attributes.baseHp = Math.floor(this.getBaseHp(attributes.level)/attributes.weakness/2);
       return [pos,0,0,[],attributes,0,{hp: attributes.baseHp,exists:1,weapon:attributes.defaultWeapon,shield:attributes.defaultShield}];
    }
 
@@ -1177,9 +1177,11 @@ class GameWorld {
    levelingOneLevelUp(i) {
       this.sounds.healSfx();
       ++this.getCharacterSharedAttributes(i).level;
-      this.getCharacterSharedAttributes(i).baseHp = getBaseHp(this.getCharacterSharedAttributes(i).level);
+      this.getCharacterSharedAttributes(i).baseHp = this.getBaseHp(this.getCharacterSharedAttributes(i).level);
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
    }
+
+   getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
    levelingUp(i) {
       if ( this.getCharacterUniqueAttributes(i).xp !== undefined ) {
@@ -1235,11 +1237,13 @@ class GameWorld {
    }
 };
 
+class DrawCanvas {
+}
+
          var sounds    = new Sounds();
          var messenger = new Messenger();
          var gameWorld = new GameWorld(messenger, sounds);
 
-         function getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
 
 
 function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
