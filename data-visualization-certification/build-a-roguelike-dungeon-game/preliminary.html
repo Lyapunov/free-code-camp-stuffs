@@ -14,110 +14,14 @@
       Your browser doesn't support html5 canvas.
       </canvas>
       <script>
-         var mainItem     = document.getElementById('canvas');
-         var context      = mainItem.getContext('2d');
-
          var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
 
-         var screenWidth  = mainItem.width  = window.innerWidth  - 20;
-         var screenHeight = mainItem.height = window.innerHeight - 20;
-         var screenScale  = Math.min( screenWidth, screenHeight ) / 2;
-         var tileSize = 35;
-         var errorTolerance = 0.01;
-         var mapRadiusX = screenWidth/2/tileSize/Math.sqrt(3);
-         var mapRadiusY = screenHeight/2/tileSize;
-         var mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
 
          var fps = 25;
-         var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
-         var aiCounter = 0;
-         var deathSpeed = 1/25;
          var ANIMATION;
-         var heroBaseHp = 20;
-         var heroHpPerLevelIncrease = 5;
-
          var curX = 0;
          var curY = 0;
          var currentTarget = 0;
-
-         //================================= AVATAR ANIMATION BEGINS =================================
-
-         function fromChar(chr,shift) {
-            var retval = chr.charCodeAt(0);
-            if ( chr == "{" ) return 39-shift;
-            if ( chr == "}" ) return 92-shift;
-            return retval -= shift;
-         }
-
-         function stringDecoder(period,shift,code) {
-            var [ptr1,counter,retval,row] = [0,0,[],[]];
-            while (ptr1 < code.length) {
-               var tuple = [fromChar(code[ptr1],shift),fromChar(code[ptr1+1],shift),5];
-               if ( code[ptr1+2] == '|' ) tuple[2] = 12;
-               if ( code[ptr1+2] == '~' ) tuple[2] = 15;
-               ptr1+=2+(tuple[2]!=5);
-               row.push(tuple);
-               ++counter;
-               if ( counter == period ) {
-                  retval.push(row);
-                  row = [];
-                  counter = 0;
-               }
-            }
-            return retval;
-         }
-
-         var characterBodyDrawData = stringDecoder(23,30,'2;1@0F/L0R0W0}1b1h1o/*~1;|0M|9>:E:M:U8}4Z5a5i6p6v3<3B3J0Q+U1X1^.c7h?j/)~2;|1L|:>;F<M<U:}5Y5`5g6o7v6=9B:I;N:U1V-}(c+g,l/(~2;|3I|5=4D3K1R-W6V7_8g;o?v;:=A>H>N=T1W-})b%i!n/)~2;|1K|4=.Q1J3C*U7W9_<hDmKr;>=C>J@O?U1X,](b)i*o.-~2?|2L|3?3G3N/S*T7X8_9f>kEo7?:F:L:S:Z2]1X0d3j4p.*~1=|2K|6?5F3L2R-X6W3]2c9g?i2;2C2K.P+T5V7]8c:i;n/{~2;|3J|8<9D;L;T:Z4U0Z.`0f2k3<.L2G3?+Q8Y:`=eCiIl.)~1<|2L|;<=B@H@O@V3Y/a*h%p w2?1A1H.N*Q6Y6`8g>jEk/-~1>|2L|8@=C@LASAY1Y-`(h)o*u/;-A+H*O*V/U/}/c0k1r/+~1;|0I|=>>F>N>V<]7V7]8f9n;v0;/A.G-N,U1U1}0d7c=a0*~2:|1J|=:?AAI@Q>X8U8}8c:k<r291?2E1J1P:S:Y:b=h@o0(~29|3F|;<;B:I8Q5X2R.Y*`-e2j4:7?8E;H=M3T.},c)k&r0)~1:|2I|<<;C8J5Q1V9T:Y<_@dFh2=2A4E9H=K2V-})c)j(r0-~2=|2J|<?:F7M4R0W8U:}<bAeFg2;2A2F3K3P8P7W7^;a@c/*~3;|3G|<;=C=K<R;Y2Q2X2_3f7m0:/@.G,L)R2Q1V3^7c9j0{~29|2E|=:?@AFBMBS8P5V2[2c2j/;/@,F*L)R2T3Y5^:d?f0)~2;|2H|><@ACHEMFT7}4e9U1n/x/>.D+I)O{T2V1^2e8e=e/-~2=|2J|==?CBHDODV7^9V3d5u4m.=,D+K,R-X2X2_2f2n3v1+~3<|3L|?=ACBKAR@X;X;_;f:n:u.;-B-I,P-W3U2]2e5b5^1*~3:|3I|?:@A@H@P?W:U;};b:i9p/:.@.E/K1P:S:f:_;Y:l1(~39|4G|>:@@@F?N=T2Y3S0^1d3i/:/@0F1L2Q;S=U<X:}8_2)~4:|4H|?:?A?H=P8W3}3T3l3d3t/=.B/H/M0S:V;_<[:b8e1-~4=|4J|>=@D@K@S<Y2W2d3j2]3p.;-B,J-P-W3T2Z2b3i3p2+~3;|3H|?;@B@I@P?W:T9a;d;[9`>:??>D>J<O3S2_3Y3e3k1(~39|3G|/9.?-F.M0T:S<X=^<d9i=9<I>C>>=N3S1V1Y3[5^2)~39|3G|0:.@/H0O5W:S;[;c;k:t?=>C?I>O<S3W3Z2^3b4e1-~3=|3K|/=-D-L.R1X:W;];e;k:q@9B@CHDODV7U6^6f5n4v4*~6;|7I|1>0F/M1T2[?T?[?b?j=q;;;B;H<M<R<R<Y<`;g8n4*~6:|5G|2:1A0I2Q3X7R7Y6`2c,d>:?@@FBLDQ<Q=W<}7c4i4(~59|5F|2:/?.E,M+T9V7P<}=d;j?;@@BFCKFP<T;Z;a5d/g4)~5:|5I|0<.B,H*M)S5U7];i<p?x?=@CBIDNGS=W=^<e7e1f4-~5=|6L|1>.C,I*O)U5Y7^;d:m9u=<>B@H@NBT=U=}=d8d2`4*~5;|6J|2</C.J.Q/W6U6]5d4k2r;9<><C<J=Q5R4Y4a1i,p4(~49|5F|3:4A3I6Q9W=QAYE`Ae<k=9:=9C5H2M?S@ZBbEiHr5)~6;|6H|3<4B6I:O=U5Q4W4].c(i<=:A9D5H1K>SAZDaFjFq4-~6>|6K|3?5D6L:Q=U6T4Z3a.e{g9<;A=F=L<R;W;];d:i9o2*~3=|4L|2?0F0O2U3]8X8_6f5n4v4>2C0J0R1Y8W9]:c8j6p2*~2<|2K|5>6D8K:R>W5X7]:c4g-j8:8A8I<N@S7S5[3b1h/n2(~3;|3G|3<2C1K1R1Y5S:X=_<f9k8<8A8E;K?P9U2^.e)i!l3)~3;|2J|0<.A,G*O+U4W;^AfFoKw9>8C9H<NAQ:U6]5e.i&k3-~3?|3L|2@.E,K*R*Z5W<^BfBnAv8<9B8I;P?U9W;]<c4g,j2*~3=|3L|3<0D/K/S1[6X6_6g5n4v4;3A1G1O1U9T?[CaBg?l2(~2;|3I|7=7D9K;R>W5V5_3i0p,v2:.?,F-L-R;U>[AaEgJn2)~39|3I|8>8C:J<PAT5U3_.h{n s2>/B,G,M+S;W?}CaBh@o2-~2?|3L|8B9G9K;P@T5W4^1e,j%o,<+C+J,P-V2U2}1c0j/q1+~1<|2K|=>?D@M@T@}:W:]:f:n9v-;-A,G,M-T1S0Z0a/i.p1)~1;|1H|<<<C<J=Q?Y8T:[:a6g2m.9/>3E4J4N7S<Y@]=e;k1(~1:|1G|;=9D9K9R9Y1S1Z/a-i+p/:0?2D4I7L0U.],e{l"t1)~1;|0H|:>7E6L5T5[9U>}BbEgJm/<0A2D4H8M1W0^.f)k$p2-~1=|1K|:A7H5N4V4]9X<]AaBiCp-:,@-E-K/R6S8]7e7m6u1*~1;|/H|:?9F8M7U6}/S1[3b.f)h/:-@,F,M,S0T4X9}:a;e1(~2:|1H|<<=B=I>P?V7U7_6g4o3v/;,A*G*N*U0R4W8}<a@e1(~1;|1H|<==C>H@OAT8T4`3j/p+x/>,C*H)O(U1S3Z6a6g6l1-~2>|1K|:@<D>I?NBR7T8[9b5g0m.=-D+K,R,Y2W2_2g2n3u1+~3;|3L|?<ACAKARAY;W;_;g;n:u.:-A-I-P-W3U2}1d3l2t1)~39|3H|?;@A@I@W@P:U;}<c:f8j.9.>/E0K2Q:S;W;};_;c2(~39|3G|>9??@G?N?U3S2}1e2m2u0:0@0E2J3O9R:U:X:};^2)~39|3G|=:>A>H>N=T1x3R2[2e2n/>/C.H0M1R:U;Y;];a;d2-~4=|3J|>>@D?K?R>Y3U2[1a3g4m.;-B,J-Q-W2V2^1e3h4j2)~3:|3K|>;?B@I@P@V;V;];c:k:t?:???D>J<O2R3V2Z2_2b1(~39|3G|0:.A-H.O/V:R;Z;c;m<u=;=?<D<G;L4S3V3Y2]2_2)~3H|3:|/;/B/H0N0T:T;};e<o<x>=?D?J>O<T3U2Y2]2a1e2-~3>|4K|0=.D.K.S/Y:V<[=a;g:m>;?B@I@N?U:U:[;b<i=p1)~4<|3J|0=-D,L,S,[2W2^2f3m4u?9@?@G?M=R=U:]:b>fCi1*~6:|6I|2?3E4M5T5[7U5]5e6m6u>;@AAH@N@T;T7Y5}2_2e1(~5:|5G|0</B/H/O-U5T5}6f8n:v><@ABHCOAU:S6Y3]/a+e1)~4;|4H|0=/B.I-O*T5S7]9g=p@x2@0D/I-M*R;V9Z6`6g6m1,~5>|4J|>>ACBICODV5U4[4b8g=m?;?@@G@M@S;V;}<b=i>p1)~5<|5J|1=0C0I/P.W4V2}3b7g:m>9>><D;J:M6T0Y,^.d1j1{~59|5G|1=3C3J4Q4X<T<Z<`?hAp>9>?=E=J<N3T0Z,a{g"m1)~5;|5I|1>4D5L7T8[<T>]@eDmIs=;>B=J;O<R;X=^?dDjHo1-~5?|5N|2A5G6M8U8}4X0^,b*i)p' );
-
-         var weaponDrawData = stringDecoder(6,35,'4W$R7#A#K#>a$#-#7#0Z#Q@`?Z-V7#A#K#1}BY2T6#A#K#/[EY5W7#A#K#0Y?_0Z7#@#J#2]0Z$S7#A#K#>_0U$J7#A#K#E[/V#J7#A#K#E^##-#7#/}#YAb##-#7#0Z{MC}5U{Q7#A#K#:]BR0T7#A#K#7[BQ3T7#A#K#5]7V(T7#A#K#@^&#-#7#/W#OFW$#+#7#-W$JLY$#,#7#,Y%KJ[##-#7#2^-WU###-#6#2}2PF[6V.Y7#A#K#BW5W-X7#A#K#=}##-#7#5Y-]A^%#-#7#3[*VD}##-#BV5Y6RU###-#AU:}=RU###-#AY5^9SU###-#J[7_HXU###-#BU8]GUU###-#IV0YBZU###-#KV.Y=ZU###-#KW.[<ZU###-#GZ4}BZU###-#AV=}JSU###-#6RBZLQU###-#6QCZNOU###-#AX7aH[U###-#7]C}MTU###-#EW6^HZU###-#ET/ZA[U###-#FW/_@]U###-#DZ6`F}U###-#5ZC}PRU###-#2WFYMNU###-#0XEYNPU###-#2[E`PVU###-#1XE]JOU###-#;P?^JYU###-#=U:`H[U###-#=V9bF_U###-#3Y;`EYU###-#0XD[KQU###-#/YGYNMU###-#,ZGWNJU#F^FQ0^A#K#U#E[EU1}A#K#U#DZBN5VA#K#U#AYCN9YA#K#U#C^ET6YA#K#U#E[FQ2}A#K#U#BS:L3[A#K#V#?T;N4YA#K#U#AX=R3_A#K#U#DZ4P7#A#K#1_?Z0Q7#A#K#9`DX6Q7#A#K#2ZFZ6T7#A#K#/YH[8V7#A#K#.VEW5P7#A#K#2}=V0L7#A#K#8^>V.L6#A#K#<_=W/N7#A#K#<a##-#7#A#K#U###-#7#A#K#U#');
-
-         var drawDescriptorForWarrior = [[0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
-                                         [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
-                                         [10],[11],[11,12],[12],
-                                         [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
-                                         [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22]];
-
-         var drawDescriptorForWarriorWithWeapon = [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],
-                                                   [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
-                                                   [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
-                                                   [10],[11],[11,12],[12],
-                                                   [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
-                                                   [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
-                                                   [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2]];
-
-         var drawDescriptorForWarriorWithShield =
-            [[25,25,0.5,0.5,10],
-             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
-             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
-             [10],[11],[11,12],[12],
-             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
-             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
-             [28,28,0.5,0.5,10]];
-
-         var drawDescriptorForWarriorWithWeaponAndShield =
-            [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],[25,25,0.5,0.5,10],
-             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
-             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
-             [10],[11],[11,12],[12],
-             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
-             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
-             [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28,28,0.5,0.5,10]];
-
-         var drawDescriptors = [drawDescriptorForWarrior,drawDescriptorForWarriorWithWeapon,drawDescriptorForWarriorWithShield, drawDescriptorForWarriorWithWeaponAndShield];
-
-         var descriptorValueToColor=[2,2,2,2,2,
-                                     3,3,3,3,3,
-                                     0,1,1,
-                                     4,4,4,4,4,
-                                     5,5,5,5,5,
-                                     6,6,7,6,6,7];
-
-         //================================== AVATAR ANIMATION ENDS =================================
-
-         var colorDescription = ["STONEWORLD","SNOWWORLD","FIREWORLD","WATER","CARPET","FAKEDOOR"];
-         var floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
-         var wallColors = ["gray","#CDCDCD","darkred","gray","#CDCDCD","#835C3B"];
-
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
@@ -786,6 +690,9 @@ class GameWorld {
          {name:"major poison gas"   ,color:SPECIAL_COLORS.POISON,width:0,height:9,value:-1,holder:"potions",effect:this.damageInRadius(10,30),effectText:"deadly poison gas is released"}
       ];
 
+      this.unitBaseHp = 20;
+      this.unitHpPerLevelIncrease = 5;
+
       this.enemyGenerator  = this.enemyGenerator.bind(this);
       this.stuffGenerator  = this.stuffGenerator.bind(this);
       this.heroHpIncreaser = this.stuffGenerator.bind(this);
@@ -807,6 +714,8 @@ class GameWorld {
 
       this.walkSfxFrequency = 10;
       this.walkSfxCounter = 10;
+      this.aiCounter = 0;
+      this.deathSpeed = 1/25;
    }
 
    createHero(pos) {
@@ -854,15 +763,17 @@ class GameWorld {
 
    createStuff(pos,attributes) { return [pos,0,0,[],attributes,0,{exists:1}]; }
 
+   posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
+
    enemyGenerator(pos, code) {
-      return this.createMonster(posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
+      return this.createMonster(this.posAdjustment(pos),this.ATTRIBUTES_OF_ENEMIES[code]);
    }
 
    stuffGenerator(pos, code) {
       if ( code == 0 ) {
-         return this.createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[0]);
+         return this.createStuff(this.posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[0]);
       } else if ( code == 1 ) {
-         return this.createStuff(posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[3]);
+         return this.createStuff(this.posAdjustment(pos),this.ATTRIBUTES_OF_STUFFS[3]);
       } else if ( code % 2 == 0 ) {
          var weapon = [ATTRIBUTES_WOODEN_STICK,
                       ATTRIBUTES_IRON_BAR,
@@ -870,7 +781,7 @@ class GameWorld {
                       ATTRIBUTES_SILVER_SWORD,
                       ATTRIBUTES_GOLD_SWORD,
                       ATTRIBUTES_CRISTAL_SWORD][(code-2)/2];
-         return this.createStuff(posAdjustment(pos),weapon);
+         return this.createStuff(this.posAdjustment(pos),weapon);
       } else {
          var shield = [ATTRIBUTES_MINISHIELD,
                       ATTRIBUTES_BUCKLER_SHIELD,
@@ -878,7 +789,7 @@ class GameWorld {
                       ATTRIBUTES_KITE_SHIELD,
                       ATTRIBUTES_TOWER_SHIELD,  
                       ATTRIBUTES_TOWER_SHIELD][(code-3)/2];
-         return this.createStuff(posAdjustment(pos),shield);
+         return this.createStuff(this.posAdjustment(pos),shield);
       }
    }
 
@@ -991,7 +902,7 @@ class GameWorld {
          for ( var i = 0; i < findings.length; ++i ) {
             for ( var j = 0; j < dirs.length; ++j ) {
                var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
-               if ( this.getMapCell(nextp[0],nextp[1]) && this.getMapCell(nextp[0],nextp[1]) < wallColors.length + 1
+               if ( this.getMapCell(nextp[0],nextp[1]) && this.getMapCell(nextp[0],nextp[1]) < 6 + 1
                  && hops[nextp] === undefined
                  && ( nextp[0] === target.y && nextp[1] === target.x || this.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
                   nfindings.push(nextp);
@@ -1121,7 +1032,7 @@ class GameWorld {
    }
 
    destroying(index) {
-      this.getCharacterUniqueAttributes(index).exists -= deathSpeed;
+      this.getCharacterUniqueAttributes(index).exists -= this.deathSpeed;
       if ( this.isCharacterFullyDead(index) && this.getCharacterSharedAttributes(index).deathProcedure ) {
          this.getCharacterSharedAttributes(index).deathProcedure();
       }
@@ -1181,7 +1092,7 @@ class GameWorld {
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
    }
 
-   getBaseHp(level) { return (heroBaseHp + Math.max(level-1,0)*heroHpPerLevelIncrease)*2; }
+   getBaseHp(level) { return (this.unitBaseHp + Math.max(level-1,0)*this.unitHpPerLevelIncrease)*2; }
 
    levelingUp(i) {
       if ( this.getCharacterUniqueAttributes(i).xp !== undefined ) {
@@ -1216,10 +1127,11 @@ class GameWorld {
    }
 
    giveInstructionsToNPCsWithAI() {
-      if ( aiCounter < aiFrequencyDecreaseRatio ) {
-         ++aiCounter;
+      var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
+      if ( this.aiCounter < aiFrequencyDecreaseRatio ) {
+         ++this.aiCounter;
       } else {
-         aiCounter = 0;
+         this.aiCounter = 0;
          this.refreshCharacterIndex();
          this.iterateOverCharactersAroundHero(
             (i)=>{ i != 0
@@ -1235,400 +1147,495 @@ class GameWorld {
    manhattan(p1,p2) {
       return Math.abs(p1[0]-p2[0]) + Math.abs(p1[1]-p2[1]);
    }
+
+   isMapCellWalkable(y,x) {
+      return this.getMapCell(y,x) <= 6;
+   }
 };
 
 class DrawCanvas {
+   fromChar(chr,shift) {
+      var retval = chr.charCodeAt(0);
+      if ( chr == "{" ) return 39-shift;
+      if ( chr == "}" ) return 92-shift;
+      return retval -= shift;
+   }
+
+   stringDecoder(period,shift,code) {
+      var [ptr1,counter,retval,row] = [0,0,[],[]];
+      while (ptr1 < code.length) {
+         var tuple = [this.fromChar(code[ptr1],shift),this.fromChar(code[ptr1+1],shift),5];
+         if ( code[ptr1+2] == '|' ) tuple[2] = 12;
+         if ( code[ptr1+2] == '~' ) tuple[2] = 15;
+         ptr1+=2+(tuple[2]!=5);
+         row.push(tuple);
+         ++counter;
+         if ( counter == period ) {
+            retval.push(row);
+            row = [];
+            counter = 0;
+         }
+      }
+      return retval;
+   }
+
+   constructor(gameWorld) {
+      this.gameWorld = gameWorld;
+      this.characterBodyDrawData = this.stringDecoder(23,30,'2;1@0F/L0R0W0}1b1h1o/*~1;|0M|9>:E:M:U8}4Z5a5i6p6v3<3B3J0Q+U1X1^.c7h?j/)~2;|1L|:>;F<M<U:}5Y5`5g6o7v6=9B:I;N:U1V-}(c+g,l/(~2;|3I|5=4D3K1R-W6V7_8g;o?v;:=A>H>N=T1W-})b%i!n/)~2;|1K|4=.Q1J3C*U7W9_<hDmKr;>=C>J@O?U1X,](b)i*o.-~2?|2L|3?3G3N/S*T7X8_9f>kEo7?:F:L:S:Z2]1X0d3j4p.*~1=|2K|6?5F3L2R-X6W3]2c9g?i2;2C2K.P+T5V7]8c:i;n/{~2;|3J|8<9D;L;T:Z4U0Z.`0f2k3<.L2G3?+Q8Y:`=eCiIl.)~1<|2L|;<=B@H@O@V3Y/a*h%p w2?1A1H.N*Q6Y6`8g>jEk/-~1>|2L|8@=C@LASAY1Y-`(h)o*u/;-A+H*O*V/U/}/c0k1r/+~1;|0I|=>>F>N>V<]7V7]8f9n;v0;/A.G-N,U1U1}0d7c=a0*~2:|1J|=:?AAI@Q>X8U8}8c:k<r291?2E1J1P:S:Y:b=h@o0(~29|3F|;<;B:I8Q5X2R.Y*`-e2j4:7?8E;H=M3T.},c)k&r0)~1:|2I|<<;C8J5Q1V9T:Y<_@dFh2=2A4E9H=K2V-})c)j(r0-~2=|2J|<?:F7M4R0W8U:}<bAeFg2;2A2F3K3P8P7W7^;a@c/*~3;|3G|<;=C=K<R;Y2Q2X2_3f7m0:/@.G,L)R2Q1V3^7c9j0{~29|2E|=:?@AFBMBS8P5V2[2c2j/;/@,F*L)R2T3Y5^:d?f0)~2;|2H|><@ACHEMFT7}4e9U1n/x/>.D+I)O{T2V1^2e8e=e/-~2=|2J|==?CBHDODV7^9V3d5u4m.=,D+K,R-X2X2_2f2n3v1+~3<|3L|?=ACBKAR@X;X;_;f:n:u.;-B-I,P-W3U2]2e5b5^1*~3:|3I|?:@A@H@P?W:U;};b:i9p/:.@.E/K1P:S:f:_;Y:l1(~39|4G|>:@@@F?N=T2Y3S0^1d3i/:/@0F1L2Q;S=U<X:}8_2)~4:|4H|?:?A?H=P8W3}3T3l3d3t/=.B/H/M0S:V;_<[:b8e1-~4=|4J|>=@D@K@S<Y2W2d3j2]3p.;-B,J-P-W3T2Z2b3i3p2+~3;|3H|?;@B@I@P?W:T9a;d;[9`>:??>D>J<O3S2_3Y3e3k1(~39|3G|/9.?-F.M0T:S<X=^<d9i=9<I>C>>=N3S1V1Y3[5^2)~39|3G|0:.@/H0O5W:S;[;c;k:t?=>C?I>O<S3W3Z2^3b4e1-~3=|3K|/=-D-L.R1X:W;];e;k:q@9B@CHDODV7U6^6f5n4v4*~6;|7I|1>0F/M1T2[?T?[?b?j=q;;;B;H<M<R<R<Y<`;g8n4*~6:|5G|2:1A0I2Q3X7R7Y6`2c,d>:?@@FBLDQ<Q=W<}7c4i4(~59|5F|2:/?.E,M+T9V7P<}=d;j?;@@BFCKFP<T;Z;a5d/g4)~5:|5I|0<.B,H*M)S5U7];i<p?x?=@CBIDNGS=W=^<e7e1f4-~5=|6L|1>.C,I*O)U5Y7^;d:m9u=<>B@H@NBT=U=}=d8d2`4*~5;|6J|2</C.J.Q/W6U6]5d4k2r;9<><C<J=Q5R4Y4a1i,p4(~49|5F|3:4A3I6Q9W=QAYE`Ae<k=9:=9C5H2M?S@ZBbEiHr5)~6;|6H|3<4B6I:O=U5Q4W4].c(i<=:A9D5H1K>SAZDaFjFq4-~6>|6K|3?5D6L:Q=U6T4Z3a.e{g9<;A=F=L<R;W;];d:i9o2*~3=|4L|2?0F0O2U3]8X8_6f5n4v4>2C0J0R1Y8W9]:c8j6p2*~2<|2K|5>6D8K:R>W5X7]:c4g-j8:8A8I<N@S7S5[3b1h/n2(~3;|3G|3<2C1K1R1Y5S:X=_<f9k8<8A8E;K?P9U2^.e)i!l3)~3;|2J|0<.A,G*O+U4W;^AfFoKw9>8C9H<NAQ:U6]5e.i&k3-~3?|3L|2@.E,K*R*Z5W<^BfBnAv8<9B8I;P?U9W;]<c4g,j2*~3=|3L|3<0D/K/S1[6X6_6g5n4v4;3A1G1O1U9T?[CaBg?l2(~2;|3I|7=7D9K;R>W5V5_3i0p,v2:.?,F-L-R;U>[AaEgJn2)~39|3I|8>8C:J<PAT5U3_.h{n s2>/B,G,M+S;W?}CaBh@o2-~2?|3L|8B9G9K;P@T5W4^1e,j%o,<+C+J,P-V2U2}1c0j/q1+~1<|2K|=>?D@M@T@}:W:]:f:n9v-;-A,G,M-T1S0Z0a/i.p1)~1;|1H|<<<C<J=Q?Y8T:[:a6g2m.9/>3E4J4N7S<Y@]=e;k1(~1:|1G|;=9D9K9R9Y1S1Z/a-i+p/:0?2D4I7L0U.],e{l"t1)~1;|0H|:>7E6L5T5[9U>}BbEgJm/<0A2D4H8M1W0^.f)k$p2-~1=|1K|:A7H5N4V4]9X<]AaBiCp-:,@-E-K/R6S8]7e7m6u1*~1;|/H|:?9F8M7U6}/S1[3b.f)h/:-@,F,M,S0T4X9}:a;e1(~2:|1H|<<=B=I>P?V7U7_6g4o3v/;,A*G*N*U0R4W8}<a@e1(~1;|1H|<==C>H@OAT8T4`3j/p+x/>,C*H)O(U1S3Z6a6g6l1-~2>|1K|:@<D>I?NBR7T8[9b5g0m.=-D+K,R,Y2W2_2g2n3u1+~3;|3L|?<ACAKARAY;W;_;g;n:u.:-A-I-P-W3U2}1d3l2t1)~39|3H|?;@A@I@W@P:U;}<c:f8j.9.>/E0K2Q:S;W;};_;c2(~39|3G|>9??@G?N?U3S2}1e2m2u0:0@0E2J3O9R:U:X:};^2)~39|3G|=:>A>H>N=T1x3R2[2e2n/>/C.H0M1R:U;Y;];a;d2-~4=|3J|>>@D?K?R>Y3U2[1a3g4m.;-B,J-Q-W2V2^1e3h4j2)~3:|3K|>;?B@I@P@V;V;];c:k:t?:???D>J<O2R3V2Z2_2b1(~39|3G|0:.A-H.O/V:R;Z;c;m<u=;=?<D<G;L4S3V3Y2]2_2)~3H|3:|/;/B/H0N0T:T;};e<o<x>=?D?J>O<T3U2Y2]2a1e2-~3>|4K|0=.D.K.S/Y:V<[=a;g:m>;?B@I@N?U:U:[;b<i=p1)~4<|3J|0=-D,L,S,[2W2^2f3m4u?9@?@G?M=R=U:]:b>fCi1*~6:|6I|2?3E4M5T5[7U5]5e6m6u>;@AAH@N@T;T7Y5}2_2e1(~5:|5G|0</B/H/O-U5T5}6f8n:v><@ABHCOAU:S6Y3]/a+e1)~4;|4H|0=/B.I-O*T5S7]9g=p@x2@0D/I-M*R;V9Z6`6g6m1,~5>|4J|>>ACBICODV5U4[4b8g=m?;?@@G@M@S;V;}<b=i>p1)~5<|5J|1=0C0I/P.W4V2}3b7g:m>9>><D;J:M6T0Y,^.d1j1{~59|5G|1=3C3J4Q4X<T<Z<`?hAp>9>?=E=J<N3T0Z,a{g"m1)~5;|5I|1>4D5L7T8[<T>]@eDmIs=;>B=J;O<R;X=^?dDjHo1-~5?|5N|2A5G6M8U8}4X0^,b*i)p' );
+      this.weaponDrawData = this.stringDecoder(6,35,'4W$R7#A#K#>a$#-#7#0Z#Q@`?Z-V7#A#K#1}BY2T6#A#K#/[EY5W7#A#K#0Y?_0Z7#@#J#2]0Z$S7#A#K#>_0U$J7#A#K#E[/V#J7#A#K#E^##-#7#/}#YAb##-#7#0Z{MC}5U{Q7#A#K#:]BR0T7#A#K#7[BQ3T7#A#K#5]7V(T7#A#K#@^&#-#7#/W#OFW$#+#7#-W$JLY$#,#7#,Y%KJ[##-#7#2^-WU###-#6#2}2PF[6V.Y7#A#K#BW5W-X7#A#K#=}##-#7#5Y-]A^%#-#7#3[*VD}##-#BV5Y6RU###-#AU:}=RU###-#AY5^9SU###-#J[7_HXU###-#BU8]GUU###-#IV0YBZU###-#KV.Y=ZU###-#KW.[<ZU###-#GZ4}BZU###-#AV=}JSU###-#6RBZLQU###-#6QCZNOU###-#AX7aH[U###-#7]C}MTU###-#EW6^HZU###-#ET/ZA[U###-#FW/_@]U###-#DZ6`F}U###-#5ZC}PRU###-#2WFYMNU###-#0XEYNPU###-#2[E`PVU###-#1XE]JOU###-#;P?^JYU###-#=U:`H[U###-#=V9bF_U###-#3Y;`EYU###-#0XD[KQU###-#/YGYNMU###-#,ZGWNJU#F^FQ0^A#K#U#E[EU1}A#K#U#DZBN5VA#K#U#AYCN9YA#K#U#C^ET6YA#K#U#E[FQ2}A#K#U#BS:L3[A#K#V#?T;N4YA#K#U#AX=R3_A#K#U#DZ4P7#A#K#1_?Z0Q7#A#K#9`DX6Q7#A#K#2ZFZ6T7#A#K#/YH[8V7#A#K#.VEW5P7#A#K#2}=V0L7#A#K#8^>V.L6#A#K#<_=W/N7#A#K#<a##-#7#A#K#U###-#7#A#K#U#');
+      var drawDescriptorForWarrior = [[0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+                                      [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+                                      [10],[11],[11,12],[12],
+                                      [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+                                      [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22]];
+      var drawDescriptorForWarriorWithWeapon = [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],
+                                                [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+                                                [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+                                                [10],[11],[11,12],[12],
+                                                [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+                                                [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+                                                [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2]];
+
+      var drawDescriptorForWarriorWithShield = [[25,25,0.5,0.5,10],
+                                                [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+                                                [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+                                                [10],[11],[11,12],[12],
+                                                [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+                                                [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+                                                [28,28,0.5,0.5,10]];
+
+      var drawDescriptorForWarriorWithWeaponAndShield =
+            [[23],[23,24,0.75,0.25],[23,24],[23,24,0.25,0.75],[24],[23,24,-0.25,1.25],[23,24,-0.5,1.5],[23,24,-0.75,1.75],[23,24,-1,2],[25,25,0.5,0.5,10],
+             [0],[0,1],[1],[1,2],[2],[2,3],[3],[3,4],[4],
+             [5],[5,6],[6],[6,7],[7],[7,8],[8],[8,9],[9],
+             [10],[11],[11,12],[12],
+             [13],[13,14],[14],[14,15],[15],[15,16],[16],[16,17],[17],
+             [18],[18,19],[19],[19,20],[20],[20,21],[21],[21,22],[22],
+             [26],[26,27,0.75,0.25],[26,27],[26,27,0.25,0.75],[27],[26,27,-0.75,1.75],[26,27,-0.5,1.5],[26,27,-0.25,1.25],[26,27,-1,2],[28,28,0.5,0.5,10]];
+
+      this.drawDescriptors = [drawDescriptorForWarrior,drawDescriptorForWarriorWithWeapon,drawDescriptorForWarriorWithShield, drawDescriptorForWarriorWithWeaponAndShield];
+
+      this.descriptorValueToColor=[2,2,2,2,2,
+                                   3,3,3,3,3,
+                                   0,1,1,
+                                   4,4,4,4,4,
+                                   5,5,5,5,5,
+                                   6,6,7,6,6,7];
+
+      this.floorColors = ["#AAAAAA","white","firebrick","blue","magenta","#AAAAAA"];
+      this.wallColors  = ["gray","#CDCDCD","darkred","gray","#CDCDCD","#835C3B"];
+
+      this.tileSize = 35;
+      this.errorTolerance = 0.01;
+
+      this.mainItem = document.getElementById('canvas');
+      this.context  = this.mainItem.getContext('2d');
+
+      this.refreshScreenConstants();
+   }
+
+   refreshScreenConstants() {
+      this.screenWidth  = this.mainItem.width  = window.innerWidth  - 20;
+      this.screenHeight = this.mainItem.height = window.innerHeight - 20;
+
+      var mapRadiusX = this.screenWidth/4/this.tileSize/Math.sqrt(3);
+      var mapRadiusY = this.screenHeight/4/this.tileSize;
+      this.mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
+   }
+
+   drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
+      this.context.beginPath();
+      this.context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize2*exists));
+      this.context.fillStyle = boxColor;
+      this.context.fill();
+   }
+
+   drawRectangle(boxX,boxY,boxSize1,boxSize2,boxColor) {
+      this.context.beginPath();
+      this.context.rect(boxX, boxY, boxSize1, boxSize2);
+      this.context.fillStyle = boxColor;
+      this.context.fill();
+   }
+
+   drawCircle( pnt, radius, strokeColor, fillColor ) {
+      this.context.strokeStyle = strokeColor;
+      this.context.fillStyle   = fillColor;
+      this.context.beginPath();
+      this.context.arc( pnt.x, pnt.y, radius, 0, 2 * Math.PI, false );
+      this.context.closePath();
+      this.context.lineWidth = 2;
+      this.context.stroke();
+      this.context.fill();
+   }
+
+   drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
+      var phaseKey = gameWorld.getCharacterAnimationKey(i);
+      var rimage = this.characterBodyDrawData[phaseKey];
+      var wimage = this.weaponDrawData[phaseKey];
+      var scale = gameWorld.getCharacterSharedAttributes(i).scale;
+      var characterColors = gameWorld.getCharacterSharedAttributes(i).coloring;
+      if ( gameWorld.getCharacterAttackBit(i) ) { // drawing in red because of damage
+         characterColors = characterColors.map(x=>x?"red":"");
+      }
+      var exists      = gameWorld.getCharacterUniqueAttributes(i).exists;
+      var shieldrad   = gameWorld.getCharacterHoldedObjectAttribute(i,"shield","size");
+      var weaponcolor = gameWorld.getCharacterHoldedObjectAttribute(i,"weapon","color");
+
+      var simage = rimage;
+      var cind = ind1;
+      if ( w1 === undefined ) {
+         w1 = 0.5;
+      }
+      if ( w2 === undefined ) {
+         w2 = 0.5;
+      }
+      var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > errorTolerance);
+      if ( ind1 > 22 ) {
+         simage = wimage;
+         ind1 -= 23;
+         if ( ind2 !== undefined ) {
+            ind2 -= 23;
+         }
+         if ( simage[ind1][1] < 3 ) {
+            return;
+         }
+      }
+      var colorIndex = this.descriptorValueToColor[cind];
+      var color = characterColors[colorIndex];
+      if ( color === "" ) {
+         return;
+      }
+      if ( colorIndex > 5 ) {
+         if ( colorIndex === 6 ) {
+            color = weaponcolor;
+         }
+         if ( colorIndex === 7 ) {
+            color = "black";
+         }
+      }
+
+      var percentage = this.tileSize / 50;
+      if ( ind2 === undefined ) {
+         this.drawBox(ux+simage[ind1][0]*percentage,
+                      uy+simage[ind1][1]*percentage*scale,
+                      simage[ind1][2]*percentage,
+                      simage[ind1][2]*percentage,
+                      color,
+                      exists);
+      } else {
+         var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
+         this.drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
+                      uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
+                      orad,
+                      orad*(isShield?shieldrad:1),
+                      color,
+                      exists);
+      }
+   }
+
+   drawCharacter(y,x,i) {
+      var drawDescriptor = this.drawDescriptors[gameWorld.getCharacterAnimationWeaponShieldValue(i)];
+      var scale = gameWorld.getCharacterSharedAttributes(i).scale;
+      var cx = (x + y) * Math.sqrt(3) * this.tileSize + this.screenWidth / 2;
+      var cy = (x - y) * this.tileSize + this.screenHeight / 2;
+      var percentage = this.tileSize / 50;
+      var ymax = 100 * percentage * scale;
+      var xmax = 54  * percentage;
+      var ux = Math.floor(cx - xmax/2);
+      var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
+      if  ( gameWorld.getCharacterSharedAttributes(i).transparency ) {
+         this.context.globalAlpha = gameWorld.getCharacterSharedAttributes(i).transparency;
+      }
+      drawDescriptor.map(box=>this.drawBoxExtended(ux,uy,i,...box));
+      this.context.globalAlpha = 1.0;
+      gameWorld.eraseCharacterAttackBit(i);
+   }
+
+   scaledValue(value) { return Math.round((value/35)*this.tileSize); }
+
+   getTileCenter(y,x) {
+      return [(x + y) * Math.sqrt(3) * this.tileSize + this.screenWidth / 2,
+              (x - y) * this.tileSize + this.screenHeight / 2];
+   }
+
+   getFloorTile(y,x,obi) {
+      var [px,py] = this.getTileCenter(y,x);
+      obi.ps = [{x:px,y:py-this.tileSize},{x:px + Math.sqrt(3) * this.tileSize,y:py},{x:px,y:py+this.tileSize},{x:px - Math.sqrt(3) * this.tileSize,y:py}];
+      return obi;
+   }
+
+   getFloorTileScale(y,x,obi,scale) {
+      var px = (x + y) * Math.sqrt(3) * this.tileSize + this.screenWidth / 2;
+      var py = (x - y) * this.tileSize + this.screenHeight / 2;
+      obi.ps = [{x:px,y:py-this.tileSize*scale},{x:px + Math.sqrt(3) * this.tileSize*scale,y:py},{x:px,y:py+this.tileSize*scale},{x:px - Math.sqrt(3) * this.tileSize*scale,y:py}];
+      return obi;
+   }
+
+   drawCell(y,x,cy,cx,oy,ox) {
+      var color = this.wallColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % this.wallColors.length ];
+      if ( !gameWorld.getMapCell(cy+y,cx+x-1) ) {
+         this.drawWall(-y+oy,x-ox,0,color);
+      }
+      if ( !gameWorld.getMapCell(cy+y-1,cx+x) ) {
+         this.drawWall(-y+oy,x-ox,1,color);
+      }
+
+      var mapval = gameWorld.getMapCell(cy+y,cx+x);
+      var speciality = Math.floor((mapval-1) / this.wallColors.length);
+      var sworld = (mapval-1) % this.wallColors.length;
+
+      {
+         var i = gameWorld.getStuffIndexFromPosition([cy+y,cx+x]);
+         if ( i !== undefined ) {
+            var attribs = gameWorld.getStuffSharedAttributes(i);
+            if ( gameWorld.getStuffUniqueAttributes(i) !== undefined && gameWorld.getStuffUniqueAttributes(i).exists ) {
+               var [px,py] = this.getTileCenter(-y+oy,x-ox);
+               this.drawRectangle(Math.round(px-this.scaledValue(attribs.width/2)),
+                                  Math.round(py-this.scaledValue(attribs.height/2)),
+                                  this.scaledValue(attribs.width),
+                                  this.scaledValue(attribs.height),
+                                  attribs.color);
+            }
+         }
+      }
+
+      if ( speciality == 1 ) {
+         if ( sworld == 1 ) {
+            // christmas tree
+            var [px,py] = this.getTileCenter(-y+oy,x-ox);
+            this.context.fillStyle = SPECIAL_COLORS.TABLEBROWN;
+            this.contextPathForObjectDraw({ps:[{x:px-this.scaledValue(3),y:py},
+                                          {x:px+this.scaledValue(3),y:py},
+                                          {x:px+this.scaledValue(3),y:py-this.scaledValue(10)},
+                                          {x:px-this.scaledValue(3),y:py-this.scaledValue(10)}]});
+            this.context.fill();
+            this.context.fillStyle = 'green';
+            this.contextPathForObjectDraw({ps:[{x:px-this.scaledValue(30),y:py-this.scaledValue(10)},
+                                          {x:px+this.scaledValue(30),y:py-this.scaledValue(10)},
+                                          {x:px                ,y:py-this.scaledValue(100)}]});
+            this.context.fill();
+            this.drawCircle({x:px+this.scaledValue(12),y:py-this.scaledValue(30)},this.scaledValue(2),'yellow','yellow');
+            this.drawCircle({x:px-this.scaledValue(8), y:py-this.scaledValue(45)},this.scaledValue(2),'yellow','yellow');
+            this.drawCircle({x:px+this.scaledValue(8), y:py-this.scaledValue(52)},this.scaledValue(2),'magenta','magenta');
+            this.drawCircle({x:px-this.scaledValue(1), y:py-this.scaledValue(65)},this.scaledValue(2),'yellow','yellow');
+         } else {
+            // table
+            var tile = this.getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
+            var tableColor = !sworld ? SPECIAL_COLORS.TABLEBROWN : SPECIAL_COLORS.STEEL;
+            this.drawRectangle(tile.ps[1].x-this.scaledValue(5),tile.ps[1].y,                    this.scaledValue(5),this.scaledValue(35),tableColor);
+            this.drawRectangle(tile.ps[2].x-this.scaledValue(2),tile.ps[2].y-this.scaledValue(2),this.scaledValue(5),this.scaledValue(35),tableColor);
+            this.drawRectangle(tile.ps[3].x                    ,tile.ps[3].y                    ,this.scaledValue(5),this.scaledValue(35),tableColor);
+            this.drawFloor(tile,tableColor);
+         }
+      }
+
+      if ( speciality == 2 ) {
+         if ( sworld == 1 ) {
+            // snowman
+            var [px,py] = this.getTileCenter(-y+oy,x-ox);
+            this.drawCircle({x:px,                    y:py-this.scaledValue(20)},this.scaledValue(20),'black','white');
+            this.drawCircle({x:px,                    y:py-this.scaledValue(37)},this.scaledValue(15),'black','white');
+            this.drawCircle({x:px,                    y:py-this.scaledValue(53)},this.scaledValue(10),'black','white');
+            this.drawCircle({x:px-this.scaledValue(4),y:py-this.scaledValue(55)},this.scaledValue(1) ,'black','black');
+            this.drawCircle({x:px+this.scaledValue(4),y:py-this.scaledValue(55)},this.scaledValue(1) ,'black','black');
+            this.drawCircle({x:px,                    y:py-this.scaledValue(28)},this.scaledValue(1) ,'black','black');
+            this.drawCircle({x:px,                    y:py-this.scaledValue(33)},this.scaledValue(1) ,'black','black');
+            this.drawCircle({x:px,                    y:py-this.scaledValue(38)},this.scaledValue(1) ,'black','black');
+         } else {
+            // chair
+            var tile = this.getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
+            var chairColor = sworld == 2 ? 'silver' : SPECIAL_COLORS.CHAIRBROWN; 
+            this.drawRectangle(tile.ps[1].x-this.scaledValue(5),tile.ps[1].y                    ,this.scaledValue(5),this.scaledValue(18),chairColor);
+            this.drawRectangle(tile.ps[2].x-this.scaledValue(2),tile.ps[2].y-this.scaledValue(2),this.scaledValue(5),this.scaledValue(18),chairColor);
+            this.drawRectangle(tile.ps[3].x                    ,tile.ps[3].y                    ,this.scaledValue(5),this.scaledValue(18),chairColor);
+            this.drawFloor(tile,chairColor);
+            
+            this.drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-this.scaledValue(35)},{x:tile.ps[0].x,y:tile.ps[0].y-this.scaledValue(35)}]}, chairColor);
+         }
+      }
+
+      var i = gameWorld.getCharacterIndexFromPosition([cy+y,cx+x]);
+      if ( i !== undefined ) {
+         var pos = gameWorld.getCharacterPosition(i);
+         this.drawCharacter((oy+cy+0.5)-(pos[0]),-(ox+cx+0.5)+(pos[1]),i);
+      }
+
+      if ( !gameWorld.getMapCell(cy+y+1,cx+x) ) {
+         this.drawWall(-y+oy,x-ox,2,color);
+      }
+      if ( !gameWorld.getMapCell(cy+y,cx+x+1) ) {
+         this.drawWall(-y+oy,x-ox,3,color);
+      }
+   }
+
+   drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
+      var color = this.floorColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % this.floorColors.length ];
+      var tile  = this.getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
+      this.drawFloor(tile, color, gameWorld.getMapCell(cy+y+1,cx+x)&&gameWorld.getMapCell(cy+y,cx+x+1));
+
+      tiles.push(tile);
+   }
+
+   contextPathForObjectDraw(obj) {
+      this.context.beginPath();
+      for ( var i = 0; i < obj.ps.length; ++i ) {
+         ( i == 0 ? this.context.moveTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) : this.context.lineTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) );
+      }
+      this.context.closePath();
+   }
+
+   drawFloor(tile, color,tick) {
+      this.context.fillStyle = color;
+      this.context.strokeStyle = color;
+      this.contextPathForObjectDraw(tile);
+      this.context.lineWidth = tick ? 2 : 1;
+      this.context.fill();
+      this.context.stroke();
+   }
+
+   drawTile(tile,color) {
+      this.context.strokeStyle = color;
+      this.context.lineWidth = 1;
+      this.contextPathForObjectDraw(tile);
+      this.context.stroke();
+   }
+
+   drawCursor(x,y) {
+      this.context.fillStyle = "red";
+      this.contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
+      this.context.fill();
+   }
+
+   drawForeground( camCenter, visibleTiles ) {
+      var cy = Math.floor(camCenter[0]);
+      var cx = Math.floor(camCenter[1]);
+      var oy = camCenter[0] - cy - 0.5;
+      var ox = camCenter[1] - cx - 0.5;
+
+      var cellsy = [];
+      var cellsx = [];
+
+      for ( var y = -this.mapRadius; y < this.mapRadius; ++y ) {
+         for ( var x = -this.mapRadius; x < this.mapRadius; ++x ) {
+            if ( this.isMapCellVisible(y,x,cy,cx,oy,ox) 
+                 || this.isMapCellVisible(y,x,cy,cx,oy,ox,0,0) 
+                 || this.isMapCellVisible(y,x,cy,cx,oy,ox,0,1) 
+                 || this.isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
+                 || this.isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
+            {
+               if ( gameWorld.getMapCell(cy+y,cx+x) ) {
+                  cellsy.push(y);
+                  cellsx.push(x);
+               }
+            }
+         }
+      }
+
+      gameWorld.refreshStuffIndex();
+
+      for ( var i = 0; i < cellsx.length; ++i ) {
+         this.drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
+      }
+
+      for ( var i = 0; i < cellsx.length; ++i ) {
+         this.drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox);
+      }
+   }
+
+   drawWall(y,x,num, color) {
+      var px = (x + y) * Math.sqrt(3) * this.tileSize + this.screenWidth / 2;
+      var py = (x - y) * this.tileSize + this.screenHeight / 2;
+
+      var bit1 = (num % 2) * 2 - 1;
+      var bit2 = (num >= 2) * 2 - 1;
+
+      if ( num < 2 ) {
+         this.context.globalAlpha = 1.0;
+         this.context.fillStyle   = color;
+      } else {
+         this.context.globalAlpha = 0.75;
+         this.context.fillStyle   = "#000000";
+      }
+      var sy = 1;
+      this.contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * this.tileSize+sy},{x:px + bit1 * Math.sqrt(3) * this.tileSize, y:py+sy},{x:px + bit1 * Math.sqrt(3) * this.tileSize, y:py - 2 * this.tileSize+sy},{x:px, y:py + bit2 * this.tileSize - 2 * this.tileSize+sy}]} );
+      this.context.fill();
+      this.context.globalAlpha = 1.0;
+   }
+
+   isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
+      var dirY  = y - oy;
+      var dirX  = x - ox;
+      var dirL  = Math.hypot(dirX,dirY);
+      dirY /= dirL;
+      dirX /= dirL;
+
+      var celly   = cy;
+      var cellx   = cx;
+
+      var dist    = 0;
+      var arrived = 0;
+      var limit   = 50;
+      var err     = 1e-6;
+
+      while ( limit && gameWorld.getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
+         --limit;
+         var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
+                               Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
+         dist += jump;
+         sx = sx + dirX * jump;
+         sy = sy + dirY * jump;
+         var pcellx = cellx;
+         var pcelly = celly;
+         if ( Math.abs(sx) < err && dirX < 0) {
+            sx = 1;
+            cellx -= 1;
+            arrived = 1;
+         } else if ( Math.abs(1-sx) < err && dirX > 0 ) {
+            sx = 0;
+            cellx += 1;
+            arrived = 2;
+         }
+         if ( Math.abs(sy) < err && dirY < 0 ) {
+            sy = 1;
+            celly -= 1;
+            arrived = 3;
+         } else if ( Math.abs(1-sy) < err && dirY > 0 ) {
+            sy = 0;
+            celly += 1;
+            arrived = 4;
+         }
+         if ( pcellx != cellx && pcelly != celly ) {
+            if ( !gameWorld.getMapCell( celly, pcellx ) && !gameWorld.getMapCell( pcelly, cellx ) ) {
+               [celly,cellx] = [pcelly,pcellx];
+               break;
+            }
+         }
+      }
+
+      return ( celly == cy + y && cellx == cx + x );
+   }
+   
+   drawBackground() {
+      this.context.fillStyle = "black";
+      this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
+   }
+
+
 }
 
-         var sounds    = new Sounds();
-         var messenger = new Messenger();
-         var gameWorld = new GameWorld(messenger, sounds);
+         var sounds     = new Sounds();
+         var messenger  = new Messenger();
+         var gameWorld  = new GameWorld(messenger, sounds);
+         var drawCanvas = new DrawCanvas(gameWorld);
+
+         var mainItem = document.getElementById('canvas');
 
 
+      
 
-function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
-
-         var multipleObjectCapacity = 5;
-
-         function drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
-            context.beginPath();
-            context.rect(boxX, boxY, Math.round(boxSize*exists), Math.round(boxSize2*exists));
-            context.fillStyle = boxColor;
-            context.fill();
-         }
-
-         function drawRectangle(boxX,boxY,boxSize1,boxSize2,boxColor) {
-            context.beginPath();
-            context.rect(boxX, boxY, boxSize1, boxSize2);
-            context.fillStyle = boxColor;
-            context.fill();
-         }
-
-         function drawCircle( pnt, radius, strokeColor, fillColor ) {
-            context.strokeStyle = strokeColor;
-            context.fillStyle   = fillColor;
-            context.beginPath();
-            context.arc( pnt.x, pnt.y, radius, 0, 2 * Math.PI, false );
-            context.closePath();
-            context.lineWidth = 2;
-            context.stroke();
-            context.fill();
-         }
-
-         function drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
-            var phaseKey = gameWorld.getCharacterAnimationKey(i);
-            var rimage = characterBodyDrawData[phaseKey];
-            var wimage = weaponDrawData[phaseKey];
-            var scale = gameWorld.getCharacterSharedAttributes(i).scale;
-            var characterColors = gameWorld.getCharacterSharedAttributes(i).coloring;
-            if ( gameWorld.getCharacterAttackBit(i) ) { // drawing in red because of damage
-               characterColors = characterColors.map(x=>x?"red":"");
-            }
-            var exists      = gameWorld.getCharacterUniqueAttributes(i).exists;
-            var shieldrad   = gameWorld.getCharacterHoldedObjectAttribute(i,"shield","size");
-            var weaponcolor = gameWorld.getCharacterHoldedObjectAttribute(i,"weapon","color");
-
-            var simage = rimage;
-            var cind = ind1;
-            if ( w1 === undefined ) {
-               w1 = 0.5;
-            }
-            if ( w2 === undefined ) {
-               w2 = 0.5;
-            }
-            var isShield = ((ind1 == 25) || (ind1 == 28))&&(shieldrad > errorTolerance);
-            if ( ind1 > 22 ) {
-               simage = wimage;
-               ind1 -= 23;
-               if ( ind2 !== undefined ) {
-                  ind2 -= 23;
-               }
-               if ( simage[ind1][1] < 3 ) {
-                  return;
-               }
-            }
-            var colorIndex = descriptorValueToColor[cind];
-            var color = characterColors[colorIndex];
-            if ( color === "" ) {
-               return;
-            }
-            if ( colorIndex > 5 ) {
-               if ( colorIndex === 6 ) {
-                  color = weaponcolor;
-               }
-               if ( colorIndex === 7 ) {
-                  color = "black";
-               }
-            }
-
-            var percentage = tileSize / 50;
-            if ( ind2 === undefined ) {
-               drawBox(ux+simage[ind1][0]*percentage,
-                       uy+simage[ind1][1]*percentage*scale,
-                       simage[ind1][2]*percentage,
-                       simage[ind1][2]*percentage,
-                       color,
-                       exists);
-            } else {
-               var orad = (rad===undefined?simage[ind1][2]:rad*2)*percentage;
-               drawBox(ux+(Math.floor(simage[ind1][0]*w1+simage[ind2][0]*w2)-(rad===undefined?0:rad))*percentage,
-                       uy+(Math.floor(simage[ind1][1]*w1+simage[ind2][1]*w2)-(rad===undefined?0:rad))*percentage*scale-orad*(isShield?shieldrad/2-0.5:0),
-                       orad,
-                       orad*(isShield?shieldrad:1),
-                       color,
-                       exists);
-            }
-         }
-
-         function drawCharacter(y,x,i) {
-            var drawDescriptor = drawDescriptors[gameWorld.getCharacterAnimationWeaponShieldValue(i)];
-            var scale = gameWorld.getCharacterSharedAttributes(i).scale;
-            var cx = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var cy = (x - y) * tileSize + screenHeight / 2;
-            var percentage = tileSize / 50;
-            var ymax = 100 * percentage * scale;
-            var xmax = 54  * percentage;
-            var ux = Math.floor(cx - xmax/2);
-            var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
-            if  ( gameWorld.getCharacterSharedAttributes(i).transparency ) {
-               context.globalAlpha = gameWorld.getCharacterSharedAttributes(i).transparency;
-            }
-            drawDescriptor.map(box=>drawBoxExtended(ux,uy,i,...box));
-            context.globalAlpha = 1.0;
-            gameWorld.eraseCharacterAttackBit(i);
-         }
-
-         function drawBackground() {
-            context.fillStyle = "black";
-            context.fillRect(0,0,screenWidth,screenHeight);
-         }
-
-         function contextPathForObjectDraw(obj) {
-            context.beginPath();
-            for ( var i = 0; i < obj.ps.length; ++i ) {
-               ( i == 0 ? context.moveTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) : context.lineTo( Math.round(obj.ps[i].x), Math.round(obj.ps[i].y) ) );
-            }
-            context.closePath();
-         }
-
-         function drawFloor(tile, color,tick) {
-            context.fillStyle = color;
-            context.strokeStyle = color;
-            contextPathForObjectDraw(tile);
-            context.lineWidth = tick ? 2 : 1;
-            context.fill();
-            context.stroke();
-         }
-
-         function drawTile(tile,color) {
-            context.strokeStyle = color;
-            context.lineWidth = 1;
-            contextPathForObjectDraw(tile);
-            context.stroke();
-         }
-
-         function getTileCenter(y,x) {
-            return [(x + y) * Math.sqrt(3) * tileSize + screenWidth / 2,
-                    (x - y) * tileSize + screenHeight / 2];
-         }
-
-         function getFloorTile(y,x,obi) {
-            var [px,py] = getTileCenter(y,x);
-            obi.ps = [{x:px,y:py-tileSize},{x:px + Math.sqrt(3) * tileSize,y:py},{x:px,y:py+tileSize},{x:px - Math.sqrt(3) * tileSize,y:py}];
-            return obi;
-         }
-
-         function getFloorTileScale(y,x,obi,scale) {
-            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var py = (x - y) * tileSize + screenHeight / 2;
-            obi.ps = [{x:px,y:py-tileSize*scale},{x:px + Math.sqrt(3) * tileSize*scale,y:py},{x:px,y:py+tileSize*scale},{x:px - Math.sqrt(3) * tileSize*scale,y:py}];
-            return obi;
-         }
-
-         function drawCursor(x,y) {
-            context.fillStyle = "red";
-            contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
-            context.fill();
-         }
-
-         function drawWall(y,x,num, color) {
-            var px = (x + y) * Math.sqrt(3) * tileSize + screenWidth / 2;
-            var py = (x - y) * tileSize + screenHeight / 2;
-
-            var bit1 = (num % 2) * 2 - 1;
-            var bit2 = (num >= 2) * 2 - 1;
-
-            if ( num < 2 ) {
-               context.globalAlpha = 1.0;
-               context.fillStyle   = color;
-            } else {
-               context.globalAlpha = 0.75;
-               context.fillStyle   = "#000000";
-            }
-            var sy = 1;
-            contextPathForObjectDraw( {ps:[{x:px,y:py + bit2 * tileSize+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py+sy},{x:px + bit1 * Math.sqrt(3) * tileSize, y:py - 2 * tileSize+sy},{x:px, y:py + bit2 * tileSize - 2 * tileSize+sy}]} );
-            context.fill();
-            context.globalAlpha = 1.0;
-         }
-
-         function isMapCellVisible(y,x,cy,cx,oy,ox,sx=0.5+ox,sy=0.5+oy) {
-            var dirY  = y - oy;
-            var dirX  = x - ox;
-            var dirL  = Math.hypot(dirX,dirY);
-            dirY /= dirL;
-            dirX /= dirL;
-
-            var celly   = cy;
-            var cellx   = cx;
-
-            var dist    = 0;
-            var arrived = 0;
-            var limit   = 50;
-            var err     = 1e-6;
-
-            while ( limit && gameWorld.getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
-               --limit;
-               var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
-                                     Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
-               dist += jump;
-               sx = sx + dirX * jump;
-               sy = sy + dirY * jump;
-               var pcellx = cellx;
-               var pcelly = celly;
-               if ( Math.abs(sx) < err && dirX < 0) {
-                  sx = 1;
-                  cellx -= 1;
-                  arrived = 1;
-               } else if ( Math.abs(1-sx) < err && dirX > 0 ) {
-                  sx = 0;
-                  cellx += 1;
-                  arrived = 2;
-               }
-               if ( Math.abs(sy) < err && dirY < 0 ) {
-                  sy = 1;
-                  celly -= 1;
-                  arrived = 3;
-               } else if ( Math.abs(1-sy) < err && dirY > 0 ) {
-                  sy = 0;
-                  celly += 1;
-                  arrived = 4;
-               }
-               if ( pcellx != cellx && pcelly != celly ) {
-                  if ( !gameWorld.getMapCell( celly, pcellx ) && !gameWorld.getMapCell( pcelly, cellx ) ) {
-                     [celly,cellx] = [pcelly,pcellx];
-                     break;
-                  }
-               }
-            }
-
-            return ( celly == cy + y && cellx == cx + x );
-         }
-
-         function drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
-            var color = floorColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % floorColors.length ];
-            var tile = getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-            drawFloor(tile, color, gameWorld.getMapCell(cy+y+1,cx+x)&&gameWorld.getMapCell(cy+y,cx+x+1));
-
-            tiles.push(tile);
-         }
-
-         function scaledValue(value) { return Math.round((value/35)*tileSize); }
-
-         function drawCell(y,x,cy,cx,oy,ox) {
-            var color = wallColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % wallColors.length ];
-            if ( !gameWorld.getMapCell(cy+y,cx+x-1) ) {
-               drawWall(-y+oy,x-ox,0,color);
-            }
-            if ( !gameWorld.getMapCell(cy+y-1,cx+x) ) {
-               drawWall(-y+oy,x-ox,1,color);
-            }
-
-            var mapval = gameWorld.getMapCell(cy+y,cx+x);
-            var speciality = Math.floor((mapval-1) / wallColors.length);
-            var sworld = (mapval-1) % wallColors.length;
-
-            {
-               var i = gameWorld.getStuffIndexFromPosition([cy+y,cx+x]);
-               if ( i !== undefined ) {
-                  var attribs = gameWorld.getStuffSharedAttributes(i);
-                  if ( gameWorld.getStuffUniqueAttributes(i) !== undefined && gameWorld.getStuffUniqueAttributes(i).exists ) {
-                     var [px,py] = getTileCenter(-y+oy,x-ox);
-                     drawRectangle(Math.round(px-scaledValue(attribs.width/2)),
-                                   Math.round(py-scaledValue(attribs.height/2)),
-                                   scaledValue(attribs.width),
-                                   scaledValue(attribs.height),
-                                   attribs.color);
-                  }
-               }
-            }
-
-            if ( speciality == 1 ) {
-               if ( sworld == 1 ) {
-                  // christmas tree
-                  var [px,py] = getTileCenter(-y+oy,x-ox);
-                  context.fillStyle = SPECIAL_COLORS.TABLEBROWN;
-                  contextPathForObjectDraw({ps:[{x:px-scaledValue(3),y:py},
-                                                {x:px+scaledValue(3),y:py},
-                                                {x:px+scaledValue(3),y:py-scaledValue(10)},
-                                                {x:px-scaledValue(3),y:py-scaledValue(10)}]});
-                  context.fill();
-                  context.fillStyle = 'green';
-                  contextPathForObjectDraw({ps:[{x:px-scaledValue(30),y:py-scaledValue(10)},
-                                                {x:px+scaledValue(30),y:py-scaledValue(10)},
-                                                {x:px                ,y:py-scaledValue(100)}]});
-                  context.fill();
-                  drawCircle({x:px+scaledValue(12),y:py-scaledValue(30)},scaledValue(2),'yellow','yellow');
-                  drawCircle({x:px-scaledValue(8),y:py-scaledValue(45)},scaledValue(2),'yellow','yellow');
-                  drawCircle({x:px+scaledValue(8),y:py-scaledValue(52)},scaledValue(2),'magenta','magenta');
-                  drawCircle({x:px-scaledValue(1),y:py-scaledValue(65)},scaledValue(2),'yellow','yellow');
-               } else {
-                  // table
-                  var tile = getFloorTile(-y+oy+0.5,x-ox-0.5,{x:x+cx,y:y+cy});
-                  var tableColor = !sworld ? SPECIAL_COLORS.TABLEBROWN : SPECIAL_COLORS.STEEL;
-                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y,               scaledValue(5),scaledValue(35),tableColor);
-                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(35),tableColor);
-                  drawRectangle(tile.ps[3].x,               tile.ps[3].y,               scaledValue(5),scaledValue(35),tableColor);
-                  drawFloor(tile,tableColor);
-               }
-            }
-
-            if ( speciality == 2 ) {
-               if ( sworld == 1 ) {
-                  // snowman
-                  var [px,py] = getTileCenter(-y+oy,x-ox);
-                  drawCircle({x:px,               y:py-scaledValue(20)},scaledValue(20),'black','white');
-                  drawCircle({x:px,               y:py-scaledValue(37)},scaledValue(15),'black','white');
-                  drawCircle({x:px,               y:py-scaledValue(53)},scaledValue(10),'black','white');
-                  drawCircle({x:px-scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
-                  drawCircle({x:px+scaledValue(4),y:py-scaledValue(55)},scaledValue(1) ,'black','black');
-                  drawCircle({x:px,               y:py-scaledValue(28)},scaledValue(1) ,'black','black');
-                  drawCircle({x:px,               y:py-scaledValue(33)},scaledValue(1) ,'black','black');
-                  drawCircle({x:px,               y:py-scaledValue(38)},scaledValue(1) ,'black','black');
-               } else {
-                  // chair
-                  var tile = getFloorTileScale(-y+oy+0.20,x-ox-0.20,{x:x+cx,y:y+cy},0.5);
-                  var chairColor = sworld == 2 ? 'silver' : SPECIAL_COLORS.CHAIRBROWN; 
-                  drawRectangle(tile.ps[1].x-scaledValue(5),tile.ps[1].y               ,scaledValue(5),scaledValue(18),chairColor);
-                  drawRectangle(tile.ps[2].x-scaledValue(2),tile.ps[2].y-scaledValue(2),scaledValue(5),scaledValue(18),chairColor);
-                  drawRectangle(tile.ps[3].x               ,tile.ps[3].y               ,scaledValue(5),scaledValue(18),chairColor);
-                  drawFloor(tile,chairColor);
-                  
-                  drawFloor({ps:[tile.ps[0],tile.ps[3],{x:tile.ps[3].x,y:tile.ps[3].y-scaledValue(35)},{x:tile.ps[0].x,y:tile.ps[0].y-scaledValue(35)}]}, chairColor);
-               }
-            }
-
-            var i = gameWorld.getCharacterIndexFromPosition([cy+y,cx+x]);
-            if ( i !== undefined ) {
-               var pos = gameWorld.getCharacterPosition(i);
-               drawCharacter((oy+cy+0.5)-(pos[0]),-(ox+cx+0.5)+(pos[1]),i);
-            }
-
-            if ( !gameWorld.getMapCell(cy+y+1,cx+x) ) {
-               drawWall(-y+oy,x-ox,2,color);
-            }
-            if ( !gameWorld.getMapCell(cy+y,cx+x+1) ) {
-               drawWall(-y+oy,x-ox,3,color);
-            }
-         }
 
 
          
-         function drawForeground( camCenter, visibleTiles ) {
-            var cy = Math.floor(camCenter[0]);
-            var cx = Math.floor(camCenter[1]);
-            var oy = camCenter[0] - cy - 0.5;
-            var ox = camCenter[1] - cx - 0.5;
-
-            var cellsy = [];
-            var cellsx = [];
-
-            for ( var y = -mapRadius; y < mapRadius; ++y ) {
-               for ( var x = -mapRadius; x < mapRadius; ++x ) {
-                  if ( isMapCellVisible(y,x,cy,cx,oy,ox) 
-                       || isMapCellVisible(y,x,cy,cx,oy,ox,0,0) 
-                       || isMapCellVisible(y,x,cy,cx,oy,ox,0,1) 
-                       || isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
-                       || isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
-                  {
-                     if ( gameWorld.getMapCell(cy+y,cx+x) ) {
-                        cellsy.push(y);
-                        cellsx.push(x);
-                     }
-                  }
-               }
-            }
-
-            gameWorld.refreshStuffIndex();
-
-            for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
-            }
-
-            for ( var i = 0; i < cellsx.length; ++i ) {
-               drawCell(cellsy[i],cellsx[i],cy,cx,oy,ox);
-            }
-         }
-
          function getPointSide(p1,p2,p3) {
             return Math.sign( (p1.y-p2.y) * (p3.x-p1.x) + (p2.x-p1.x) * (p3.y-p1.y) );
          }
@@ -1655,14 +1662,14 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
                ANIMATION = requestAnimationFrame(drawScene);
 
                gameWorld.refreshCharacterIndex();
-               drawBackground();
+               drawCanvas.drawBackground();
                var visibleTiles = [];
-               drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
-               drawCursor(curX,curY);
+               drawCanvas.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
+               drawCanvas.drawCursor(curX,curY);
                currentTarget = getCursorsTile(visibleTiles,curX,curY);
-               if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.getMapCell(currentTarget.y,currentTarget.x) <= floorColors.length ) {
+               if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
                   var characterIndexOnSelectedCell = gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
-                  drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
+                  drawCanvas.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
                }
                gameWorld.moveCharacters();
                gameWorld.giveInstructionsToNPCsWithAI();
@@ -1670,12 +1677,7 @@ function posAdjustment([y,x]) { return [y+0.5,x+0.5]; }
          }
 
          function initCanvas() {
-            screenWidth  = mainItem.width  = window.innerWidth  - 20;
-            screenHeight = mainItem.height = window.innerHeight - 20;
-            screenScale  = Math.min( screenWidth, screenHeight ) / 2;
-            mapRadiusX = screenWidth/4/tileSize/Math.sqrt(3);
-            mapRadiusY = screenHeight/4/tileSize;
-            mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
+            drawCanvas.refreshScreenConstants();
 
             // starting the engine only if it is not running
             if ( !ANIMATION ) {
