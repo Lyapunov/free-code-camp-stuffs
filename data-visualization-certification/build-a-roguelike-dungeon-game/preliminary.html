@@ -1703,10 +1703,6 @@ class DrawCanvas {
             if ( currentTarget === undefined ) {
                return;
             }
-            var source = gameWorld.getCharacterPositionFloorObj(0);
-            if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
-               return;
-            }
             if ( gameWorld.isCharacterPathTargetAlreadySet(0, currentTarget) ) {
                return;
             }
