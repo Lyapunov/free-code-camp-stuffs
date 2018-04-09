@@ -824,6 +824,10 @@ class GameWorld {
       this.characters[i][3] = path;
    }
    setCharacterPathWithBfs(i, target) { 
+      if ( target === undefined || gameWorld.isCharacterPathTargetAlreadySet(i, currentTarget) ) {
+         return;
+      }
+
       if ( this.getCharacterPath(i).length ) {
          var source = {y:this.getCharacterPath(i)[0][0],x:this.getCharacterPath(i)[0][1]};
          this.setCharacterPath(i, [this.getCharacterPath(i)[0]].concat(this.bfs(i,source, target)));
@@ -1699,14 +1703,8 @@ class DrawCanvas {
             }
          }
 
-         mainItem.onmousedown = function(event) {
-            if ( currentTarget !== undefined && !gameWorld.isCharacterPathTargetAlreadySet(0, currentTarget) ) {
-               gameWorld.setCharacterPathWithBfs(0, currentTarget);
-            }
-         };
-
+         mainItem.onmousedown = function(event) { gameWorld.setCharacterPathWithBfs(0, currentTarget); };
          mainItem.onmouseup = function(event) {};
-
          mainItem.onmousemove = function(event) { [curX,curY] = [event.clientX,event.clientY]; };
 
          //init
