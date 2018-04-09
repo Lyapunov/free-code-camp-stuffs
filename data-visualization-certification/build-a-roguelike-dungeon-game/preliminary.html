@@ -20,8 +20,6 @@
          var fps = 25;
          var ANIMATION;
          var currentTarget = 0;
-         var curX = 0;
-         var curY = 0;
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
@@ -1642,7 +1640,9 @@ class DrawCanvas {
       this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
    }
 
-   draw(cursorX,cursorY) {
+   draw(mouseState) {
+      var cursorX = mouseState.cursorX;
+      var cursorY = mouseState.cursorY;
       var visibleTiles = [];
       this.gameWorld.refreshCharacterIndex();
       this.drawBackground();
@@ -1684,12 +1684,18 @@ class DrawCanvas {
 
          var mainItem = document.getElementById('canvas');
 
+         var mouseState = {cursorX:0,cursorY:0,clicked:0};
+
          // common functions 
          function drawScene() {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
 
-               currentTarget = drawCanvas.draw(curX,curY);
+               currentTarget = drawCanvas.draw(mouseState);
+               if ( mouseState.clicked ) {
+                  mouseState.clicked = 0;
+                  gameWorld.setCharacterPathWithBfs(0, currentTarget);
+               }
                gameWorld.moveCharacters();
                gameWorld.giveInstructionsToNPCsWithAI();
             }, 1000 / fps );
@@ -1704,9 +1710,9 @@ class DrawCanvas {
             }
          }
 
-         mainItem.onmousedown = function(event) { gameWorld.setCharacterPathWithBfs(0, currentTarget); };
+         mainItem.onmousedown = function(event) { mouseState.clicked = 1; };
          mainItem.onmouseup = function(event) {};
-         mainItem.onmousemove = function(event) { [curX,curY] = [event.clientX,event.clientY]; };
+         mainItem.onmousemove = function(event) { [mouseState.cursorX,mouseState.cursorY] = [event.clientX,event.clientY]; };
 
          //init
          (function() {
