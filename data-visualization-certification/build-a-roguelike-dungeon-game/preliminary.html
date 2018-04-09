@@ -1687,9 +1687,9 @@ class DrawCanvas {
          var mouseState = {cursorX:0,cursorY:0,clicked:0};
 
          // common functions 
-         function drawScene() {
+         function mainLoop() {
             setTimeout( function() {
-               ANIMATION = requestAnimationFrame(drawScene);
+               ANIMATION = requestAnimationFrame(mainLoop);
 
                currentTarget = drawCanvas.draw(mouseState);
                if ( mouseState.clicked ) {
@@ -1701,12 +1701,12 @@ class DrawCanvas {
             }, 1000 / fps );
          }
 
-         function initCanvas() {
+         function initMainLoop() {
             drawCanvas.refreshScreenConstants();
 
             // starting the engine only if it is not running
             if ( !ANIMATION ) {
-               drawScene();
+               mainLoop();
             }
          }
 
@@ -1716,8 +1716,8 @@ class DrawCanvas {
 
          //init
          (function() {
-            initCanvas();
-            addEventListener('resize', initCanvas, false);
+            initMainLoop();
+            addEventListener('resize', initMainLoop, false);
             addEventListener('keydown', (event)=>{
                if ( parseInt(event.key).toString() == event.key ) { gameWorld.getCharacterUniqueAttributes(0).setUsePotion = parseInt(event.key)-1; }
                if ( event.key == "s" ) { messenger.sendMessage("HP is "+gameWorld.getCharacterUniqueAttributes(0).hp+"/"+gameWorld.getCharacterSharedAttributes(0).baseHp+", XP is "+gameWorld.getCharacterUniqueAttributes(0).xp+", level "+gameWorld.getCharacterSharedAttributes(0).level+" (next level requires "+gameWorld.minimalLevelXp(gameWorld.getCharacterSharedAttributes(0).level+1)+" xp)"); }
