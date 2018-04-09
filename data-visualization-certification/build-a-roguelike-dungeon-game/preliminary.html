@@ -810,6 +810,12 @@ class GameWorld {
    setCharacterFaceDir(i,a,b)         { this.characters[i][1] = 2 * ( a < 0 ) + b };
    increaseCharacterPhase(i)          { this.characters[i][2] = (this.characters[i][2] % 8 ) + 1; }
    getCharacterPath(i)                { return this.characters[i][3]; }
+   isCharacterPathTargetAlreadySet(i, target) {
+      return ( this.getCharacterPath(i).length
+            && this.getCharacterPath(i)[this.getCharacterPath(i).length-1][1] == target.x 
+            && this.getCharacterPath(i)[this.getCharacterPath(i).length-1][0] == target.y );
+   }
+
    removeCharacterFirstPathChain(i)   { this.characters[i][3].reverse();this.characters[i][3].pop();this.characters[i][3].reverse(); }
    setCharacterPath(i,path) {
       if ( path === undefined || path.length == 0 ) {
@@ -1692,9 +1698,7 @@ class DrawCanvas {
             if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
                return;
             }
-            if ( gameWorld.getCharacterPath(0).length
-              && gameWorld.getCharacterPath(0)[gameWorld.getCharacterPath(0).length-1][1] == currentTarget.x 
-              && gameWorld.getCharacterPath(0)[gameWorld.getCharacterPath(0).length-1][0] == currentTarget.y ) {
+            if ( gameWorld.isCharacterPathTargetAlreadySet(0, currentTarget) ) {
                return;
             }
             gameWorld.refreshCharacterIndex();
