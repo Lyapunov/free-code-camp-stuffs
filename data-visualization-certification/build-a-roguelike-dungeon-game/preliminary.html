@@ -824,7 +824,7 @@ class GameWorld {
       this.characters[i][3] = path;
    }
    setCharacterPathWithBfs(i, target) { 
-      if ( target === undefined || gameWorld.isCharacterPathTargetAlreadySet(i, currentTarget) ) {
+      if ( target === undefined || gameWorld.isCharacterPathTargetAlreadySet(i, target) ) {
          return;
       }
 
@@ -1642,11 +1642,11 @@ class DrawCanvas {
       this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
    }
 
-   draw(visibleTiles) {
+   draw(cursorX,cursorY,visibleTiles) {
       this.drawBackground();
       this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
-      this.drawCursor(curX,curY);
-      return this.getCursorsTile(visibleTiles,curX,curY);
+      this.drawCursor(cursorX,cursorY);
+      return this.getCursorsTile(visibleTiles,cursorX,cursorY);
    }
 
    getPointSide(p1,p2,p3) {
@@ -1684,7 +1684,7 @@ class DrawCanvas {
 
                gameWorld.refreshCharacterIndex();
                var visibleTiles = [];
-               currentTarget = drawCanvas.draw(visibleTiles);
+               currentTarget = drawCanvas.draw(curX,curY,visibleTiles);
                if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
                   var characterIndexOnSelectedCell = gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
                   drawCanvas.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
