@@ -1700,14 +1700,9 @@ class DrawCanvas {
          }
 
          mainItem.onmousedown = function(event) {
-            if ( currentTarget === undefined ) {
-               return;
+            if ( currentTarget !== undefined && !gameWorld.isCharacterPathTargetAlreadySet(0, currentTarget) ) {
+               gameWorld.setCharacterPathWithBfs(0, currentTarget);
             }
-            if ( gameWorld.isCharacterPathTargetAlreadySet(0, currentTarget) ) {
-               return;
-            }
-            gameWorld.refreshCharacterIndex();
-            gameWorld.setCharacterPathWithBfs(0, currentTarget);
          };
 
          mainItem.onmouseup = function(event) {};
