@@ -1643,6 +1643,7 @@ class DrawCanvas {
    }
 
    draw(cursorX,cursorY,visibleTiles) {
+      this.gameWorld.refreshCharacterIndex();
       this.drawBackground();
       this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
       this.drawCursor(cursorX,cursorY);
@@ -1682,7 +1683,6 @@ class DrawCanvas {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
 
-               gameWorld.refreshCharacterIndex();
                var visibleTiles = [];
                currentTarget = drawCanvas.draw(curX,curY,visibleTiles);
                if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
