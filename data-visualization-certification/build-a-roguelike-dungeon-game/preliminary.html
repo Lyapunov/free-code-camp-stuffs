@@ -1642,12 +1642,18 @@ class DrawCanvas {
       this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
    }
 
-   draw(cursorX,cursorY,visibleTiles) {
+   draw(cursorX,cursorY) {
+      var visibleTiles = [];
       this.gameWorld.refreshCharacterIndex();
       this.drawBackground();
       this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
       this.drawCursor(cursorX,cursorY);
-      return this.getCursorsTile(visibleTiles,cursorX,cursorY);
+      var currentTarget = this.getCursorsTile(visibleTiles,cursorX,cursorY);
+      if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
+         var characterIndexOnSelectedCell = this.gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
+         this.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
+         return currentTarget;
+      }
    }
 
    getPointSide(p1,p2,p3) {
@@ -1683,12 +1689,7 @@ class DrawCanvas {
             setTimeout( function() {
                ANIMATION = requestAnimationFrame(drawScene);
 
-               var visibleTiles = [];
-               currentTarget = drawCanvas.draw(curX,curY,visibleTiles);
-               if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
-                  var characterIndexOnSelectedCell = gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
-                  drawCanvas.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
-               }
+               currentTarget = drawCanvas.draw(curX,curY);
                gameWorld.moveCharacters();
                gameWorld.giveInstructionsToNPCsWithAI();
             }, 1000 / fps );
