@@ -1694,7 +1694,7 @@ class DrawCanvas {
             if ( currentTarget === undefined ) {
                return;
             }
-            var source = {x:Math.floor(gameWorld.getCharacterPosition(0)[1]),y:Math.floor(gameWorld.getCharacterPosition(0)[0])};
+            var source = gameWorld.getCharacterPositionFloorObj(0);
             if ( source.x === currentTarget.x && source.y === currentTarget.y ) {
                return;
             }
