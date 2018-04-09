@@ -823,7 +823,14 @@ class GameWorld {
       }
       this.characters[i][3] = path;
    }
-   setCharacterPathWithBfs(i, target) { this.setCharacterPath(i, this.bfs(this.getCharacterPositionFloorObj(i), target)); }
+   setCharacterPathWithBfs(i, target) { 
+      if ( this.getCharacterPath(i).length ) {
+         var source = {y:this.getCharacterPath(i)[0][0],x:this.getCharacterPath(i)[0][1]};
+         this.setCharacterPath(i, [this.getCharacterPath(i)[0]].concat(this.bfs(i,source, target)));
+      } else {
+         this.setCharacterPath(i, this.bfs(i,this.getCharacterPositionFloorObj(i), target));
+      }
+   }
    getCharacterAnimationKey(i)     { return this.getKey(this.getCharacterFaceDir(i), this.getCharacterPhase(i)); }
    getCharacterSharedAttributes(i) { return this.characters[i][4]; }
    getCharacterAttackBit(i)        { return this.characters[i][5]; }
@@ -896,7 +903,7 @@ class GameWorld {
       return this.stuffIndex[this.stuffBuckets.getIndexKey(pos)];
    }
 
-   bfs(source,target) {
+   bfs(index,source,target) {
       if ( !this.getMapCell(source.y,source.x) ) {
          return [];
       }
@@ -913,7 +920,9 @@ class GameWorld {
                var nextp = [(findings[i][0]+dirs[j][1]),(findings[i][1]+dirs[j][0])];
                if ( this.getMapCell(nextp[0],nextp[1]) && this.getMapCell(nextp[0],nextp[1]) < 6 + 1
                  && hops[nextp] === undefined
-                 && ( nextp[0] === target.y && nextp[1] === target.x || this.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === undefined ) ) { // enemies shadowing the areas behind of them, but not themselves
+                 && ( nextp[0] === target.y && nextp[1] === target.x 
+                   || this.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === undefined
+                   || this.getCharacterIndexFromPosition([nextp[0],nextp[1]]) === index ) ) { // enemies shadowing the areas behind of them, but not themselves
                   nfindings.push(nextp);
                   hops[nextp] = findings[i];
                }
