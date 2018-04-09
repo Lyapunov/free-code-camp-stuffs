@@ -823,7 +823,7 @@ class GameWorld {
       }
       this.characters[i][3] = path;
    }
-   setCharacterPathWithBfs(i, source, target) { this.setCharacterPath(i, this.bfs(source, target)); }
+   setCharacterPathWithBfs(i, target) { this.setCharacterPath(i, this.bfs(this.getCharacterPositionFloorObj(i), target)); }
    getCharacterAnimationKey(i)     { return this.getKey(this.getCharacterFaceDir(i), this.getCharacterPhase(i)); }
    getCharacterSharedAttributes(i) { return this.characters[i][4]; }
    getCharacterAttackBit(i)        { return this.characters[i][5]; }
@@ -1148,7 +1148,7 @@ class GameWorld {
                 && this.isCharacterAlive(0) 
                 && this.manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) <= this.getCharacterSharedAttributes(i).range
                 && this.isCharacterAtCellCenter(i)
-                && this.setCharacterPathWithBfs(i, this.getCharacterPositionFloorObj(i), this.getCharacterPositionFloorObj(0));
+                && this.setCharacterPathWithBfs(i, this.getCharacterPositionFloorObj(0));
                    });
       }
    }
@@ -1702,7 +1702,7 @@ class DrawCanvas {
                return;
             }
             gameWorld.refreshCharacterIndex();
-            gameWorld.setCharacterPathWithBfs(0, source, currentTarget);
+            gameWorld.setCharacterPathWithBfs(0, currentTarget);
          };
 
          mainItem.onmouseup = function(event) {};
