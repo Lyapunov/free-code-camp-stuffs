@@ -2,15 +2,6 @@
 
 <!DOCTYPE HTML>
 <html>
-   <head>
-      <style>
-         body {
-            margin : 0px;
-            padding: 0px;
-            cursor : none;
-         }
-      </style>
-   </head>
    <body>
       <div class="game-of-life-outer">
           <canvas id="canvas" class="game-of-life-canvas" width="500" height="500">
@@ -1530,12 +1521,6 @@ class DrawCanvas {
       this.context.stroke();
    }
 
-   drawCursor(x,y) {
-      this.context.fillStyle = "red";
-      this.contextPathForObjectDraw({ps:[{x:x,y:y},{x:x+15,y:y+20},{x:x,y:y+25}]});
-      this.context.fill();
-   }
-
    drawForeground( camCenter, visibleTiles ) {
       var cy = Math.floor(camCenter[0]);
       var cx = Math.floor(camCenter[1]);
@@ -1657,7 +1642,6 @@ class DrawCanvas {
       this.gameWorld.refreshCharacterIndex();
       this.drawBackground();
       this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
-      this.drawCursor(cursorX,cursorY);
       var currentTarget = this.getCursorsTile(visibleTiles,cursorX,cursorY);
       if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
          var characterIndexOnSelectedCell = this.gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])

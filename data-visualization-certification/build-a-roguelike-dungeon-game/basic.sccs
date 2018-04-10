@@ -3,6 +3,8 @@ html, body,
    height    : 100%
    overflow-x: hidden
    background-color: #000000
+   margin: 0px
+   padding: 0px
 
 .noselect
    -webkit-touch-callout: none
