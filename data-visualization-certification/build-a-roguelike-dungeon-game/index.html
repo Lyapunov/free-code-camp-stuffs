@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="basic.css">
+
 <!DOCTYPE HTML>
 <html>
    <head>
@@ -10,9 +12,11 @@
       </style>
    </head>
    <body>
-   	<canvas id="canvas" width="500" height="500">
-      Your browser doesn't support html5 canvas.
-      </canvas>
+      <div class="game-of-life-outer">
+          <canvas id="canvas" class="game-of-life-canvas" width="500" height="500">
+             Your browser doesn't support html5 canvas.
+          </canvas>
+      </div>
       <script>
          var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
 
@@ -1254,8 +1258,15 @@ class DrawCanvas {
    }
 
    refreshScreenConstants() {
-      this.screenWidth  = this.mainItem.width  = window.innerWidth  - 20;
-      this.screenHeight = this.mainItem.height = window.innerHeight - 20;
+      var widthFromHeight = Math.floor(4 * (window.innerHeight - 20) / 3);
+      var heightFromWidth = Math.floor(3 * (window.innerWidth - 20) / 4);
+      if ( widthFromHeight > window.innerWidth ) {
+         this.screenWidth  = this.mainItem.width  = window.innerWidth - 20;
+         this.screenHeight = this.mainItem.height = heightFromWidth;
+      } else {
+         this.screenWidth  = this.mainItem.width  = widthFromHeight;
+         this.screenHeight = this.mainItem.height = window.innerHeight - 20;
+      }
 
       var mapRadiusX = this.screenWidth/4/this.tileSize/Math.sqrt(3);
       var mapRadiusY = this.screenHeight/4/this.tileSize;
