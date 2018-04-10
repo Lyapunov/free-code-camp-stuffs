@@ -3,7 +3,6 @@ html, body,
    height    : 100%
    overflow-x: hidden
    background-color: #000000
-   margin: 0px
    padding: 0px
 
 .noselect
@@ -26,6 +25,7 @@ html, body,
 .game-of-life-outer
    width: 100vw
    display: table
+
    background-color: #ffff00
 
 

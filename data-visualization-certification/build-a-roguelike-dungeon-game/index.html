@@ -1255,6 +1255,9 @@ class DrawCanvas {
          this.screenWidth  = this.mainItem.width  = window.innerWidth - 20;
          this.screenHeight = this.mainItem.height = heightFromWidth;
       } else {
+         this.leftOffset = Math.floor((window.innerWidth - widthFromHeight)/2);
+         console.log('--->',this.screenWidth,Math.floor((window.innerWidth - widthFromHeight)/2));
+         this.mainItem.style.marginLeft = this.leftOffset;
          this.screenWidth  = this.mainItem.width  = widthFromHeight;
          this.screenHeight = this.mainItem.height = window.innerHeight - 20;
       }
@@ -1636,7 +1639,7 @@ class DrawCanvas {
    }
 
    draw(mouseState) {
-      var cursorX = mouseState.cursorX;
+      var cursorX = mouseState.cursorX - this.leftOffset;
       var cursorY = mouseState.cursorY;
       var visibleTiles = [];
       this.gameWorld.refreshCharacterIndex();
