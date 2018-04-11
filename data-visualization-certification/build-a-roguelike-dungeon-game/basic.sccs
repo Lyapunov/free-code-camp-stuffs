@@ -37,3 +37,10 @@ html, body,
    width: 100vw
    height: 30vh
    background-color: #f3e3c2
+
+.diabolito-control-panel
+   width: 100vmin
+   height: 100%
+   background-color: #ff00ff
+   margin-left: auto
+   margin-right: auto
