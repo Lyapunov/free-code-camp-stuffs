@@ -4,6 +4,7 @@ html, body,
    overflow-x: hidden
    background-color: #000000
    padding: 0px
+   margin: 0px
 
 .noselect
    -webkit-touch-callout: none
@@ -22,10 +23,17 @@ html, body,
 
 // Gem of centering: https://stackoverflow.com/questions/7455362/how-to-center-a-table-of-the-screen-vertically-and-horizontally
 
-.game-of-life-outer
+.diabolito-main
    width: 100vw
    display: table
-
    background-color: #ffff00
 
+.diabolito-canvas
+   width: 100vw
+   height: 70vh
+   background-color: #000000
 
+.diabolito-bar
+   width: 100vw
+   height: 30vh
+   background-color: #f3e3c2
