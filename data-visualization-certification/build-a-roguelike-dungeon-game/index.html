@@ -377,8 +377,6 @@ class MapGenerator {
          }
       }
 
-      // console.log('===>',rooms.length,sarea,sarea/sizeX/sizeY);
-
       if ( createStuff !== undefined && createEnemy !== undefined ) {
          var [hmap,hlev] = this.bfsMap(retval,{y:rooms[0][0],x:rooms[0][1]},[world,4,5]);
          var helper = [10,Math.floor(hlev/3),Math.floor(2*hlev/3),hlev-2];
@@ -1256,8 +1254,7 @@ class DrawCanvas {
       this.screenWidth  = this.mainItem.width  = window.innerWidth;
       this.screenHeight = this.mainItem.height = Math.round(window.innerHeight * 0.70);
       var minDimension = Math.min(window.innerWidth, window.innerHeight);
-      this.tileSize = Math.max(Math.round(Math.round(minDimension/20)/5.0)*5,15);
-      console.log(this.tileSize);
+      this.tileSize = Math.max(Math.round(Math.round(minDimension/20)/8.0)*8,16);
       this.leftOffset = 0;
 
       var mapRadiusX = this.screenWidth/4/this.tileSize/Math.sqrt(3);
