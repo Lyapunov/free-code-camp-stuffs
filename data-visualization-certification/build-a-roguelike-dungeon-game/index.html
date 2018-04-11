@@ -11,6 +11,24 @@
           </div>
           <div class="diabolito-bar">
              <div class="diabolito-control-panel">
+                <div class="diabolito-character-status">
+                   <span>Hp:</span>
+                   <span>40/40</span>
+                   <span>Weapon:</span>
+                   <span>None</span>
+                   <span>Armor:</span>
+                   <span>None</span>
+                </div>
+                <div class="diabolito-character-belt">
+                   <button></button>
+                   <button></button>
+                   <button></button>
+                   <button></button>
+                   <button></button>
+                </div>
+                <div class="diabolito-character-text">
+                   <textarea id="diabolito-messenger" rows="5" cols="80"></textarea>
+                </div>
              </div>
           </div>
       </div>
@@ -615,12 +633,22 @@ class Sounds {
 }
 
 class Messenger {
+   constructor() {
+      document.getElementById("diabolito-messenger").value = "Hero entered Diabolito's luxury-dungeon.\n";
+   }
+
    capitalize(text) {
       return text[0].toUpperCase() + text.substring(1);
    }
 
    sendMessage(text) {
       console.log(this.capitalize(text)+".");
+      var lines = document.getElementById("diabolito-messenger").value.split("\n");
+      while ( lines.length > 5 ) {
+         lines.shift();
+      }
+      document.getElementById("diabolito-messenger").value = lines.join("\n"); 
+      document.getElementById("diabolito-messenger").value += this.capitalize(text)+"."+"\n";
    }
 }
 

@@ -44,3 +44,12 @@ html, body,
    background-color: #ff00ff
    margin-left: auto
    margin-right: auto
+
+.diabolito-character-status
+   display: flex
+
+.diabolito-character-belt
+   display: flex
+
+.diabolito-character-text
+   display: flex
