@@ -18,7 +18,6 @@
 
          var fps = 25;
          var ANIMATION;
-         var currentTarget = 0;
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
          var ATTRIBUTES_WOODEN_STICK   = {name:"wooden stick"  ,color:SPECIAL_COLORS.WOODBROWN,width:30,height:4,value:1,holder:"weapon"};
@@ -1691,7 +1690,7 @@ class DrawCanvas {
                return;
             }
             animationInProgress = true;
-            currentTarget = drawCanvas.draw(mouseState);
+            var currentTarget = drawCanvas.draw(mouseState);
             if ( mouseState.clicked ) {
                mouseState.clicked = 0;
                gameWorld.setCharacterPathWithBfs(0, currentTarget);
