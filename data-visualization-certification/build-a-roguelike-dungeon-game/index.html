@@ -1,42 +1,19 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+
+<!-- 
+  CSS 
+-->
 <link rel="stylesheet" type="text/css" href="basic.css">
 
-<!DOCTYPE HTML>
-<html>
-   <body>
-      <div class="diabolito-main">
-          <div class="diabolito-canvas">
-          <canvas id="canvas" width="500" height="500">
-             Your browser doesn't support html5 canvas.
-          </canvas>
-          </div>
-          <div class="diabolito-bar">
-             <div class="diabolito-control-panel">
-                <div class="diabolito-character-status">
-                   <span>Hp:</span>
-                   <span>40/40</span>
-                   <span>Weapon:</span>
-                   <span>None</span>
-                   <span>Armor:</span>
-                   <span>None</span>
-                </div>
-                <div class="diabolito-character-belt">
-                   <button></button>
-                   <button></button>
-                   <button></button>
-                   <button></button>
-                   <button></button>
-                </div>
-                <div class="diabolito-character-text">
-                   <textarea id="diabolito-messenger" rows="5" cols="80"></textarea>
-                </div>
-             </div>
-          </div>
-      </div>
-      <script>
+<!-- 
+  JS 
+-->
+<script type="text/babel">
          var SPECIAL_COLORS = {WOODBROWN:"#966F33",IRON:"#434b4d",STEEL:"#4682B4",POISON:"#00FF00",TABLEBROWN:"#835C3B",CHAIRBROWN:"#8B4513",DARKGRAY0:"#282828",DARKGRAY1:"#484848",DARKGRAY2:"#585858"};
 
-         var fps = 25;
-         var ANIMATION;
          var currentTarget = 0;
 
          var ATTRIBUTES_BAREFIST       = {name:"nothing", value: 0, size:0};
@@ -633,8 +610,8 @@ class Sounds {
 }
 
 class Messenger {
-   constructor() {
-      document.getElementById("diabolito-messenger").value = "Hero entered Diabolito's luxury-dungeon.\n";
+   constructor(reactComponent) {
+      this.reactComponent = this;
    }
 
    capitalize(text) {
@@ -642,13 +619,17 @@ class Messenger {
    }
 
    sendMessage(text) {
+      if ( !this.reactComponent.textarea ) {
+         return;
+      }
+
       console.log(this.capitalize(text)+".");
-      var lines = document.getElementById("diabolito-messenger").value.split("\n");
+      var lines = this.reactComponent.textarea.value.split("\n");
       while ( lines.length > 5 ) {
          lines.shift();
       }
-      document.getElementById("diabolito-messenger").value = lines.join("\n"); 
-      document.getElementById("diabolito-messenger").value += this.capitalize(text)+"."+"\n";
+      this.reactComponent.textarea.value = lines.join("\n"); 
+      this.reactComponent.textarea.value += this.capitalize(text)+"."+"\n";
    }
 }
 
@@ -848,7 +829,7 @@ class GameWorld {
       this.characters[i][3] = path;
    }
    setCharacterPathWithBfs(i, target) { 
-      if ( target === undefined || gameWorld.isCharacterPathTargetAlreadySet(i, target) ) {
+      if ( target === undefined || this.isCharacterPathTargetAlreadySet(i, target) ) {
          return;
       }
 
@@ -1092,7 +1073,7 @@ class GameWorld {
    moveCharacters() {
       this.iterateOverCharactersAroundHero((i)=>{ this.isCharacterAlive(i) && (this.moveCharacter(i) || 1) || this.isCharacterFullyDead(i) || this.destroying(i) });
       this.handleWalkSfx();
-      this.usePotion(gameWorld.getCharacterUniqueAttributes(0).setUsePotion);
+      this.usePotion(this.getCharacterUniqueAttributes(0).setUsePotion);
    }
 
    handleWalkSfx() {
@@ -1172,7 +1153,7 @@ class GameWorld {
       }
    }
 
-   giveInstructionsToNPCsWithAI() {
+   giveInstructionsToNPCsWithAI(fps) {
       var aiFrequencyDecreaseRatio = 5; // AI runs in every (1 / fps * aiFrequenceDecreasingRatio) second
       if ( this.aiCounter < aiFrequencyDecreaseRatio ) {
          ++this.aiCounter;
@@ -1225,7 +1206,8 @@ class DrawCanvas {
       return retval;
    }
 
-   constructor(gameWorld) {
+   constructor(reactComponent, gameWorld) {
+      this.reactComponent = reactComponent;
       this.gameWorld = gameWorld;
       this.characterBodyDrawData = this.stringDecoder(23,30,'2;1@0F/L0R0W0}1b1h1o/*~1;|0M|9>:E:M:U8}4Z5a5i6p6v3<3B3J0Q+U1X1^.c7h?j/)~2;|1L|:>;F<M<U:}5Y5`5g6o7v6=9B:I;N:U1V-}(c+g,l/(~2;|3I|5=4D3K1R-W6V7_8g;o?v;:=A>H>N=T1W-})b%i!n/)~2;|1K|4=.Q1J3C*U7W9_<hDmKr;>=C>J@O?U1X,](b)i*o.-~2?|2L|3?3G3N/S*T7X8_9f>kEo7?:F:L:S:Z2]1X0d3j4p.*~1=|2K|6?5F3L2R-X6W3]2c9g?i2;2C2K.P+T5V7]8c:i;n/{~2;|3J|8<9D;L;T:Z4U0Z.`0f2k3<.L2G3?+Q8Y:`=eCiIl.)~1<|2L|;<=B@H@O@V3Y/a*h%p w2?1A1H.N*Q6Y6`8g>jEk/-~1>|2L|8@=C@LASAY1Y-`(h)o*u/;-A+H*O*V/U/}/c0k1r/+~1;|0I|=>>F>N>V<]7V7]8f9n;v0;/A.G-N,U1U1}0d7c=a0*~2:|1J|=:?AAI@Q>X8U8}8c:k<r291?2E1J1P:S:Y:b=h@o0(~29|3F|;<;B:I8Q5X2R.Y*`-e2j4:7?8E;H=M3T.},c)k&r0)~1:|2I|<<;C8J5Q1V9T:Y<_@dFh2=2A4E9H=K2V-})c)j(r0-~2=|2J|<?:F7M4R0W8U:}<bAeFg2;2A2F3K3P8P7W7^;a@c/*~3;|3G|<;=C=K<R;Y2Q2X2_3f7m0:/@.G,L)R2Q1V3^7c9j0{~29|2E|=:?@AFBMBS8P5V2[2c2j/;/@,F*L)R2T3Y5^:d?f0)~2;|2H|><@ACHEMFT7}4e9U1n/x/>.D+I)O{T2V1^2e8e=e/-~2=|2J|==?CBHDODV7^9V3d5u4m.=,D+K,R-X2X2_2f2n3v1+~3<|3L|?=ACBKAR@X;X;_;f:n:u.;-B-I,P-W3U2]2e5b5^1*~3:|3I|?:@A@H@P?W:U;};b:i9p/:.@.E/K1P:S:f:_;Y:l1(~39|4G|>:@@@F?N=T2Y3S0^1d3i/:/@0F1L2Q;S=U<X:}8_2)~4:|4H|?:?A?H=P8W3}3T3l3d3t/=.B/H/M0S:V;_<[:b8e1-~4=|4J|>=@D@K@S<Y2W2d3j2]3p.;-B,J-P-W3T2Z2b3i3p2+~3;|3H|?;@B@I@P?W:T9a;d;[9`>:??>D>J<O3S2_3Y3e3k1(~39|3G|/9.?-F.M0T:S<X=^<d9i=9<I>C>>=N3S1V1Y3[5^2)~39|3G|0:.@/H0O5W:S;[;c;k:t?=>C?I>O<S3W3Z2^3b4e1-~3=|3K|/=-D-L.R1X:W;];e;k:q@9B@CHDODV7U6^6f5n4v4*~6;|7I|1>0F/M1T2[?T?[?b?j=q;;;B;H<M<R<R<Y<`;g8n4*~6:|5G|2:1A0I2Q3X7R7Y6`2c,d>:?@@FBLDQ<Q=W<}7c4i4(~59|5F|2:/?.E,M+T9V7P<}=d;j?;@@BFCKFP<T;Z;a5d/g4)~5:|5I|0<.B,H*M)S5U7];i<p?x?=@CBIDNGS=W=^<e7e1f4-~5=|6L|1>.C,I*O)U5Y7^;d:m9u=<>B@H@NBT=U=}=d8d2`4*~5;|6J|2</C.J.Q/W6U6]5d4k2r;9<><C<J=Q5R4Y4a1i,p4(~49|5F|3:4A3I6Q9W=QAYE`Ae<k=9:=9C5H2M?S@ZBbEiHr5)~6;|6H|3<4B6I:O=U5Q4W4].c(i<=:A9D5H1K>SAZDaFjFq4-~6>|6K|3?5D6L:Q=U6T4Z3a.e{g9<;A=F=L<R;W;];d:i9o2*~3=|4L|2?0F0O2U3]8X8_6f5n4v4>2C0J0R1Y8W9]:c8j6p2*~2<|2K|5>6D8K:R>W5X7]:c4g-j8:8A8I<N@S7S5[3b1h/n2(~3;|3G|3<2C1K1R1Y5S:X=_<f9k8<8A8E;K?P9U2^.e)i!l3)~3;|2J|0<.A,G*O+U4W;^AfFoKw9>8C9H<NAQ:U6]5e.i&k3-~3?|3L|2@.E,K*R*Z5W<^BfBnAv8<9B8I;P?U9W;]<c4g,j2*~3=|3L|3<0D/K/S1[6X6_6g5n4v4;3A1G1O1U9T?[CaBg?l2(~2;|3I|7=7D9K;R>W5V5_3i0p,v2:.?,F-L-R;U>[AaEgJn2)~39|3I|8>8C:J<PAT5U3_.h{n s2>/B,G,M+S;W?}CaBh@o2-~2?|3L|8B9G9K;P@T5W4^1e,j%o,<+C+J,P-V2U2}1c0j/q1+~1<|2K|=>?D@M@T@}:W:]:f:n9v-;-A,G,M-T1S0Z0a/i.p1)~1;|1H|<<<C<J=Q?Y8T:[:a6g2m.9/>3E4J4N7S<Y@]=e;k1(~1:|1G|;=9D9K9R9Y1S1Z/a-i+p/:0?2D4I7L0U.],e{l"t1)~1;|0H|:>7E6L5T5[9U>}BbEgJm/<0A2D4H8M1W0^.f)k$p2-~1=|1K|:A7H5N4V4]9X<]AaBiCp-:,@-E-K/R6S8]7e7m6u1*~1;|/H|:?9F8M7U6}/S1[3b.f)h/:-@,F,M,S0T4X9}:a;e1(~2:|1H|<<=B=I>P?V7U7_6g4o3v/;,A*G*N*U0R4W8}<a@e1(~1;|1H|<==C>H@OAT8T4`3j/p+x/>,C*H)O(U1S3Z6a6g6l1-~2>|1K|:@<D>I?NBR7T8[9b5g0m.=-D+K,R,Y2W2_2g2n3u1+~3;|3L|?<ACAKARAY;W;_;g;n:u.:-A-I-P-W3U2}1d3l2t1)~39|3H|?;@A@I@W@P:U;}<c:f8j.9.>/E0K2Q:S;W;};_;c2(~39|3G|>9??@G?N?U3S2}1e2m2u0:0@0E2J3O9R:U:X:};^2)~39|3G|=:>A>H>N=T1x3R2[2e2n/>/C.H0M1R:U;Y;];a;d2-~4=|3J|>>@D?K?R>Y3U2[1a3g4m.;-B,J-Q-W2V2^1e3h4j2)~3:|3K|>;?B@I@P@V;V;];c:k:t?:???D>J<O2R3V2Z2_2b1(~39|3G|0:.A-H.O/V:R;Z;c;m<u=;=?<D<G;L4S3V3Y2]2_2)~3H|3:|/;/B/H0N0T:T;};e<o<x>=?D?J>O<T3U2Y2]2a1e2-~3>|4K|0=.D.K.S/Y:V<[=a;g:m>;?B@I@N?U:U:[;b<i=p1)~4<|3J|0=-D,L,S,[2W2^2f3m4u?9@?@G?M=R=U:]:b>fCi1*~6:|6I|2?3E4M5T5[7U5]5e6m6u>;@AAH@N@T;T7Y5}2_2e1(~5:|5G|0</B/H/O-U5T5}6f8n:v><@ABHCOAU:S6Y3]/a+e1)~4;|4H|0=/B.I-O*T5S7]9g=p@x2@0D/I-M*R;V9Z6`6g6m1,~5>|4J|>>ACBICODV5U4[4b8g=m?;?@@G@M@S;V;}<b=i>p1)~5<|5J|1=0C0I/P.W4V2}3b7g:m>9>><D;J:M6T0Y,^.d1j1{~59|5G|1=3C3J4Q4X<T<Z<`?hAp>9>?=E=J<N3T0Z,a{g"m1)~5;|5I|1>4D5L7T8[<T>]@eDmIs=;>B=J;O<R;X=^?dDjHo1-~5?|5N|2A5G6M8U8}4X0^,b*i)p' );
       this.weaponDrawData = this.stringDecoder(6,35,'4W$R7#A#K#>a$#-#7#0Z#Q@`?Z-V7#A#K#1}BY2T6#A#K#/[EY5W7#A#K#0Y?_0Z7#@#J#2]0Z$S7#A#K#>_0U$J7#A#K#E[/V#J7#A#K#E^##-#7#/}#YAb##-#7#0Z{MC}5U{Q7#A#K#:]BR0T7#A#K#7[BQ3T7#A#K#5]7V(T7#A#K#@^&#-#7#/W#OFW$#+#7#-W$JLY$#,#7#,Y%KJ[##-#7#2^-WU###-#6#2}2PF[6V.Y7#A#K#BW5W-X7#A#K#=}##-#7#5Y-]A^%#-#7#3[*VD}##-#BV5Y6RU###-#AU:}=RU###-#AY5^9SU###-#J[7_HXU###-#BU8]GUU###-#IV0YBZU###-#KV.Y=ZU###-#KW.[<ZU###-#GZ4}BZU###-#AV=}JSU###-#6RBZLQU###-#6QCZNOU###-#AX7aH[U###-#7]C}MTU###-#EW6^HZU###-#ET/ZA[U###-#FW/_@]U###-#DZ6`F}U###-#5ZC}PRU###-#2WFYMNU###-#0XEYNPU###-#2[E`PVU###-#1XE]JOU###-#;P?^JYU###-#=U:`H[U###-#=V9bF_U###-#3Y;`EYU###-#0XD[KQU###-#/YGYNMU###-#,ZGWNJU#F^FQ0^A#K#U#E[EU1}A#K#U#DZBN5VA#K#U#AYCN9YA#K#U#C^ET6YA#K#U#E[FQ2}A#K#U#BS:L3[A#K#V#?T;N4YA#K#U#AX=R3_A#K#U#DZ4P7#A#K#1_?Z0Q7#A#K#9`DX6Q7#A#K#2ZFZ6T7#A#K#/YH[8V7#A#K#.VEW5P7#A#K#2}=V0L7#A#K#8^>V.L6#A#K#<_=W/N7#A#K#<a##-#7#A#K#U###-#7#A#K#U#');
@@ -1274,22 +1256,36 @@ class DrawCanvas {
       this.tileSize = 35;
       this.errorTolerance = 0.01;
 
-      this.mainItem = document.getElementById('canvas');
-      this.context  = this.mainItem.getContext('2d');
-
-      this.refreshScreenConstants();
+      this.screenConstantsAreSet = false;
    }
 
-   refreshScreenConstants() {
-      this.screenWidth  = this.mainItem.width  = window.innerWidth;
-      this.screenHeight = this.mainItem.height = Math.round(window.innerHeight * 0.70);
-      var minDimension = Math.min(window.innerWidth, window.innerHeight);
-      this.tileSize = Math.max(Math.round(Math.round(minDimension/20)/8.0)*8,16);
-      this.leftOffset = 0;
+   refreshContext() {
+      if ( this.reactComponent.canvas === undefined ) {
+         return 0;
+      }
+      this.context = this.reactComponent.canvas.getContext('2d');
+      return 1;
+   }
+
+   refreshScreenConstants(force=false) {
+      if ( this.screenConstantsAreSet && !force ) {
+         return 1;
+      }
+      this.screenConstantsAreSet = false;
+      if ( this.reactComponent.canvas === undefined ) {
+         return 0;
+      }
+      this.screenWidth  = this.reactComponent.canvas.width  = window.innerWidth;
+      this.screenHeight = this.reactComponent.canvas.height = Math.round(window.innerHeight * 0.70);
+      var minDimension  = Math.min(window.innerWidth, window.innerHeight);
+      this.tileSize     = Math.max(Math.round(Math.round(minDimension/20)/8.0)*8,16);
+      this.leftOffset   = 0;
 
       var mapRadiusX = this.screenWidth/4/this.tileSize/Math.sqrt(3);
       var mapRadiusY = this.screenHeight/4/this.tileSize;
       this.mapRadius = Math.ceil(2 * Math.max(mapRadiusX,mapRadiusY));
+      this.screenConstantsAreSet = true;
+      return 1;
    }
 
    drawBox(boxX,boxY,boxSize,boxSize2,boxColor, exists) {
@@ -1318,17 +1314,17 @@ class DrawCanvas {
    }
 
    drawBoxExtended(ux,uy,i,ind1,ind2,w1,w2,rad) {
-      var phaseKey = gameWorld.getCharacterAnimationKey(i);
+      var phaseKey = this.gameWorld.getCharacterAnimationKey(i);
       var rimage = this.characterBodyDrawData[phaseKey];
       var wimage = this.weaponDrawData[phaseKey];
-      var scale = gameWorld.getCharacterSharedAttributes(i).scale;
-      var characterColors = gameWorld.getCharacterSharedAttributes(i).coloring;
-      if ( gameWorld.getCharacterAttackBit(i) ) { // drawing in red because of damage
+      var scale = this.gameWorld.getCharacterSharedAttributes(i).scale;
+      var characterColors = this.gameWorld.getCharacterSharedAttributes(i).coloring;
+      if ( this.gameWorld.getCharacterAttackBit(i) ) { // drawing in red because of damage
          characterColors = characterColors.map(x=>x?"red":"");
       }
-      var exists      = gameWorld.getCharacterUniqueAttributes(i).exists;
-      var shieldrad   = gameWorld.getCharacterHoldedObjectAttribute(i,"shield","size");
-      var weaponcolor = gameWorld.getCharacterHoldedObjectAttribute(i,"weapon","color");
+      var exists      = this.gameWorld.getCharacterUniqueAttributes(i).exists;
+      var shieldrad   = this.gameWorld.getCharacterHoldedObjectAttribute(i,"shield","size");
+      var weaponcolor = this.gameWorld.getCharacterHoldedObjectAttribute(i,"weapon","color");
 
       var simage = rimage;
       var cind = ind1;
@@ -1383,8 +1379,8 @@ class DrawCanvas {
    }
 
    drawCharacter(y,x,i) {
-      var drawDescriptor = this.drawDescriptors[gameWorld.getCharacterAnimationWeaponShieldValue(i)];
-      var scale = gameWorld.getCharacterSharedAttributes(i).scale;
+      var drawDescriptor = this.drawDescriptors[this.gameWorld.getCharacterAnimationWeaponShieldValue(i)];
+      var scale = this.gameWorld.getCharacterSharedAttributes(i).scale;
       var cx = (x + y) * Math.sqrt(3) * this.tileSize + this.screenWidth / 2;
       var cy = (x - y) * this.tileSize + this.screenHeight / 2;
       var percentage = this.tileSize / 50;
@@ -1392,12 +1388,12 @@ class DrawCanvas {
       var xmax = 54  * percentage;
       var ux = Math.floor(cx - xmax/2);
       var uy = Math.floor(cy - ymax + ymax * percentage * 0.1);
-      if  ( gameWorld.getCharacterSharedAttributes(i).transparency ) {
-         this.context.globalAlpha = gameWorld.getCharacterSharedAttributes(i).transparency;
+      if  ( this.gameWorld.getCharacterSharedAttributes(i).transparency ) {
+         this.context.globalAlpha = this.gameWorld.getCharacterSharedAttributes(i).transparency;
       }
       drawDescriptor.map(box=>this.drawBoxExtended(ux,uy,i,...box));
       this.context.globalAlpha = 1.0;
-      gameWorld.eraseCharacterAttackBit(i);
+      this.gameWorld.eraseCharacterAttackBit(i);
    }
 
    scaledValue(value) { return Math.round((value/35)*this.tileSize); }
@@ -1421,23 +1417,23 @@ class DrawCanvas {
    }
 
    drawCell(y,x,cy,cx,oy,ox) {
-      var color = this.wallColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % this.wallColors.length ];
-      if ( !gameWorld.getMapCell(cy+y,cx+x-1) ) {
+      var color = this.wallColors[ (this.gameWorld.getMapCell(cy+y,cx+x) - 1) % this.wallColors.length ];
+      if ( !this.gameWorld.getMapCell(cy+y,cx+x-1) ) {
          this.drawWall(-y+oy,x-ox,0,color);
       }
-      if ( !gameWorld.getMapCell(cy+y-1,cx+x) ) {
+      if ( !this.gameWorld.getMapCell(cy+y-1,cx+x) ) {
          this.drawWall(-y+oy,x-ox,1,color);
       }
 
-      var mapval = gameWorld.getMapCell(cy+y,cx+x);
+      var mapval = this.gameWorld.getMapCell(cy+y,cx+x);
       var speciality = Math.floor((mapval-1) / this.wallColors.length);
       var sworld = (mapval-1) % this.wallColors.length;
 
       {
-         var i = gameWorld.getStuffIndexFromPosition([cy+y,cx+x]);
+         var i = this.gameWorld.getStuffIndexFromPosition([cy+y,cx+x]);
          if ( i !== undefined ) {
-            var attribs = gameWorld.getStuffSharedAttributes(i);
-            if ( gameWorld.getStuffUniqueAttributes(i) !== undefined && gameWorld.getStuffUniqueAttributes(i).exists ) {
+            var attribs = this.gameWorld.getStuffSharedAttributes(i);
+            if ( this.gameWorld.getStuffUniqueAttributes(i) !== undefined && this.gameWorld.getStuffUniqueAttributes(i).exists ) {
                var [px,py] = this.getTileCenter(-y+oy,x-ox);
                this.drawRectangle(Math.round(px-this.scaledValue(attribs.width/2)),
                                   Math.round(py-this.scaledValue(attribs.height/2)),
@@ -1503,24 +1499,24 @@ class DrawCanvas {
          }
       }
 
-      var i = gameWorld.getCharacterIndexFromPosition([cy+y,cx+x]);
+      var i = this.gameWorld.getCharacterIndexFromPosition([cy+y,cx+x]);
       if ( i !== undefined ) {
-         var pos = gameWorld.getCharacterPosition(i);
+         var pos = this.gameWorld.getCharacterPosition(i);
          this.drawCharacter((oy+cy+0.5)-(pos[0]),-(ox+cx+0.5)+(pos[1]),i);
       }
 
-      if ( !gameWorld.getMapCell(cy+y+1,cx+x) ) {
+      if ( !this.gameWorld.getMapCell(cy+y+1,cx+x) ) {
          this.drawWall(-y+oy,x-ox,2,color);
       }
-      if ( !gameWorld.getMapCell(cy+y,cx+x+1) ) {
+      if ( !this.gameWorld.getMapCell(cy+y,cx+x+1) ) {
          this.drawWall(-y+oy,x-ox,3,color);
       }
    }
 
    drawCellFloor(y,x,cy,cx,oy,ox,tiles) {
-      var color = this.floorColors[ (gameWorld.getMapCell(cy+y,cx+x) - 1) % this.floorColors.length ];
+      var color = this.floorColors[ (this.gameWorld.getMapCell(cy+y,cx+x) - 1) % this.floorColors.length ];
       var tile  = this.getFloorTile(-y+oy,x-ox,{x:x+cx,y:y+cy});
-      this.drawFloor(tile, color, gameWorld.getMapCell(cy+y+1,cx+x)&&gameWorld.getMapCell(cy+y,cx+x+1));
+      this.drawFloor(tile, color, this.gameWorld.getMapCell(cy+y+1,cx+x)&&this.gameWorld.getMapCell(cy+y,cx+x+1));
 
       tiles.push(tile);
    }
@@ -1566,7 +1562,7 @@ class DrawCanvas {
                  || this.isMapCellVisible(y,x,cy,cx,oy,ox,1,0) 
                  || this.isMapCellVisible(y,x,cy,cx,oy,ox,1,1) )
             {
-               if ( gameWorld.getMapCell(cy+y,cx+x) ) {
+               if ( this.gameWorld.getMapCell(cy+y,cx+x) ) {
                   cellsy.push(y);
                   cellsx.push(x);
                }
@@ -1574,7 +1570,7 @@ class DrawCanvas {
          }
       }
 
-      gameWorld.refreshStuffIndex();
+      this.gameWorld.refreshStuffIndex();
 
       for ( var i = 0; i < cellsx.length; ++i ) {
          this.drawCellFloor(cellsy[i],cellsx[i],cy,cx,oy,ox,visibleTiles);
@@ -1620,7 +1616,7 @@ class DrawCanvas {
       var limit   = 50;
       var err     = 1e-6;
 
-      while ( limit && gameWorld.getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
+      while ( limit && this.gameWorld.getMapCell( celly, cellx ) && !( celly == cy + y && cellx == cx + x ) ) {
          --limit;
          var jump  = Math.min( Math.max( ( 1 - sx ) / dirX, -sx / dirX ),
                                Math.max( ( 1 - sy ) / dirY, -sy / dirY ) );
@@ -1648,7 +1644,7 @@ class DrawCanvas {
             arrived = 4;
          }
          if ( pcellx != cellx && pcelly != celly ) {
-            if ( !gameWorld.getMapCell( celly, pcellx ) && !gameWorld.getMapCell( pcelly, cellx ) ) {
+            if ( !this.gameWorld.getMapCell( celly, pcellx ) && !this.gameWorld.getMapCell( pcelly, cellx ) ) {
                [celly,cellx] = [pcelly,pcellx];
                break;
             }
@@ -1663,15 +1659,20 @@ class DrawCanvas {
       this.context.fillRect(0,0,this.screenWidth,this.screenHeight);
    }
 
-   draw(mouseState) {
+   draw(mouseState, retobj) {
+      if ( !this.refreshContext() || !this.refreshScreenConstants() ) {
+         retobj.failed = true;
+         return;
+      }
+
       var cursorX = mouseState.cursorX - this.leftOffset;
       var cursorY = mouseState.cursorY;
       var visibleTiles = [];
       this.gameWorld.refreshCharacterIndex();
       this.drawBackground();
-      this.drawForeground(gameWorld.getCharacterPosition(0), visibleTiles);
+      this.drawForeground(this.gameWorld.getCharacterPosition(0), visibleTiles);
       var currentTarget = this.getCursorsTile(visibleTiles,cursorX,cursorY);
-      if ( gameWorld.isCharacterAlive(0) && currentTarget !== undefined && gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
+      if ( this.gameWorld.isCharacterAlive(0) && currentTarget !== undefined && this.gameWorld.isMapCellWalkable(currentTarget.y,currentTarget.x) ) {
          var characterIndexOnSelectedCell = this.gameWorld.getCharacterIndexFromPosition([currentTarget.y,currentTarget.x])
          this.drawTile(currentTarget, characterIndexOnSelectedCell === undefined ? "yellow" : (characterIndexOnSelectedCell === 0 ? "blue" : "red"));
          return currentTarget;
@@ -1699,54 +1700,122 @@ class DrawCanvas {
    }
 }
 
-         var sounds     = new Sounds();
-         var messenger  = new Messenger();
-         var gameWorld  = new GameWorld(messenger, sounds);
-         var drawCanvas = new DrawCanvas(gameWorld);
 
-         var mainItem = document.getElementById('canvas');
+class DiabolitoGame extends React.Component {
+  constructor(props) {
+     super(props);
+     this.state               = {interval: undefined};
+     this.mainLoop            = this.mainLoop.bind(this);
+     this.requestMainLoop     = this.requestMainLoop.bind(this);
+     this.mouse_down          = this.mouse_down.bind(this);
+     this.mouse_move          = this.mouse_move.bind(this);
+     this.sounds              = new Sounds();
+     this.messenger           = new Messenger(this);
+     this.gameWorld           = new GameWorld(this.messenger, this.sounds);
+     this.drawCanvas          = new DrawCanvas(this, this.gameWorld);
+     this.mouseState          = {cursorX:0,cursorY:0,clicked:0};
+     this.animationInProgress = false;
+     this.fps                 = 25;
 
-         var mouseState = {cursorX:0,cursorY:0,clicked:0};
+     setInterval( this.requestMainLoop, 1000 / this.fps );
+  }
 
-         // common functions 
-         function mainLoop() {
-            setTimeout( function() {
-               ANIMATION = requestAnimationFrame(mainLoop);
+  requestMainLoop() {
+     requestAnimationFrame(this.mainLoop);
+  }
 
-               currentTarget = drawCanvas.draw(mouseState);
-               if ( mouseState.clicked ) {
-                  mouseState.clicked = 0;
-                  gameWorld.setCharacterPathWithBfs(0, currentTarget);
-               }
-               gameWorld.moveCharacters();
-               gameWorld.giveInstructionsToNPCsWithAI();
-            }, 1000 / fps );
-         }
+  mainLoop() {
+     if ( !this.animationInProgress ) {
+        this.animationInProgress = true;
+        var retobj = {};
+        var currentTarget = this.drawCanvas.draw(this.mouseState, retobj);
+        if ( !retobj.failed ) {
+           if ( this.mouseState.clicked ) {
+              this.mouseState.clicked = 0;
+              this.gameWorld.setCharacterPathWithBfs(0, currentTarget);
+           }
+           this.gameWorld.moveCharacters();
+           this.gameWorld.giveInstructionsToNPCsWithAI();
+        }
+        this.animationInProgress = false;
+     }
+  }
 
-         function initMainLoop() {
-            drawCanvas.refreshScreenConstants();
+  mouse_down(event) {
+     this.mouseState.clicked = 1; 
+  }
 
-            // starting the engine only if it is not running
-            if ( !ANIMATION ) {
-               mainLoop();
-            }
-         }
+  mouse_move(event) {
+     [this.mouseState.cursorX, this.mouseState.cursorY] = [event.clientX,event.clientY];
+  }
 
-         mainItem.onmousedown = function(event) { mouseState.clicked = 1; };
-         mainItem.onmouseup = function(event) {};
-         mainItem.onmousemove = function(event) { [mouseState.cursorX,mouseState.cursorY] = [event.clientX,event.clientY]; };
+  render() {
+    var content = [];
+    for (var row = 0; row < this.state.boardy; ++row) {
+      var rowKey = "game-of-life-table-row-" + row;
+      var content2 = [];
+      for (var column = 0; column < this.state.boardx; ++column) {
+        var columnKey = "game-of-life-table-cell-" + row + "-" + column;
+        var color = this.state.board[row][column];
+        var cdescs = ["-none", "-half", "-full"];
+        content2.push(
+          <td
+            key={columnKey}
+            id={columnKey}
+            className={"game-of-life-cell" + cdescs[color]}
+            onClick={this.click_on_cell}
+          />
+        );
+      }
+      content.push(<tr key={rowKey}>{content2}</tr>);
+    }
 
-         //init
-         (function() {
-            initMainLoop();
-            addEventListener('resize', initMainLoop, false);
-            addEventListener('keydown', (event)=>{
-               if ( parseInt(event.key).toString() == event.key ) { gameWorld.getCharacterUniqueAttributes(0).setUsePotion = parseInt(event.key)-1; }
-               if ( event.key == "s" ) { messenger.sendMessage("HP is "+gameWorld.getCharacterUniqueAttributes(0).hp+"/"+gameWorld.getCharacterSharedAttributes(0).baseHp+", XP is "+gameWorld.getCharacterUniqueAttributes(0).xp+", level "+gameWorld.getCharacterSharedAttributes(0).level+" (next level requires "+gameWorld.minimalLevelXp(gameWorld.getCharacterSharedAttributes(0).level+1)+" xp)"); }
-               if ( event.key == "p" ) { messenger.sendMessage("Position is "+gameWorld.getCharacterPosition(0).toString()); }
-               if ( event.key == "w" ) { messenger.sendMessage("World is "+getWorldName()); }
-            });
-         })();
-      </script>
+    return (
+      <div className="diabolito-main">
+          <div className="diabolito-canvas">
+          <canvas ref={canvas => (this.canvas = canvas)} id="canvas" width="500" height="500" onMouseDown={this.mouse_down} onMouseMove={this.mouse_move}>
+             Your browser doesn't support html5 canvas.
+          </canvas>
+          </div>
+          <div className="diabolito-bar">
+             <div className="diabolito-control-panel">
+                <div className="diabolito-character-status">
+                   <span>Hp:</span>
+                   <span>40/40</span>
+                   <span>Weapon:</span>
+                   <span>None</span>
+                   <span>Armor:</span>
+                   <span>None</span>
+                </div>
+                <div className="diabolito-character-belt">
+                   <button onClick={function(){console.log("click");}}></button>
+                   <button></button>
+                   <button></button>
+                   <button></button>
+                   <button></button>
+                </div>
+                <div className="diabolito-character-text">
+                   <textarea ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
+                </div>
+             </div>
+          </div>
+      </div> );
+  }
+}
+
+var mountNode = document.getElementById("diabolito-widget-holder");
+ReactDOM.render(<DiabolitoGame/>, mountNode);
+addEventListener('resize', ()=>{console.log('resize!');}, false);
+
+</script>
+
+<!-- 
+  HTML  
+-->
+<html>
+   <body>
+      <div id="diabolito-widget-holder"></div>
    </body>
 </html>
+
+
