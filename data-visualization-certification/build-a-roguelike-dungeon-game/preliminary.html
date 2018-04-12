@@ -1684,19 +1684,27 @@ class DrawCanvas {
          var mainItem = document.getElementById('canvas');
 
          var mouseState = {cursorX:0,cursorY:0,clicked:0};
+         var animationInProgress = false;
+
+         function grabFrame() {
+            if ( animationInProgress ) {
+               return;
+            }
+            animationInProgress = true;
+            currentTarget = drawCanvas.draw(mouseState);
+            if ( mouseState.clicked ) {
+               mouseState.clicked = 0;
+               gameWorld.setCharacterPathWithBfs(0, currentTarget);
+            }
+            gameWorld.moveCharacters();
+            gameWorld.giveInstructionsToNPCsWithAI();
+            animationInProgress = false;
+         }
 
          // common functions 
          function mainLoop() {
-            setTimeout( function() {
-               ANIMATION = requestAnimationFrame(mainLoop);
-
-               currentTarget = drawCanvas.draw(mouseState);
-               if ( mouseState.clicked ) {
-                  mouseState.clicked = 0;
-                  gameWorld.setCharacterPathWithBfs(0, currentTarget);
-               }
-               gameWorld.moveCharacters();
-               gameWorld.giveInstructionsToNPCsWithAI();
+            setInterval( function() {
+               ANIMATION = requestAnimationFrame(grabFrame);
             }, 1000 / fps );
          }
 
