@@ -1013,12 +1013,16 @@ class GameWorld {
                }
                this.messenger.sendMessage(this.getCharacterSharedAttributes(index).name + " picks up " + this.getStuffSharedAttributes(stuff).name + " and puts it into slot "+(i+1)+" of "+holder);
                this.sounds.pickupSfx();
+               this.reactComponent.refreshWeaponName();
+               this.reactComponent.refreshShieldName();
                this.getCharacterUniqueAttributes(index)[holder][i] = this.getStuffSharedAttributes(stuff);
                this.getStuffUniqueAttributes(stuff).exists = 0;
                return;
             }
          }
       }
+      this.reactComponent.refreshWeaponName();
+      this.reactComponent.refreshShieldName();
    }
 
    moveCharacter(index) {
@@ -1718,6 +1722,8 @@ class DiabolitoGame extends React.Component {
      this.mouse_move          = this.mouse_move.bind(this);
      this.refresh             = this.refresh.bind(this);
      this.queryHpText         = this.queryHpText.bind(this);
+     this.queryWeaponName     = this.queryWeaponName.bind(this);
+     this.queryShieldName     = this.queryShieldName.bind(this);
      this.sounds              = new Sounds();
      this.messenger           = new Messenger(this);
      this.gameWorld           = new GameWorld(this, this.messenger, this.sounds);
@@ -1749,6 +1755,22 @@ class DiabolitoGame extends React.Component {
 
   queryHpText() {
      return this.getHpText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
+  }
+
+  queryWeaponName() {
+     return this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
+  }
+
+  refreshWeaponName() {
+     this.weaponBar.innerText = this.queryWeaponName(); 
+  }
+
+  queryShieldName() {
+     return this.gameWorld.getCharacterHoldedObjectAttribute(0,"shield","name");
+  }
+
+  refreshShieldName() {
+     this.shieldBar.innerText = this.queryShieldName(); 
   }
 
   mainLoop() {
@@ -1812,9 +1834,9 @@ class DiabolitoGame extends React.Component {
                    <span>Hp:</span>
                    <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
                    <span>Weapon:</span>
-                   <span>None</span>
+                   <span ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
                    <span>Armor:</span>
-                   <span>None</span>
+                   <span ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
                 </div>
                 <div className="diabolito-character-belt">
                    <button onClick={function(){console.log("click");}}></button>
