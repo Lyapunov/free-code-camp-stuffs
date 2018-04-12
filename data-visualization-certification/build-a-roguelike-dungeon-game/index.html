@@ -1709,6 +1709,7 @@ class DiabolitoGame extends React.Component {
      this.requestMainLoop     = this.requestMainLoop.bind(this);
      this.mouse_down          = this.mouse_down.bind(this);
      this.mouse_move          = this.mouse_move.bind(this);
+     this.refresh             = this.refresh.bind(this);
      this.sounds              = new Sounds();
      this.messenger           = new Messenger(this);
      this.gameWorld           = new GameWorld(this.messenger, this.sounds);
@@ -1717,7 +1718,13 @@ class DiabolitoGame extends React.Component {
      this.animationInProgress = false;
      this.fps                 = 25;
 
+     // Setting global callbacks
      setInterval( this.requestMainLoop, 1000 / this.fps );
+     addEventListener('resize', this.refresh, false);
+  }
+
+  refresh() {
+     this.setState(this.state);
   }
 
   requestMainLoop() {
@@ -1750,6 +1757,8 @@ class DiabolitoGame extends React.Component {
   }
 
   render() {
+    this.drawCanvas.refreshScreenConstants(true);
+
     var content = [];
     for (var row = 0; row < this.state.boardy; ++row) {
       var rowKey = "game-of-life-table-row-" + row;
@@ -1805,7 +1814,6 @@ class DiabolitoGame extends React.Component {
 
 var mountNode = document.getElementById("diabolito-widget-holder");
 ReactDOM.render(<DiabolitoGame/>, mountNode);
-addEventListener('resize', ()=>{console.log('resize!');}, false);
 
 </script>
 
@@ -1817,5 +1825,3 @@ addEventListener('resize', ()=>{console.log('resize!');}, false);
       <div id="diabolito-widget-holder"></div>
    </body>
 </html>
-
-
