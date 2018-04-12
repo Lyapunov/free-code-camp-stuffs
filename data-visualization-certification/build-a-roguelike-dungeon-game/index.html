@@ -623,11 +623,11 @@ class Messenger {
          return;
       }
 
-      console.log(this.capitalize(text)+".");
       var lines = this.reactComponent.textarea.value.split("\n");
       while ( lines.length > 5 ) {
          lines.shift();
       }
+
       this.reactComponent.textarea.value = lines.join("\n"); 
       this.reactComponent.textarea.value += this.capitalize(text)+"."+"\n";
    }
