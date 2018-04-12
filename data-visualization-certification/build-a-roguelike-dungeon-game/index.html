@@ -634,7 +634,8 @@ class Messenger {
 }
 
 class GameWorld {
-   constructor(messenger, sounds) {
+   constructor(reactComponent, messenger, sounds) {
+      this.reactComponent = reactComponent;
       this.messenger = messenger;
       this.sounds    = sounds;
 
@@ -749,7 +750,8 @@ class GameWorld {
                    return this.isCharacterAlive(0)
                        && (this.getCharacterUniqueAttributes(0).hp < this.getCharacterSharedAttributes(0).baseHp)
                        && (this.getCharacterUniqueAttributes(0).hp=Math.min(this.getCharacterSharedAttributes(0).baseHp,this.getCharacterUniqueAttributes(0).hp+value))
-                       && (this.sounds.healSfx() || 1); };
+                       && (this.sounds.healSfx() || 1)
+                       && (this.reactComponent.setHpValues(this.getCharacterUniqueAttributes(0).hp, this.getCharacterSharedAttributes(0).baseHp) || 1); };
    }
 
    damageInRadius(radius, value) {
@@ -1105,6 +1107,11 @@ class GameWorld {
       this.getCharacterUniqueAttributes(attacked).hp -= value;
       if ( this.getCharacterUniqueAttributes(attacked).hp <= 0 ) {
          this.getCharacterUniqueAttributes(attacked).hp = 0;
+      }
+      if ( this.reactComponent && !attacked ) {
+         this.reactComponent.setHpValues(this.getCharacterUniqueAttributes(attacked).hp, this.getCharacterSharedAttributes(attacked).baseHp);
+      }
+      if ( this.getCharacterUniqueAttributes(attacked).hp <= 0 ) {
          this.kill(attacked);
          return 1;
       }
@@ -1710,9 +1717,10 @@ class DiabolitoGame extends React.Component {
      this.mouse_down          = this.mouse_down.bind(this);
      this.mouse_move          = this.mouse_move.bind(this);
      this.refresh             = this.refresh.bind(this);
+     this.queryHpText         = this.queryHpText.bind(this);
      this.sounds              = new Sounds();
      this.messenger           = new Messenger(this);
-     this.gameWorld           = new GameWorld(this.messenger, this.sounds);
+     this.gameWorld           = new GameWorld(this, this.messenger, this.sounds);
      this.drawCanvas          = new DrawCanvas(this, this.gameWorld);
      this.mouseState          = {cursorX:0,cursorY:0,clicked:0};
      this.animationInProgress = false;
@@ -1729,6 +1737,18 @@ class DiabolitoGame extends React.Component {
 
   requestMainLoop() {
      requestAnimationFrame(this.mainLoop);
+  }
+
+  getHpText(hp, baseHp) {
+     return (hp ||0).toString()+"/"+(baseHp || 0).toString();
+  }
+
+  setHpValues(hp, baseHp) {
+     this.hpBar.innerText = this.getHpText(hp, baseHp); 
+  }
+
+  queryHpText() {
+     return this.getHpText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
   }
 
   mainLoop() {
@@ -1790,7 +1810,7 @@ class DiabolitoGame extends React.Component {
              <div className="diabolito-control-panel">
                 <div className="diabolito-character-status">
                    <span>Hp:</span>
-                   <span>40/40</span>
+                   <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
                    <span>Weapon:</span>
                    <span>None</span>
                    <span>Armor:</span>
