@@ -1132,6 +1132,7 @@ class GameWorld {
       this.getCharacterSharedAttributes(i).baseHp = this.getBaseHp(this.getCharacterSharedAttributes(i).level);
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
       this.reactComponent.refreshLevelValues();
+      this.reactComponent.refreshHpValues();
    }
 
    getBaseHp(level) { return (this.unitBaseHp + Math.max(level-1,0)*this.unitHpPerLevelIncrease)*2; }
