@@ -1128,6 +1128,7 @@ class GameWorld {
       ++this.getCharacterSharedAttributes(i).level;
       this.getCharacterSharedAttributes(i).baseHp = this.getBaseHp(this.getCharacterSharedAttributes(i).level);
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
+      this.reactComponent.refreshLevelValues();
    }
 
    getBaseHp(level) { return (this.unitBaseHp + Math.max(level-1,0)*this.unitHpPerLevelIncrease)*2; }
@@ -1760,6 +1761,10 @@ class DiabolitoGame extends React.Component {
      return this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).xp, this.gameWorld.minimalLevelXp(this.gameWorld.getCharacterSharedAttributes(0).level+1));
   }
 
+  queryLevelText() {
+     return this.gameWorld.getCharacterSharedAttributes(0).level;
+  }
+
   queryWeaponName() {
      return this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
   }
@@ -1770,6 +1775,10 @@ class DiabolitoGame extends React.Component {
 
   refreshXpValues() {
      this.xpBar.innerText = this.queryXpText(); 
+  }
+
+  refreshLevelValues() {
+     this.levelBar.innerText = this.queryLevelText(); 
   }
 
   refreshWeaponName() {
@@ -1844,6 +1853,8 @@ class DiabolitoGame extends React.Component {
                 <div className="diabolito-character-status">
                    <span>Hp:</span>
                    <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
+                   <span>Player's level:</span>
+                   <span ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
                    <span>Xp:</span>
                    <span ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
                    <span>Weapon:</span>
