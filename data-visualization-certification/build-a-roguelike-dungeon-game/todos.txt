@@ -12,3 +12,4 @@
 5. Changing the name minor health potion to health potion. [DONE]
 6. Adding naming the world (catacombs, iceworld, hellworld). Iceworld is x >= 73. Hellworld >= 145. [DONE]
 7. Bug in the MapGenerator? High level enemies sometimes are too early.
+8. Hiding most of the control panel at death.
