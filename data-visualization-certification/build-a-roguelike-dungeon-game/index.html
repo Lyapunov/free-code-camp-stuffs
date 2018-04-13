@@ -1158,7 +1158,8 @@ class GameWorld {
       var attackValue     = attackValueMin  + Math.round( (attackValueMax - attackValueMin)*Math.random() );
       var defenseValue    = defenseValueMin + Math.round( (defenseValueMax-defenseValueMin)*Math.random() );
       var damageValue     = Math.max(attackValue - defenseValue,0);
-      this.messenger.sendMessage(this.getCharacterSharedAttributes(attacker).name + " attacks " + this.getCharacterSharedAttributes(attacked).name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + " points") + " ("+attackValue+"-"+defenseValue+")");
+      var pointsText = damageValue > 1 ? " points" : " point";
+      this.messenger.sendMessage(this.getCharacterSharedAttributes(attacker).name + " attacks " + this.getCharacterSharedAttributes(attacked).name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + pointsText) + " ("+attackValue+"-"+defenseValue+")");
       if ( this.damage(attacked,damageValue) ) {
          this.awardXp(attacker,this.getCharacterSharedAttributes(attacked).level);
       }
