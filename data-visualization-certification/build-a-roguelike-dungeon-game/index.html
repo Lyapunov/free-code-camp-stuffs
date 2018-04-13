@@ -751,7 +751,7 @@ class GameWorld {
                        && (this.getCharacterUniqueAttributes(0).hp < this.getCharacterSharedAttributes(0).baseHp)
                        && (this.getCharacterUniqueAttributes(0).hp=Math.min(this.getCharacterSharedAttributes(0).baseHp,this.getCharacterUniqueAttributes(0).hp+value))
                        && (this.sounds.healSfx() || 1)
-                       && (this.reactComponent.setHpValues(this.getCharacterUniqueAttributes(0).hp, this.getCharacterSharedAttributes(0).baseHp) || 1); };
+                       && (this.reactComponent.refreshHpValues() || 1); };
    }
 
    damageInRadius(radius, value) {
@@ -1113,7 +1113,7 @@ class GameWorld {
          this.getCharacterUniqueAttributes(attacked).hp = 0;
       }
       if ( this.reactComponent && !attacked ) {
-         this.reactComponent.setHpValues(this.getCharacterUniqueAttributes(attacked).hp, this.getCharacterSharedAttributes(attacked).baseHp);
+         this.reactComponent.refreshHpValues();
       }
       if ( this.getCharacterUniqueAttributes(attacked).hp <= 0 ) {
          this.kill(attacked);
@@ -1146,6 +1146,7 @@ class GameWorld {
       if ( this.getCharacterUniqueAttributes(i).xp !== undefined ) {
          var rndPart = (0.75+Math.random()/4);
          this.getCharacterUniqueAttributes(i).xp += Math.floor( ((this.minimalLevelXp(enemyLevel+1)-this.minimalLevelXp(enemyLevel)) / this.monsterKillingPerLevelFactor) * rndPart );
+         this.reactComponent.refreshXpValues();
          this.levelingUp(i);
       }
    }
@@ -1723,6 +1724,7 @@ class DiabolitoGame extends React.Component {
      this.mouse_move          = this.mouse_move.bind(this);
      this.refresh             = this.refresh.bind(this);
      this.queryHpText         = this.queryHpText.bind(this);
+     this.queryXpText         = this.queryXpText.bind(this);
      this.queryWeaponName     = this.queryWeaponName.bind(this);
      this.queryShieldName     = this.queryShieldName.bind(this);
      this.sounds              = new Sounds();
@@ -1746,20 +1748,28 @@ class DiabolitoGame extends React.Component {
      requestAnimationFrame(this.mainLoop);
   }
 
-  getHpText(hp, baseHp) {
+  getPairText(hp, baseHp) {
      return (hp ||0).toString()+"/"+(baseHp || 0).toString();
   }
 
-  setHpValues(hp, baseHp) {
-     this.hpBar.innerText = this.getHpText(hp, baseHp); 
+  queryHpText() {
+     return this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
   }
 
-  queryHpText() {
-     return this.getHpText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
+  queryXpText() {
+     return this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).xp, this.gameWorld.minimalLevelXp(this.gameWorld.getCharacterSharedAttributes(0).level+1));
   }
 
   queryWeaponName() {
      return this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
+  }
+
+  refreshHpValues() {
+     this.hpBar.innerText = this.queryHpText(); 
+  }
+
+  refreshXpValues() {
+     this.xpBar.innerText = this.queryXpText(); 
   }
 
   refreshWeaponName() {
@@ -1834,6 +1844,8 @@ class DiabolitoGame extends React.Component {
                 <div className="diabolito-character-status">
                    <span>Hp:</span>
                    <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
+                   <span>Xp:</span>
+                   <span ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
                    <span>Weapon:</span>
                    <span ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
                    <span>Armor:</span>
