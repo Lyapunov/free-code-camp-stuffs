@@ -1776,7 +1776,7 @@ class DiabolitoGame extends React.Component {
 
   queryPotionSlotColor(i) {
      if ( this.gameWorld.getCharacterUniqueAttributes(0).potions && this.gameWorld.getCharacterUniqueAttributes(0).potions[i] ) {
-        return {color:"red"};
+        return {color: this.gameWorld.getCharacterUniqueAttributes(0).potions[i].color};
      }
      return {color:"white"};
   }
