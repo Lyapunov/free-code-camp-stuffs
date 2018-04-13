@@ -970,6 +970,7 @@ class GameWorld {
             this.messenger.sendMessage('Hero uses '+exec.name+', but nothing happens');
          }
          this.pickupAttempt(0,1);
+         this.reactComponent.refreshPotionBelt();
          this.getCharacterUniqueAttributes(0).setUsePotion = undefined;
       }
    }
@@ -1013,16 +1014,18 @@ class GameWorld {
                }
                this.messenger.sendMessage(this.getCharacterSharedAttributes(index).name + " picks up " + this.getStuffSharedAttributes(stuff).name + " and puts it into slot "+(i+1)+" of "+holder);
                this.sounds.pickupSfx();
-               this.reactComponent.refreshWeaponName();
-               this.reactComponent.refreshShieldName();
                this.getCharacterUniqueAttributes(index)[holder][i] = this.getStuffSharedAttributes(stuff);
                this.getStuffUniqueAttributes(stuff).exists = 0;
+               this.reactComponent.refreshWeaponName();
+               this.reactComponent.refreshShieldName();
+               this.reactComponent.refreshPotionBelt();
                return;
             }
          }
       }
       this.reactComponent.refreshWeaponName();
       this.reactComponent.refreshShieldName();
+      this.reactComponent.refreshPotionBelt();
    }
 
    moveCharacter(index) {
@@ -1718,23 +1721,25 @@ class DrawCanvas {
 class DiabolitoGame extends React.Component {
   constructor(props) {
      super(props);
-     this.state               = {interval: undefined};
-     this.mainLoop            = this.mainLoop.bind(this);
-     this.requestMainLoop     = this.requestMainLoop.bind(this);
-     this.mouse_down          = this.mouse_down.bind(this);
-     this.mouse_move          = this.mouse_move.bind(this);
-     this.refresh             = this.refresh.bind(this);
-     this.queryHpText         = this.queryHpText.bind(this);
-     this.queryXpText         = this.queryXpText.bind(this);
-     this.queryWeaponName     = this.queryWeaponName.bind(this);
-     this.queryShieldName     = this.queryShieldName.bind(this);
-     this.sounds              = new Sounds();
-     this.messenger           = new Messenger(this);
-     this.gameWorld           = new GameWorld(this, this.messenger, this.sounds);
-     this.drawCanvas          = new DrawCanvas(this, this.gameWorld);
-     this.mouseState          = {cursorX:0,cursorY:0,clicked:0};
-     this.animationInProgress = false;
-     this.fps                 = 25;
+     this.state                = {interval: undefined};
+     this.mainLoop             = this.mainLoop.bind(this);
+     this.requestMainLoop      = this.requestMainLoop.bind(this);
+     this.mouse_down           = this.mouse_down.bind(this);
+     this.mouse_move           = this.mouse_move.bind(this);
+     this.refresh              = this.refresh.bind(this);
+     this.queryHpText          = this.queryHpText.bind(this);
+     this.queryXpText          = this.queryXpText.bind(this);
+     this.queryWeaponName      = this.queryWeaponName.bind(this);
+     this.queryPotionSlotColor = this.queryPotionSlotColor.bind(this);
+     this.queryShieldName      = this.queryShieldName.bind(this);
+     this.drinkPotion          = this.drinkPotion.bind(this);
+     this.sounds               = new Sounds();
+     this.messenger            = new Messenger(this);
+     this.gameWorld            = new GameWorld(this, this.messenger, this.sounds);
+     this.drawCanvas           = new DrawCanvas(this, this.gameWorld);
+     this.mouseState           = {cursorX:0,cursorY:0,clicked:0};
+     this.animationInProgress  = false;
+     this.fps                  = 25;
 
      // Setting global callbacks
      setInterval( this.requestMainLoop, 1000 / this.fps );
@@ -1769,6 +1774,13 @@ class DiabolitoGame extends React.Component {
      return this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
   }
 
+  queryPotionSlotColor(i) {
+     if ( this.gameWorld.getCharacterUniqueAttributes(0).potions && this.gameWorld.getCharacterUniqueAttributes(0).potions[i] ) {
+        return {color:"red"};
+     }
+     return {color:"white"};
+  }
+
   refreshHpValues() {
      this.hpBar.innerText = this.queryHpText(); 
   }
@@ -1783,6 +1795,14 @@ class DiabolitoGame extends React.Component {
 
   refreshWeaponName() {
      this.weaponBar.innerText = this.queryWeaponName(); 
+  }
+
+  refreshPotionBelt() {
+     for (var i = 0; i < 8; ++i) {
+        if ( this["potionButton"+i] ) {
+           this["potionButton"+i].style = "color:"+this.queryPotionSlotColor(i).color+";";
+        }
+     }
   }
 
   queryShieldName() {
@@ -1818,28 +1838,15 @@ class DiabolitoGame extends React.Component {
      [this.mouseState.cursorX, this.mouseState.cursorY] = [event.clientX,event.clientY];
   }
 
+  drinkPotion(i) {
+     var self = this;
+     return function(){
+        self.gameWorld.getCharacterUniqueAttributes(0).setUsePotion = i;
+     };
+  }
+
   render() {
     this.drawCanvas.refreshScreenConstants(true);
-
-    var content = [];
-    for (var row = 0; row < this.state.boardy; ++row) {
-      var rowKey = "game-of-life-table-row-" + row;
-      var content2 = [];
-      for (var column = 0; column < this.state.boardx; ++column) {
-        var columnKey = "game-of-life-table-cell-" + row + "-" + column;
-        var color = this.state.board[row][column];
-        var cdescs = ["-none", "-half", "-full"];
-        content2.push(
-          <td
-            key={columnKey}
-            id={columnKey}
-            className={"game-of-life-cell" + cdescs[color]}
-            onClick={this.click_on_cell}
-          />
-        );
-      }
-      content.push(<tr key={rowKey}>{content2}</tr>);
-    }
 
     return (
       <div className="diabolito-main">
@@ -1863,11 +1870,14 @@ class DiabolitoGame extends React.Component {
                    <span ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
                 </div>
                 <div className="diabolito-character-belt">
-                   <button onClick={function(){console.log("click");}}></button>
-                   <button></button>
-                   <button></button>
-                   <button></button>
-                   <button></button>
+                   <button ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
+                   <button ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
+                   <button ref={button => (this.potionButton2 = button)} style={this.queryPotionSlotColor(2)} onClick={this.drinkPotion(2)}>&#9632;</button>
+                   <button ref={button => (this.potionButton3 = button)} style={this.queryPotionSlotColor(3)} onClick={this.drinkPotion(3)}>&#9632;</button>
+                   <button ref={button => (this.potionButton4 = button)} style={this.queryPotionSlotColor(4)} onClick={this.drinkPotion(4)}>&#9632;</button>
+                   <button ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
+                   <button ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
+                   <button ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
                 </div>
                 <div className="diabolito-character-text">
                    <textarea ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
