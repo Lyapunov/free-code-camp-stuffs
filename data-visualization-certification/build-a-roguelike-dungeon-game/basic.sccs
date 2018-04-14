@@ -45,11 +45,35 @@ html, body,
    margin-left: auto
    margin-right: auto
 
-.diabolito-character-status
-   display: flex
-
 .diabolito-character-belt
    display: flex
 
 .diabolito-character-text
    display: flex
+
+.diabolito-character-status
+   padding: 0px
+   margin: 0px
+   border-collapse: separate
+   border-spacing: 0
+
+.diabolito-control-row
+   display: block
+   background-color: #888888
+   padding: 0px
+   margin: 0px
+
+.diabolito-control-box
+   font-family: Arial
+   font-size: 2vmin
+   padding: 0px
+   margin: 0px
+
+.diabolito-belt-button
+   width: 12vmin
+   height: 5vh
+
+.diabolito-messenger
+   width: 90vmin
+   height: 15vh
+   font-size: 2vmin

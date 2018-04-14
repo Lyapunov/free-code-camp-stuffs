@@ -624,12 +624,16 @@ class Messenger {
       }
 
       var lines = this.reactComponent.textarea.value.split("\n");
-      while ( lines.length > 5 ) {
+      while ( lines.length > 4 ) {
          lines.shift();
       }
 
-      this.reactComponent.textarea.value = lines.join("\n"); 
-      this.reactComponent.textarea.value += this.capitalize(text)+"."+"\n";
+      var retval = lines.join("\n");
+      if ( retval.length > 0 ) {
+         retval += "\n";
+      }
+      retval += this.capitalize(text)+".";
+      this.reactComponent.textarea.value = retval;  
    }
 }
 
@@ -1873,37 +1877,35 @@ class DiabolitoGame extends React.Component {
           <div className="diabolito-bar">
              <div className="diabolito-control-panel">
                 <div className="diabolito-character-status">
-                   <p>
-                      <span>Hp:</span>
-                      <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
-                      <span>Player's level:</span>
-                      <span ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
-                      <span>Xp:</span>
-                      <span ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
+                   <p className="diabolito-control-row">
+                      <span className="diabolito-control-box" >Hp:</span>
+                      <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
+                      <span className="diabolito-control-box" >Player's level:</span>
+                      <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
+                      <span className="diabolito-control-box" >Xp:</span>
+                      <span className="diabolito-control-box" ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
                    </p>
-                   <p>
-                      <span>Weapon:</span>
-                      <span ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
-                      <span>Armor:</span>
-                      <span ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
-                   </p>
-                   <p>
-                      <span>Elapsed mission time:</span>
-                      <span ref={span => (this.missionTimer = span)}>00:00:00</span>
+                   <p className="diabolito-control-row">
+                      <span className="diabolito-control-box" >Weapon:</span>
+                      <span className="diabolito-control-box" ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
+                      <span className="diabolito-control-box">Armor:</span>
+                      <span className="diabolito-control-box" ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
+                      <span className="diabolito-control-box">Elapsed mission time:</span>
+                      <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>00:00:00</span>
                    </p>
                 </div>
                 <div className="diabolito-character-belt">
-                   <button ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
-                   <button ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
-                   <button ref={button => (this.potionButton2 = button)} style={this.queryPotionSlotColor(2)} onClick={this.drinkPotion(2)}>&#9632;</button>
-                   <button ref={button => (this.potionButton3 = button)} style={this.queryPotionSlotColor(3)} onClick={this.drinkPotion(3)}>&#9632;</button>
-                   <button ref={button => (this.potionButton4 = button)} style={this.queryPotionSlotColor(4)} onClick={this.drinkPotion(4)}>&#9632;</button>
-                   <button ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
-                   <button ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
-                   <button ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton2 = button)} style={this.queryPotionSlotColor(2)} onClick={this.drinkPotion(2)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton3 = button)} style={this.queryPotionSlotColor(3)} onClick={this.drinkPotion(3)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton4 = button)} style={this.queryPotionSlotColor(4)} onClick={this.drinkPotion(4)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
+                   <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
                 </div>
                 <div className="diabolito-character-text">
-                   <textarea ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
+                   <textarea className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
                 </div>
              </div>
           </div>
