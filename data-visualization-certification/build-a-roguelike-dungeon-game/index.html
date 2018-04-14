@@ -1741,6 +1741,8 @@ class DiabolitoGame extends React.Component {
      this.mouseState           = {cursorX:0,cursorY:0,clicked:0};
      this.animationInProgress  = false;
      this.fps                  = 25;
+     this.ticksLow             = 0;
+     this.ticksHigh            = 0;
 
      // Setting global callbacks
      setInterval( this.requestMainLoop, 1000 / this.fps );
@@ -1752,6 +1754,14 @@ class DiabolitoGame extends React.Component {
   }
 
   requestMainLoop() {
+     if ( this.ticksHigh < 60 * 60 * 60 ) {
+        ++this.ticksLow;
+        if ( this.ticksLow >= this.fps ) {
+           this.ticksLow = 0;
+           ++this.ticksHigh;
+           this.setMissionTimer(Math.floor(this.ticksHigh / 3600), Math.floor(this.ticksHigh / 60) % 60, this.ticksHigh % 60)
+        }
+     }
      requestAnimationFrame(this.mainLoop);
   }
 
@@ -1814,6 +1824,10 @@ class DiabolitoGame extends React.Component {
      this.shieldBar.innerText = this.queryShieldName(); 
   }
 
+  setMissionTimer(hh, mm, ss) {
+     this.missionTimer.innerText = ""+hh.toString().padStart(2,"0")+":"+mm.toString().padStart(2,"0")+":"+ss.toString().padStart(2,"0");
+  }
+
   mainLoop() {
      if ( !this.animationInProgress ) {
         this.animationInProgress = true;
@@ -1859,16 +1873,24 @@ class DiabolitoGame extends React.Component {
           <div className="diabolito-bar">
              <div className="diabolito-control-panel">
                 <div className="diabolito-character-status">
-                   <span>Hp:</span>
-                   <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
-                   <span>Player's level:</span>
-                   <span ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
-                   <span>Xp:</span>
-                   <span ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
-                   <span>Weapon:</span>
-                   <span ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
-                   <span>Armor:</span>
-                   <span ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
+                   <p>
+                      <span>Hp:</span>
+                      <span ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
+                      <span>Player's level:</span>
+                      <span ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
+                      <span>Xp:</span>
+                      <span ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
+                   </p>
+                   <p>
+                      <span>Weapon:</span>
+                      <span ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
+                      <span>Armor:</span>
+                      <span ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
+                   </p>
+                   <p>
+                      <span>Elapsed mission time:</span>
+                      <span ref={span => (this.missionTimer = span)}>00:00:00</span>
+                   </p>
                 </div>
                 <div className="diabolito-character-belt">
                    <button ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
