@@ -91,7 +91,6 @@ html, body,
    border-radius: 0px
    -webkit-appearance: none
    color: white
-   outline: none
    border: 1px solid #23415a
    background-color: #4682B4
    cursor: pointer
