@@ -89,3 +89,8 @@ button
    font-size: 2vmin
    resize: none
    cursor: default
+   color: transparent
+   text-shadow: 0 0 0 black
+
+.diabolito-messenger.focus
+   outline: none
