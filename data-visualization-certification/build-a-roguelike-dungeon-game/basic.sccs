@@ -73,6 +73,11 @@ button
    padding: 0px
    margin: 0px
 
+.diabolito-control-upper-spacer
+   @extend .noselect
+   height: 2vmin
+   background-color: #ff0000
+
 .diabolito-control-box
    @extend .noselect
    font-family: monospace 
