@@ -34,7 +34,6 @@ button
 .diabolito-main
    width: 100vw
    display: table
-   background-color: #ffff00
 
 .diabolito-canvas
    width: 100vw
@@ -61,7 +60,6 @@ button
 .diabolito-character-text
    display: flex
    width: 100vmin
-   background-color: #ffff00
 
 .diabolito-character-status
    padding: 0px
