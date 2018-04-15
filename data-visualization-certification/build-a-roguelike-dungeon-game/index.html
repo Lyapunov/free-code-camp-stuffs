@@ -1905,7 +1905,7 @@ class DiabolitoGame extends React.Component {
                    <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
                 </div>
                 <div className="diabolito-character-text">
-                   <textarea className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
+                   <textarea readOnly className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
                 </div>
              </div>
           </div>
