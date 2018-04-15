@@ -48,7 +48,7 @@ button
 .diabolito-control-panel
    width: 100vmin
    height: 100%
-   background-color: #4682B4
+   background-color: #23415a
    margin-left: auto
    margin-right: auto
 
@@ -76,14 +76,19 @@ button
    @extend .noselect
    height: 1vmin
 
+.diabolito-control-mini-spacer
+   width: 2vmin
+   display: inline-block
+
 .diabolito-control-box
    @extend .noselect
    font-family: monospace 
    font-size: 2vmin
    padding: 0px
    margin: 0px
-   width: 33vmin
+   width: 32vmin
    display: inline-block
+   color: #ffffff
 
 .diabolito-belt-button
    width: 12vmin
@@ -100,6 +105,7 @@ button
    text-shadow: 0 0 0 black
    margin-left: auto
    margin-right: auto
+   background-color: #4682B4
 
 .diabolito-messenger.focus
    outline: none

@@ -1884,11 +1884,13 @@ class DiabolitoGame extends React.Component {
                <div className="diabolito-control-half-spacer"></div>
                <div className="diabolito-character-status">
                   <p className="diabolito-control-row">
+                     <span className="diabolito-control-mini-spacer"></span>
                      <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
                      <span className="diabolito-control-box" ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
                      <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
                   </p>
                   <p className="diabolito-control-row">
+                     <span className="diabolito-control-mini-spacer"></span>
                      <span className="diabolito-control-box" ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
                      <span className="diabolito-control-box" ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
                      <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>Elapsed time: --:--:--</span>
