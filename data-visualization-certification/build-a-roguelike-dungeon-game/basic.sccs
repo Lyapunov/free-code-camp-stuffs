@@ -6,17 +6,6 @@ html, body,
    padding: 0px
    margin: 0px
 
-button
-   border: 1
-   background-repeat: no-repeat
-   box-shadow: none
-   border-radius: 0px
-   -webkit-appearance: none
-   color: white
-   outline: none
-   border: 1px solid #23415a
-   background-color: #4682B4
-
 .noselect
    -webkit-touch-callout: none
    -webkit-user-select: none
@@ -96,6 +85,15 @@ button
 .diabolito-belt-button
    width: 12vmin
    height: 5vh
+   border: 1
+   background-repeat: no-repeat
+   box-shadow: none
+   border-radius: 0px
+   -webkit-appearance: none
+   color: white
+   outline: none
+   border: 1px solid #23415a
+   background-color: #4682B4
 
 .noborder
    border-radius: 0px
