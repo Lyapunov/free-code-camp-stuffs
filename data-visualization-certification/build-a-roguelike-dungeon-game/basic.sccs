@@ -43,12 +43,12 @@ button
 .diabolito-bar
    width: 100vw
    height: 30vh
-   background-color: #f3e3c2
+   background-color: #4682B4
 
 .diabolito-control-panel
    width: 100vmin
    height: 100%
-   background-color: #ff00ff
+   background-color: #4682B4
    margin-left: auto
    margin-right: auto
 
@@ -69,14 +69,12 @@ button
 
 .diabolito-control-row
    display: block
-   background-color: #888888
    padding: 0px
    margin: 0px
 
 .diabolito-control-half-spacer
    @extend .noselect
    height: 1vmin
-   background-color: #ff0000
 
 .diabolito-control-box
    @extend .noselect
