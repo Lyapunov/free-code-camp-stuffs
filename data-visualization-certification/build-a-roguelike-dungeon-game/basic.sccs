@@ -6,6 +6,16 @@ html, body,
    padding: 0px
    margin: 0px
 
+button
+   border: 0
+   background: none
+   background-repeat: no-repeat
+   box-shadow: none
+   border-radius: 0px
+   -webkit-appearance: none
+   color: white
+   text-decoration: underline
+
 .noselect
    -webkit-touch-callout: none
    -webkit-user-select: none
