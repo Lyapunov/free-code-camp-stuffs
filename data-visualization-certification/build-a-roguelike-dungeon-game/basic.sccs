@@ -73,9 +73,9 @@ button
    padding: 0px
    margin: 0px
 
-.diabolito-control-upper-spacer
+.diabolito-control-half-spacer
    @extend .noselect
-   height: 2vmin
+   height: 1vmin
    background-color: #ff0000
 
 .diabolito-control-box

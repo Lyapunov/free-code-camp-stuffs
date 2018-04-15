@@ -1881,8 +1881,7 @@ class DiabolitoGame extends React.Component {
          </div>
          <div className="diabolito-bar">
             <div className="diabolito-control-panel">
-               <div className="diabolito-control-upper-spacer">
-               </div>
+               <div className="diabolito-control-half-spacer"></div>
                <div className="diabolito-character-status">
                   <p className="diabolito-control-row">
                      <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
@@ -1895,6 +1894,7 @@ class DiabolitoGame extends React.Component {
                      <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>Elapsed time: --:--:--</span>
                   </p>
                </div>
+               <div className="diabolito-control-half-spacer"></div>
                <div className="diabolito-character-text">
                   <div className="diabolito-character-belt">
                      <button className="diabolito-belt-button" ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
