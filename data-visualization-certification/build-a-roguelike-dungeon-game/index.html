@@ -1834,7 +1834,7 @@ class DiabolitoGame extends React.Component {
   }
 
   setMissionTimer(hh, mm, ss) {
-     this.missionTimer.innerText = "Elapsed mission time: "+hh.toString().padStart(2,"0")+":"+mm.toString().padStart(2,"0")+":"+ss.toString().padStart(2,"0");
+     this.missionTimer.innerText = "Elapsed time: "+hh.toString().padStart(2,"0")+":"+mm.toString().padStart(2,"0")+":"+ss.toString().padStart(2,"0");
   }
 
   mainLoop() {
@@ -1884,13 +1884,13 @@ class DiabolitoGame extends React.Component {
                <div className="diabolito-character-status">
                   <p className="diabolito-control-row">
                      <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
-                     <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
                      <span className="diabolito-control-box" ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
+                     <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
                   </p>
                   <p className="diabolito-control-row">
                      <span className="diabolito-control-box" ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
                      <span className="diabolito-control-box" ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
-                     <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>Elapsed mission time: --:--:--</span>
+                     <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>Elapsed time: --:--:--</span>
                   </p>
                </div>
                <div className="diabolito-character-text">
