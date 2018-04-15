@@ -10,7 +10,7 @@ button
    border: 1
    background-repeat: no-repeat
    box-shadow: none
-   border-radius: 1px
+   border-radius: 0px
    -webkit-appearance: none
    color: white
 
@@ -94,8 +94,17 @@ button
    width: 12vmin
    height: 5vh
 
+.noborder
+   border-radius: 0px
+   box-shadow: none
+   -webkit-box-shadow: none
+   -moz-box-shadow: none
+   outline: none
+   border: none
+
 .diabolito-messenger
    @extend .noselect
+   @extend .noborder
    width: 90vmin
    height: 15vh
    font-size: 2vmin

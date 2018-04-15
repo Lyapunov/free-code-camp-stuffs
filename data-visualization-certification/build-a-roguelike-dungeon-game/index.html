@@ -1137,6 +1137,7 @@ class GameWorld {
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
       this.reactComponent.refreshLevelValues();
       this.reactComponent.refreshHpValues();
+      this.messenger.sendMessage("Hero levelled up");
    }
 
    getBaseHp(level) { return (this.unitBaseHp + Math.max(level-1,0)*this.unitHpPerLevelIncrease)*2; }
@@ -1909,6 +1910,7 @@ class DiabolitoGame extends React.Component {
                      <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
                   </div>
                </div>
+               <div className="diabolito-control-half-spacer"></div>
                <div className="diabolito-character-text">
                   <textarea readOnly unselectable="on" className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
                </div>
