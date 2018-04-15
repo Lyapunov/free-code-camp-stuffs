@@ -20,8 +20,8 @@ button
    -khtml-user-select: none
    -moz-user-select: none
    -ms-user-select: none
-   user-select: none
-                             
+   -o-user-select: none
+
 .big-font
    font-size: 8vh
 
@@ -83,6 +83,8 @@ button
    height: 5vh
 
 .diabolito-messenger
+   @extend .noselect
    width: 90vmin
    height: 15vh
    font-size: 2vmin
+   resize: none
