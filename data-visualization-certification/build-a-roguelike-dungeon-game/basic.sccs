@@ -73,7 +73,7 @@ button
 
 .diabolito-control-box
    @extend .noselect
-   font-family: Arial
+   font-family: monospace 
    font-size: 2vmin
    padding: 0px
    margin: 0px
