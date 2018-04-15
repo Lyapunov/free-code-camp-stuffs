@@ -1899,6 +1899,7 @@ class DiabolitoGame extends React.Component {
                       <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>00:00:00</span>
                    </p>
                 </div>
+                <div className="diabolito-character-text">
                 <div className="diabolito-character-belt">
                    <button className="diabolito-belt-button" ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
                    <button className="diabolito-belt-button" ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
@@ -1908,6 +1909,7 @@ class DiabolitoGame extends React.Component {
                    <button className="diabolito-belt-button" ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
                    <button className="diabolito-belt-button" ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
                    <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
+                </div>
                 </div>
                 <div className="diabolito-character-text">
                    <textarea readOnly unselectable="on" className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
