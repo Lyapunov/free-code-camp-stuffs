@@ -88,3 +88,4 @@ button
    height: 15vh
    font-size: 2vmin
    resize: none
+   cursor: default
