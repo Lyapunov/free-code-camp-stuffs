@@ -1779,19 +1779,19 @@ class DiabolitoGame extends React.Component {
   }
 
   queryHpText() {
-     return this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
+     return "Hp: "+this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).hp, this.gameWorld.getCharacterSharedAttributes(0).baseHp);
   }
 
   queryXpText() {
-     return this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).xp, this.gameWorld.minimalLevelXp(this.gameWorld.getCharacterSharedAttributes(0).level+1));
+     return "Xp: "+this.getPairText(this.gameWorld.getCharacterUniqueAttributes(0).xp, this.gameWorld.minimalLevelXp(this.gameWorld.getCharacterSharedAttributes(0).level+1));
   }
 
   queryLevelText() {
-     return this.gameWorld.getCharacterSharedAttributes(0).level;
+     return "Player's level: "+this.gameWorld.getCharacterSharedAttributes(0).level;
   }
 
   queryWeaponName() {
-     return this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
+     return "Weapon: "+this.gameWorld.getCharacterHoldedObjectAttribute(0,"weapon","name");
   }
 
   queryPotionSlotColor(i) {
@@ -1826,7 +1826,7 @@ class DiabolitoGame extends React.Component {
   }
 
   queryShieldName() {
-     return this.gameWorld.getCharacterHoldedObjectAttribute(0,"shield","name");
+     return "Armor: "+this.gameWorld.getCharacterHoldedObjectAttribute(0,"shield","name");
   }
 
   refreshShieldName() {
@@ -1834,7 +1834,7 @@ class DiabolitoGame extends React.Component {
   }
 
   setMissionTimer(hh, mm, ss) {
-     this.missionTimer.innerText = ""+hh.toString().padStart(2,"0")+":"+mm.toString().padStart(2,"0")+":"+ss.toString().padStart(2,"0");
+     this.missionTimer.innerText = "Elapsed mission time: "+hh.toString().padStart(2,"0")+":"+mm.toString().padStart(2,"0")+":"+ss.toString().padStart(2,"0");
   }
 
   mainLoop() {
@@ -1874,48 +1874,42 @@ class DiabolitoGame extends React.Component {
 
     return (
       <div className="diabolito-main">
-          <div className="diabolito-canvas">
-          <canvas ref={canvas => (this.canvas = canvas)} id="canvas" width="500" height="500" onMouseDown={this.mouse_down} onMouseMove={this.mouse_move}>
-             Your browser doesn't support html5 canvas.
-          </canvas>
-          </div>
-          <div className="diabolito-bar">
-             <div className="diabolito-control-panel">
-                <div className="diabolito-character-status">
-                   <p className="diabolito-control-row">
-                      <span className="diabolito-control-box" >Hp:</span>
-                      <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
-                      <span className="diabolito-control-box" >Player's level:</span>
-                      <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
-                      <span className="diabolito-control-box" >Xp:</span>
-                      <span className="diabolito-control-box" ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
-                   </p>
-                   <p className="diabolito-control-row">
-                      <span className="diabolito-control-box" >Weapon:</span>
-                      <span className="diabolito-control-box" ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
-                      <span className="diabolito-control-box">Armor:</span>
-                      <span className="diabolito-control-box" ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
-                      <span className="diabolito-control-box">Elapsed mission time:</span>
-                      <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>00:00:00</span>
-                   </p>
-                </div>
-                <div className="diabolito-character-text">
-                <div className="diabolito-character-belt">
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton2 = button)} style={this.queryPotionSlotColor(2)} onClick={this.drinkPotion(2)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton3 = button)} style={this.queryPotionSlotColor(3)} onClick={this.drinkPotion(3)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton4 = button)} style={this.queryPotionSlotColor(4)} onClick={this.drinkPotion(4)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
-                   <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
-                </div>
-                </div>
-                <div className="diabolito-character-text">
-                   <textarea readOnly unselectable="on" className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
-                </div>
-             </div>
-          </div>
+         <div className="diabolito-canvas">
+         <canvas ref={canvas => (this.canvas = canvas)} id="canvas" width="500" height="500" onMouseDown={this.mouse_down} onMouseMove={this.mouse_move}>
+            Your browser doesn't support html5 canvas.
+         </canvas>
+         </div>
+         <div className="diabolito-bar">
+            <div className="diabolito-control-panel">
+               <div className="diabolito-character-status">
+                  <p className="diabolito-control-row">
+                     <span className="diabolito-control-box" ref={span => (this.hpBar = span)}>{this.queryHpText()}</span>
+                     <span className="diabolito-control-box" ref={span => (this.levelBar = span)}>{this.queryLevelText()}</span>
+                     <span className="diabolito-control-box" ref={span => (this.xpBar = span)}>{this.queryXpText()}</span>
+                  </p>
+                  <p className="diabolito-control-row">
+                     <span className="diabolito-control-box" ref={span => (this.weaponBar = span)}>{this.queryWeaponName()}</span>
+                     <span className="diabolito-control-box" ref={span => (this.shieldBar = span)}>{this.queryShieldName()}</span>
+                     <span className="diabolito-control-box" ref={span => (this.missionTimer = span)}>Elapsed mission time: --:--:--</span>
+                  </p>
+               </div>
+               <div className="diabolito-character-text">
+                  <div className="diabolito-character-belt">
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton0 = button)} style={this.queryPotionSlotColor(0)} onClick={this.drinkPotion(0)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton1 = button)} style={this.queryPotionSlotColor(1)} onClick={this.drinkPotion(1)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton2 = button)} style={this.queryPotionSlotColor(2)} onClick={this.drinkPotion(2)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton3 = button)} style={this.queryPotionSlotColor(3)} onClick={this.drinkPotion(3)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton4 = button)} style={this.queryPotionSlotColor(4)} onClick={this.drinkPotion(4)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton5 = button)} style={this.queryPotionSlotColor(5)} onClick={this.drinkPotion(5)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton6 = button)} style={this.queryPotionSlotColor(6)} onClick={this.drinkPotion(6)}>&#9632;</button>
+                     <button className="diabolito-belt-button" ref={button => (this.potionButton7 = button)} style={this.queryPotionSlotColor(7)} onClick={this.drinkPotion(7)}>&#9632;</button>
+                  </div>
+               </div>
+               <div className="diabolito-character-text">
+                  <textarea readOnly unselectable="on" className="diabolito-messenger" ref={textarea => (this.textarea = textarea)} id="diabolito-messenger" rows="5" cols="80"></textarea>
+               </div>
+            </div>
+         </div>
       </div> );
   }
 }
