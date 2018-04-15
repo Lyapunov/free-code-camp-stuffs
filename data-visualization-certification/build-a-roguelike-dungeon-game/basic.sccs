@@ -94,6 +94,9 @@ html, body,
    border: 1px solid #23415a
    background-color: #4682B4
    cursor: pointer
+   overflow-x: hidden
+   overflow-y: hidden
+   font-size: 3vmin
 
 .noborder
    border-radius: 0px
