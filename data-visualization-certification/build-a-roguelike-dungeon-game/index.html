@@ -1137,7 +1137,7 @@ class GameWorld {
       this.getCharacterUniqueAttributes(i).hp = this.getCharacterSharedAttributes(i).baseHp;
       this.reactComponent.refreshLevelValues();
       this.reactComponent.refreshHpValues();
-      this.messenger.sendMessage("Hero levelled up");
+      this.messenger.sendMessage("hero levels up");
    }
 
    getBaseHp(level) { return (this.unitBaseHp + Math.max(level-1,0)*this.unitHpPerLevelIncrease)*2; }
