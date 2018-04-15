@@ -94,6 +94,7 @@ html, body,
    outline: none
    border: 1px solid #23415a
    background-color: #4682B4
+   cursor: pointer
 
 .noborder
    border-radius: 0px
