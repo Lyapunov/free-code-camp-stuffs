@@ -1747,6 +1747,7 @@ class DiabolitoGame extends React.Component {
      this.fps                  = 25;
      this.ticksLow             = 0;
      this.ticksHigh            = 0;
+     this.initTextarea         = false;
 
      // Setting global callbacks
      setInterval( this.requestMainLoop, 1000 / this.fps );
@@ -1765,6 +1766,10 @@ class DiabolitoGame extends React.Component {
            ++this.ticksHigh;
            this.setMissionTimer(Math.floor(this.ticksHigh / 3600), Math.floor(this.ticksHigh / 60) % 60, this.ticksHigh % 60)
         }
+     }
+     if ( !this.initTextarea && this.textarea ) {
+        this.initTextarea = true;
+        this.textarea.value = "Hero enters Diabolito's dungeon.";
      }
      requestAnimationFrame(this.mainLoop);
   }
