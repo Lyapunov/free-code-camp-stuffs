@@ -1082,6 +1082,10 @@ class GameWorld {
    kill(index) {
       this.messenger.sendMessage(this.getCharacterSharedAttributes(index).name+" dies");
       this.destroying(index);
+      if ( !index ) {
+         this.getCharacterUniqueAttributes(0).potions = undefined;
+         this.reactComponent.refreshPotionBelt();
+      }
    }
 
    moveCharacters() {
