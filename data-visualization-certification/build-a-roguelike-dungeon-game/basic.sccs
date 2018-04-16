@@ -66,7 +66,7 @@ html, body,
    border-spacing: 0
 
 .diabolito-control-row
-   display: block
+   display: flex
    padding: 0px
    margin: 0px
 
@@ -77,6 +77,8 @@ html, body,
 .diabolito-control-mini-spacer
    width: 2vmin
    display: inline-block
+   padding: 0px
+   margin: 0px
 
 .diabolito-control-box
    @extend .noselect
