@@ -763,7 +763,9 @@ class GameWorld {
          this.characterBuckets.iterateOverBucketItemsAroundPos(this.getCharacterPosition(0),
                                                                (i)=>{
                                                                    if ( this.manhattan(this.getCharacterPosition(0), this.getCharacterPosition(i)) < radius ) {
-                                                                      this.damage(i,value);
+                                                                      if ( this.damage(i, value) ) {
+                                                                         this.awardXp(0, i);
+                                                                      };
                                                                    }
                                                                });
          return 1;
@@ -1151,7 +1153,8 @@ class GameWorld {
 
    minimalLevelXp(level) { return (level>1) * 500 * Math.pow(3,level); }
 
-   awardXp(i, enemyLevel) {
+   awardXp(i, attacked) {
+      var enemyLevel = this.getCharacterSharedAttributes(attacked).level;
       if ( this.getCharacterUniqueAttributes(i).xp !== undefined ) {
          var rndPart = (0.75+Math.random()/4);
          this.getCharacterUniqueAttributes(i).xp += Math.floor( ((this.minimalLevelXp(enemyLevel+1)-this.minimalLevelXp(enemyLevel)) / this.monsterKillingPerLevelFactor) * rndPart );
@@ -1171,7 +1174,7 @@ class GameWorld {
       var pointsText = damageValue > 1 ? " points" : " point";
       this.messenger.sendMessage(this.getCharacterSharedAttributes(attacker).name + " attacks " + this.getCharacterSharedAttributes(attacked).name + " and " + (damageValue <= 0 ? "misses" : "damages " + damageValue + pointsText) + " ("+attackValue+"-"+defenseValue+")");
       if ( this.damage(attacked,damageValue) ) {
-         this.awardXp(attacker,this.getCharacterSharedAttributes(attacked).level);
+         this.awardXp(attacker, attacked);
       }
    }
 
