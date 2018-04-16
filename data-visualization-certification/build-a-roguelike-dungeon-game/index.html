@@ -959,24 +959,23 @@ class GameWorld {
       return way;
    }
 
-   usePotion(number) {
-      if ( this.getCharacterUniqueAttributes(0).setUsePotion !== undefined ) {
-         if ( this.getCharacterUniqueAttributes(0).potions === undefined
-           || number >= this.getCharacterUniqueAttributes(0).potions.length
-           || this.getCharacterUniqueAttributes(0).potions[number] === undefined ) {
-            return;
-         }
-         var exec = this.getCharacterUniqueAttributes(0).potions[number];
-         this.getCharacterUniqueAttributes(0).potions[number] = undefined;
-         if ( exec.effect() ) {
-            this.messenger.sendMessage('Hero uses '+exec.name+', '+exec.effectText);
-         } else {
-            this.messenger.sendMessage('Hero uses '+exec.name+', but nothing happens');
-         }
-         this.pickupAttempt(0,1);
-         this.reactComponent.refreshPotionBelt();
-         this.getCharacterUniqueAttributes(0).setUsePotion = undefined;
+   tryingToUsePotion() {
+      if ( this.getCharacterUniqueAttributes(0).setUsePotion === undefined
+        || this.getCharacterUniqueAttributes(0).potions === undefined
+        || this.getCharacterUniqueAttributes(0).setUsePotion >= this.getCharacterUniqueAttributes(0).potions.length
+        || this.getCharacterUniqueAttributes(0).potions[this.getCharacterUniqueAttributes(0).setUsePotion] === undefined ) {
+         return;
       }
+      var exec = this.getCharacterUniqueAttributes(0).potions[this.getCharacterUniqueAttributes(0).setUsePotion];
+      this.getCharacterUniqueAttributes(0).potions[this.getCharacterUniqueAttributes(0).setUsePotion] = undefined;
+      if ( exec.effect() ) {
+         this.messenger.sendMessage('Hero uses '+exec.name+', '+exec.effectText);
+      } else {
+         this.messenger.sendMessage('Hero uses '+exec.name+', but nothing happens');
+      }
+      this.pickupAttempt(0,1);
+      this.reactComponent.refreshPotionBelt();
+      this.getCharacterUniqueAttributes(0).setUsePotion = undefined;
    }
 
    pickupAttempt(index,forgiving) {
@@ -1086,7 +1085,7 @@ class GameWorld {
    moveCharacters() {
       this.iterateOverCharactersAroundHero((i)=>{ this.isCharacterAlive(i) && (this.moveCharacter(i) || 1) || this.isCharacterFullyDead(i) || this.destroying(i) });
       this.handleWalkSfx();
-      this.usePotion(this.getCharacterUniqueAttributes(0).setUsePotion);
+      this.tryingToUsePotion();
    }
 
    handleWalkSfx() {
