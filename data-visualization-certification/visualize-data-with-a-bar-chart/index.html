@@ -30,10 +30,10 @@ var chart = d3.select(".chart")
 var bar = chart.selectAll("bullshit")
              .data(data)
            .enter().append("g")
-             .attr("transform",(_,d)=>"translate(0,"+(d*20)+")");
+             .attr("transform",(_,d)=>"translate("+(d*20)+",0)");
 
 bar.append("rect")
- .attr("width",(d)=>d*10)
- .attr("height",10);
+ .attr("height",(d)=>d*10)
+ .attr("width",10);
 
 </script>
