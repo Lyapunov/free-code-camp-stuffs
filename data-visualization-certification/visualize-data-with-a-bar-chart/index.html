@@ -33,7 +33,8 @@ var bar = chart.selectAll("bullshit")
              .attr("transform",(_,d)=>"translate("+(d*20)+",0)");
 
 bar.append("rect")
- .attr("height",(d)=>d*10)
+ .attr("y",(d)=>300-d*10)
+ .attr("height",(d)=>300)
  .attr("width",10);
 
 </script>
